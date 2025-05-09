@@ -240,6 +240,12 @@ def fetch_emails_to_db(user: AuthenticatedUser, request: Request, last_updated: 
             msg = get_email(message_id=msg_id, gmail_instance=service)
 
             if msg:
+                sender = msg.get("from", "").lower()
+                if user.user_email.split("@")[-1].lower() in sender:
+                    logger.info(
+                        f"user_id:{user_id} skipping email {idx + 1} of {len(messages)} with id {msg_id} because it is from the user"
+                    )
+                    continue
                 try:
                     result = process_email(msg["text_content"])
                     # if values are empty strings or null, set them to "unknown"
