@@ -300,18 +300,22 @@ class GmailDataCollector:
         print(f"Found {len(message_ids)} potential job application emails since 2024-01-01")
         
         statuses = [
-            "False positive",
+            "False positive, not related to job search",
             "Application confirmation",
             "Rejection",
             "Availability request", # Action required from candidate
             "Information request",  # Action required from candidate
             "Assessment sent", # Action required from candidate
             "Interview invitation", # Action required from candidate
-            "Did not apply - they reached out",
+            "Did not apply - inbound request", # Action required from candidate
             "Action required from company",
             "Hiring freeze notification",
             "Withdrew application",
-            "Offer"
+            "Offer made",  # Action required from candidate
+            "Offer negotiated",
+            "Offer accepted",
+            "Offer rejected",
+            "Offer rescinded",
         ]
 
         temp_html_file = None
