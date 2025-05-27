@@ -183,6 +183,7 @@ def fetch_emails_to_db(user: AuthenticatedUser, request: Request, last_updated: 
         db_session.commit()  # sync with the database so calls in the future reflect the task is already started
 
         start_date = request.session.get("start_date")
+        logger.info(f"start_date: {start_date}")
         start_date_query = get_start_date_email_filter(start_date)
         is_new_user = request.session.get("is_new_user")
 

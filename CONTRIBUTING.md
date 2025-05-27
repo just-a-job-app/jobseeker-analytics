@@ -1,3 +1,28 @@
+## Table of Contents
+
+1. [Welcome!](#welcome)
+2. [How can I install the app directly on my computer?](#how-can-i-install-the-app-directly-on-my-computer-%EF%B8%8F-back-to-table-of-contents)
+    - [Clone the repo](#clone-the-repo)
+    - [Get a Google AI API key](#get-a-google-ai-api-key)
+    - [Create a Google OAuth App](#create-a-google-oauth-app)
+    - [Set Up Environment Variables](#set-up-environment-variables)
+    - [Run the App: Two options](#run-the-app-two-options)
+        - [Option 1: Docker Compose (Preferred Option)](#option-1-docker-compose-preferred-option-%EF%B8%8F-back-to-table-of-contents)
+        - [Option 2: Virtual Environment](#option-2-virtual-environment-%EF%B8%8F-back-to-table-of-contents)
+    - [Inspect the Database with DBeaver](#inspect-the-database-with-dbeaver-%EF%B8%8F-back-to-table-of-contents)
+    - [Troubleshooting Tips](#troubleshooting-tips-%EF%B8%8F-back-to-table-of-contents)
+3. [Submit Changes](#submit-changes)
+    - The "One Diff, One Thesis" Principle
+    - Keep Pull Requests Under 250 Lines of Code
+    - Make your code testable
+4. [Report a Bug](#report-a-bug)
+    - [How Do I Submit a (Good) Bug Report?](#how-do-i-submit-a-good-bug-report)
+5. [Code of Conduct](#code-of-conduct)
+    - [Examples of positive behavior](#examples-of-behavior-that-contributes-to-positive-environment)
+    - [Examples of unacceptable behavior](#examples-of-unacceptable-behavior)
+
+---
+
 # Welcome!
 
 Whether this is your first time downloading code or the gazillionth time cloning a repo, we are happy to see you. 
@@ -12,15 +37,15 @@ If you're not an aspiring developer, that's totally ok.
 
 Keep reading to install the app. 
 
-You may run into issues - email help@jobba.help for help :)
+You may run into issues - email help@justajobapp.com for help :)
 
-## How can I install the app directly on my computer?
+## How can I install the app directly on my computer? [⬆️ Back to Table of Contents](#table-of-contents)
 
 ### Clone the repo
 1. On Windows: We recommend that you use WSL2. [Installation instructions here](https://learn.microsoft.com/en-us/windows/wsl/). 
 2. On Windows: start WSL 
 3. In Github, fork the repository
-4. Clone this fork  using ```git clone https://github.com/jobba-help/jobseeker-analytics.git```
+4. Clone this fork  using ```git clone https://github.com/just-a-job-app/jobseeker-analytics.git```
 5. ```cd jobseeker-analytics``` into the repo you just cloned
 
 ### Get a Google AI API key
@@ -30,7 +55,7 @@ You may run into issues - email help@jobba.help for help :)
 
 ---
 
-### Create a Google OAuth App 
+### Create a Google OAuth App
 1. Go to the [Google Cloud Console](https://console.cloud.google.com/) and create a new project (or use an existing one).  
 2. Navigate to **APIs & Services** → **Credentials**.  
 3. If this is your first time creating credentials with this project, you will have to configure the OAuth consent screen.
@@ -41,7 +66,19 @@ You may run into issues - email help@jobba.help for help :)
    - https://jobseeker-analytics.onrender.com/login
    - http://localhost:8000/login
 6. Copy the **Client ID** and **Client Secret** for later.  
-7. Download and save your credentials locally to the `backend` folder for this repo in a file named ```credentials.json```
+7. Next to Client Secret is a download button. Click it and save it to the `backend` folder with filename ```credentials.json```
+8. Click **Data Access** and then **Add or remove scopes**. 
+9. At the top of the list, check 
+   - .../auth/userinfo.email  
+   - openid
+![CleanShot 2025-05-20 at 23 11 20](https://github.com/user-attachments/assets/dd9f339e-7111-4aa5-8b77-b8900c62b2c4)
+![CleanShot 2025-05-20 at 23 11 34](https://github.com/user-attachments/assets/82a60ab2-a4b1-412e-a5a5-75568900043e)
+10. Search for "Gmail API" at the top search bar, click **Enable**
+11. Click on **Data Access** again, **Add or remove scopes**
+12. Click the filter field above those checkboxes, and enter "gmail". It will probably autocomplete so you can click "Gmail API" or press enter.
+13. Check the box next to Gmail API | .../auth/gmail.readonly
+14. Click **Update**
+15. Click **Save**
 
 ---
 
@@ -50,7 +87,11 @@ You may run into issues - email help@jobba.help for help :)
    ```sh
    cp backend/.env.example backend/.env
    ```
-2. Edit the `.env` file with your own credentials.
+2. Edit `backend/.env` to put in your own credentials, particularly 
+   - Client ID goes in `GOOGLE_CLIENT_ID`
+   - Client Secret goes in `GOOGLE_API_KEY`
+   - Type a random string in `COOKIE_SECRET`
+
    **🔒 Never share your `.env` file or commit it to Git!**  
 3. Copy `frontend\.env.sample` to `frontend\.env`:
    ```sh
@@ -59,9 +100,9 @@ You may run into issues - email help@jobba.help for help :)
 ---
 
 
-### Run the App: Two options  
+### Run the App: Two options
 
-#### Option 1: Docker Compose (Preferred Option)
+#### Option 1: Docker Compose (Preferred Option) [⬆️ Back to Table of Contents](#table-of-contents)
 
 1. If this is your first time using Docker, install as below:
    - Install Docker. On Windows/Mac install [Docker Desktop](https://docs.docker.com/get-started/get-docker/). On Linux install [Docker Engine](https://docs.docker.com/engine/install/). 
@@ -72,7 +113,7 @@ You may run into issues - email help@jobba.help for help :)
 ```
 docker-compose up --build
 ```
-3. Then, visit [http://localhost:3000](http://localhost:3000) to begin testing the app locally.
+3. Go to [http://localhost:3000](http://localhost:3000) and click the **Login with Google** button. After you grant access it will go to work scanning your emails for relevant emails.
 4. Troubleshooting:
    - Attempted import error
       - `cd frontend`
@@ -80,7 +121,7 @@ docker-compose up --build
 
 You can view logs from the app by finding your container in Docker Desktop/Docker Engine and clicking on it. The app will automatically refresh when you make changes. 
 
-#### Option 2: Virtual Environment
+#### Option 2: Virtual Environment [⬆️ Back to Table of Contents](#table-of-contents) 
 
 Once your `.env` file is set up, start the app by following the instructions below:
 1. Create and activate virtual environment:
@@ -115,15 +156,12 @@ Once your `.env` file is set up, start the app by following the instructions bel
    ```bash
    cd frontend && npm run dev
    ```
-5. Check it out @:
-   http://127.0.0.1:8000
-   
-Then, visit `http://localhost:8000/login` to test the authentication flow.  
+5. Go to [http://localhost:3000](http://localhost:3000) and click the **Login with Google** button. After you grant access it will go to work scanning your emails for relevant emails.
 
 ---
 
 
-### Inspect the Database with DBeaver
+### Inspect the Database with DBeaver [⬆️ Back to Table of Contents](#table-of-contents)
 
 To inspect your PostgreSQL database running in Docker, follow these steps:
 
@@ -166,7 +204,7 @@ To inspect your PostgreSQL database running in Docker, follow these steps:
    - Right-click on a table (e.g., `test_table`) and select `View Data` to see the data in the table.
 
 
-### Troubleshooting Tips
+### Troubleshooting Tips [⬆️ Back to Table of Contents](#table-of-contents)
 - **Not redirected after login?**  
   Double-check your `REDIRECT_URI` in both `.env` and Google Cloud settings.  
 - **Invalid API key errors?**  
@@ -178,19 +216,19 @@ To inspect your PostgreSQL database running in Docker, follow these steps:
 - if you change `.env` variables, you'll need to `docker compose down` and `docker compose up --build`
 ---
 
-### Submit Changes  
+### Submit Changes [⬆️ Back to Table of Contents](#table-of-contents)  
 1. **Fork** this repository.  
-2. **Clone** your fork:  
+2. **Clone** your fork:
    ```sh
-   git clone https://github.com/your-username/repo-name.git
-   cd repo-name
+   git clone https://github.com/your-username/jobseeker-analytics.git
+   cd jobseeker-analytics
    ```
 3. **Create a new branch** for your changes:
-- use branch convention <feature|bugfix|hotfix|docs>/<issueNumber>-<issueDescription>
+- use branch convention <feature|bugfix|hotfix|docs>/<issueNumber>-<issueDescription> e.g.
    ```sh
    git checkout -b docs/65-add-contribution-guidelines
    ```
-4. **Make your changes** and commit them:  
+4. **Make your changes** and commit them:
    ```sh
    git add .
    git commit -m "Add submission guidelines and env setup"
@@ -218,17 +256,85 @@ To inspect your PostgreSQL database running in Docker, follow these steps:
    ```sh
    git push origin docs/65-add-contribution-guidelines
    ```
-7. **Open a Pull Request** on GitHub.  
+7. **Open a Pull Request** on GitHub. See tips below. Credit to Taro ([warning: you will make me money if you sign up through this link](https://www.jointaro.com/r/liannan073/))
 
-Please ensure your changes align with the project's goals and do your best to follow the below coding style guides.
-- Python: https://google.github.io/styleguide/pyguide.html
-- TypeScript: https://google.github.io/styleguide/tsguide.html
-- HTML/CSS: https://google.github.io/styleguide/htmlcssguide.html
+   #### 1. The "One Diff, One Thesis" Principle
+   
+       - Each code change should focus on a single purpose or goal.
+   
+      **What This Means:**
+      - Make each pull request about one specific improvement
+      - Address one feature, bug fix, or enhancement at a time
+      - Keep your changes focused and related to one objective
+      
+      **Why It Matters:**
+      When your changes have a single purpose, they're easier to review, understand, and test. If something goes wrong, it's also easier to identify and fix the problem.
+      
+      **Example:**
+      If you're working on a user profile page:
+      - ✅ GOOD PR: Add email validation to the registration form
+      - ❌ BAD PR: Add email validation, redesign the profile layout, and optimize database queries
+      
+      Think of each PR as a single chapter in a book, not the entire story.
+      
+      #### 2. Keep Pull Requests Under 250 Lines of Code
+      
+      Smaller code changes are easier to review and less likely to introduce bugs.
+      
+      **How to Stay Under the Limit:**
+      - Count only meaningful lines of code you've added or changed
+      - Break large features into a series of smaller, sequential changes
+      - Submit related changes in separate pull requests
+      
+      **Breaking Down Large Features:**
+      When implementing something complex, try this approach:
+      1. First PR: Set up the basic structure
+      2. Second PR: Implement core functionality
+      3. Third PR: Add refinements and advanced features
+      
+      **Example:**
+      Instead of one massive PR for a new search feature, create:
+      1. PR #1: Add search box to navigation
+      2. PR #2: Connect search box to backend
+      3. PR #3: Implement search results display
+      4. PR #4: Add filtering options
+      
+      #### 3. Make Your Code Testable
+      
+      Always include a way to verify your changes work correctly.
+      
+      **Verification Methods:**
+      - **Automated tests:** Write code that checks your changes automatically
+      - **Screenshots/Videos:** For visual changes, show before and after
+      - **Test instructions:** Provide clear steps for others to test your changes
+      
+      **What Good Testing Looks Like:**
+      - Tests cover both expected behavior and edge cases
+      - Instructions are specific enough that anyone could follow them
+      - Visual evidence clearly demonstrates the improvement
+      
+      **Example:**
+      For a login form improvement:
+      ```
+      Test Plan:
+      1. Try logging in with a correct username/password → Should succeed
+      2. Try logging in with an incorrect password → Should show error message
+      3. Try logging in with a blank password → Should prevent submission
+      
+      [Screenshots attached showing each scenario]
+      ```
+      
+      Remember: Good pull requests aren't just about the code you write—they're about making changes that others can understand, verify, and maintain.
+      
+      Lastly, do your best to follow the below coding style guides.
+      - Python: https://google.github.io/styleguide/pyguide.html
+      - TypeScript: https://google.github.io/styleguide/tsguide.html
+      - HTML/CSS: https://google.github.io/styleguide/htmlcssguide.html
 
 ---
 
 
-### Report a Bug
+### Report a Bug [⬆️ Back to Table of Contents](#table-of-contents)
 
 This section guides you through submitting a bug report for Job Analytics. Following these guidelines helps maintainers and the community understand your report, reproduce the behavior and provide a proper solution.
 
@@ -244,7 +350,7 @@ Bugs are tracked as [GitHub issues](https://docs.github.com/en/issues/tracking-y
 - Include screenshots and/or animated GIFs when possible.
 - If the problem wasn't triggered by a specific action, describe what you were doing before the problem occurred.
 
-## Code of Conduct
+## Code of Conduct [⬆️ Back to Table of Contents](#table-of-contents)
 
 We aim to make participation in this project and in the community a harassment-free experience for everyone.
 
