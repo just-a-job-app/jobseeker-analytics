@@ -307,6 +307,7 @@ class GmailDataCollector:
             "Information request",  # Action required from candidate
             "Assessment sent", # Action required from candidate
             "Interview invitation", # Action required from candidate
+            "Informational outreach", # Action required from candidate
             "Did not apply - inbound request", # Action required from candidate
             "Action required from company",
             "Hiring freeze notification",
@@ -394,6 +395,25 @@ class GmailDataCollector:
             
         print(f"\nData collection complete. {len(training_data)} emails labeled.")
         print(f"Data saved to {output_file}")
+
+         # Save all data to the main file
+        with open(output_file, 'w') as f:
+            json.dump(training_data, f, indent=2)
+
+        # Split data by category
+        false_positives = [email for email in training_data if email.get('application_status') == "False positive, not related to job search"]
+        applications = [email for email in training_data if email.get('application_status') != "False positive, not related to job search"]
+
+        # Save false positives
+        with open("training_data_false_positive.json", "w") as f:
+            json.dump(false_positives, f, indent=2)
+        print(f"Saved {len(false_positives)} false positives to training_data_false_positive.json")
+
+        # Save all other applications
+        with open("training_data_applications.json", "w") as f:
+            json.dump(applications, f, indent=2)
+        print(f"Saved {len(applications)} application-related emails to training_data_applications.json")
+
         
         # Convert to CSV for easier analysis
         df = pd.DataFrame(training_data)
