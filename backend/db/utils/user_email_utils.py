@@ -35,12 +35,16 @@ def create_user_email(user, message_data: dict) -> UserEmails:
     Creates a UserEmail record instance from the provided data.
     """
     try:
+        logger.info(f"Creating email record for user {user.user_id}, message ID: {message_data['id']}")
         received_at_str = message_data["received_at"]
-        received_at = parse_email_date(received_at_str)  # parse_email_date function was created as different date formats were being pulled from the data
+        received_at = parse_email_date(received_at_str)
+        logger.debug(f"Parsed received_at date: {received_at}")
+        
         if check_email_exists(user.user_id, message_data["id"]):
             logger.info(f"Email with ID {message_data['id']} already exists in the database.")
             return None
-        return UserEmails(
+            
+        email_record = UserEmails(
             id=message_data["id"],
             user_id=user.user_id,
             company_name=message_data["company_name"],
@@ -50,6 +54,9 @@ def create_user_email(user, message_data: dict) -> UserEmails:
             job_title=message_data["job_title"],
             email_from=message_data["from"]
         )
+        logger.info(f"Successfully created email record for message ID: {message_data['id']}")
+        return email_record
+        
     except Exception as e:
-        logger.error(f"Error creating UserEmail record: {e}")
+        logger.exception(f"Error creating UserEmail record for message ID {message_data.get('id', 'unknown')}: {e}")
         return None
