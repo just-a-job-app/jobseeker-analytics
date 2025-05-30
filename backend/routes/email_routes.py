@@ -7,6 +7,7 @@ from googleapiclient.discovery import build
 from db.user_emails import UserEmails
 from db import processing_tasks as task_models
 from db.utils.user_email_utils import create_user_email
+from db.utils.companies_utils import company_exists, add_company
 from utils.auth_utils import AuthenticatedUser
 from utils.email_utils import get_email_ids, get_email
 from utils.llm_utils import process_email
@@ -264,6 +265,7 @@ def fetch_emails_to_db(user: AuthenticatedUser, request: Request, last_updated: 
                     logger.warning(
                         f"user_id:{user_id} failed to extract email {idx + 1} of {len(messages)} with id {msg_id}"
                     )
+
                     result = {"company_name": "unknown", "application_status": "unknown", "job_title": "unknown"}
 
                 message_data = {
@@ -278,6 +280,14 @@ def fetch_emails_to_db(user: AuthenticatedUser, request: Request, last_updated: 
                 email_record = create_user_email(user, message_data)
                 if email_record:
                     email_records.append(email_record)
+
+            company_name = email_record.company_name
+            company_email_domain = email_record.email_from
+
+            # Add company to the database if it doesn't exist
+            if company_name and company_email_domain:
+                if not company_exists(company_name, company_email_domain):
+                    add_company(company_name, company_email_domain)
 
         # batch insert all records at once
         if email_records:
