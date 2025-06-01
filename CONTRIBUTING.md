@@ -62,8 +62,8 @@ You may run into issues - email help@justajobapp.com for help :)
 4. Click **Create Credentials** → **OAuth 2.0 Client IDs**.  
 5. Set the application type to **Web Application**.  
 6. Under "Authorized redirect URIs," add:  
-   - https://jobseeker-analytics.onrender.com/login
-   - http://localhost:8000/login
+   - https://jobseeker-analytics.onrender.com
+   - http://localhost:8000
 7. Copy the **Client ID** for later.  
 8. Next to Client Secret is a download button. Click it and save it to the `backend` folder with filename ```credentials.json```
 9. On the OAuth Consent Screen page, scroll to "Test Users" and add your gmail address.
