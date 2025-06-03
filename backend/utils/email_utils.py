@@ -14,10 +14,8 @@ logger = logging.getLogger(__name__)
 
 def clean_whitespace(text: str) -> str:
     """
-    remove \n, \r, and \t from strings. If text is None, return an empty string.
+    remove \n, \r, and \t from strings.
     """
-    if text is None:
-        return ""
     return text.replace("\n", "").replace("\r", "").replace("\t", "")
 
 

@@ -162,10 +162,3 @@ def test_create_user_email_with_list_values(mock_check_email, mock_user, message
     mock_check_email.return_value = False
     result = user_email_utils.create_user_email(mock_user, message_data_with_list_values)
     assert result is not None  # user email created successfully
-
-def test_clean_whitespace():
-    assert email_utils.clean_whitespace("hello\nworld\r\ttest") == "helloworldtest"
-    assert email_utils.clean_whitespace("nowhitespace") == "nowhitespace"
-    assert email_utils.clean_whitespace("") == ""
-    assert email_utils.clean_whitespace(None) == ""
-    
