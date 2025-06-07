@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 def clean_whitespace(text: str) -> str:
     """
-    remove \n, \r, and \t from strings
+    remove \n, \r, and \t from strings.
     """
     return text.replace("\n", "").replace("\r", "").replace("\t", "")
 
