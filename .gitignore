@@ -66,6 +66,7 @@ node_modules/
 
 # Testing
 /coverage
+frontend/test-results
 
 # Production
 /build

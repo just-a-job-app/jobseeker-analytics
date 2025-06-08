@@ -1,62 +1,52 @@
-# **jobba.help - The Open-Source Job Search Tracker**
+[![Run python unit tests](https://github.com/macro1/jobseeker-analytics/actions/workflows/pytest.yml/badge.svg)](https://github.com/macro1/jobseeker-analytics/actions/workflows/pytest.yml)
 
-## **Overview**
+## **About Just a Job App**
 
-jobba.help is an open-source job tracker that reliably logs every application by integrating with your inbox—no manual entry, just automated and accurate tracking.
+Built by jobseekers, for jobseekers. Free forever.
 
-## **The Vision**
+Tired of abandoned spreadsheets and forgotten Notion tables?
 
-With enough support, jobba.help will overhaul the job search. The more jobseekers contribute, the better insights and tools we generate. 
+Just a Job App tracks your job applications — automatically, straight from your inbox.
 
-Imagine the perfect job search:
+No manual tracking. No extra tabs. Just a simpler job search.
 
-- **Relevant roles**  - you don't have to visit 10 job boards to find a job
-- **Analytics** - you know which industries and company sizes your profile attracts
-- **Task organization** - see pending interviews and follow-ups at a glance without digging through hundreds of emails
-- **Ghosting exposed** - public leaderboards will discourage bad hiring practices
-- **Interview scheduling** is effortless, eliminating back-and-forth emails
-- **Asking for help is easy** - Share job search updates with your support system and keep your search visible to the people who can vouch for you
+🎥 [Watch a demo](https://youtube.com/shorts/YT7qzTh2Q7A?feature=share)
 
-## **Want to sign up?**
+## **Try the App**
 
-**You have two options:**
+**Option 1: Join the beta**
 
-1. **Join the waitlist** to receive updates when we launch outside of beta: https://dashboard.mailerlite.com/forms/1348245/149432531062621442/share
-2. **Use the app right away on your personal computer**: This means downloading our code and installing the app directly on your computer instead of using our website. Don't worry if you're not technical - this is actually a great learning opportunity, and we're here to help!
+[Get on the waitlist](https://app.formbricks.com/s/cmagfwkuu3f8bug01e340supq) to reserve your spot.
 
-If you choose option 2, I'd be happy to walk you through the process step-by-step. 
-- This gives you full access to all features while we work on publishing the app outside of beta.
-- Feel free to email [help@jobba.help](mailto:help@jobba.help?subject=Help%20Running%20App%20On%20Personal%20Computer) for personalized assistance with setting up the app on your computer. 
-- For those familiar with GitHub, the [CONTRIBUTING.md](https://github.com/lnovitz/jobseeker-analytics/blob/main/CONTRIBUTING.md) file in our repository also contains setup instructions.
+**Option 2: Do-It-Yourself (DIY) Install**
 
-## **Latest Feature: Automated Job Tracker**
+- Already familiar with GitHub? Start with [CONTRIBUTING.md](https://github.com/lnovitz/jobseeker-analytics/blob/main/CONTRIBUTING.md). If you run into issues, hop into [Discord](https://discord.gg/5tTT6WVQyw).
+- Not technical? We’ll help you get set up! [Email us](mailto:help@justajobapp.com?subject=Help%20Running%20App%20On%20Personal%20Computer) to book time with a friendly developer
 
-Our automated job tracker allows you to:
+## **Support & Feedback**
 
-- **Login with Google:** Automatically generate a spreadsheet filled with the date you applied, company name, and status of the application.
-- **No manual updates required:** The spreadsheet updates automagically, saving you time and effort.
+- Join our [Discord community](https://discord.gg/5tTT6WVQyw)
+- [Send us feedback](https://docs.google.com/forms/d/e/1FAIpQLSeTJB5JDo-SNdVn2Ga3caExaYlwempeYHhWbEiao3jNCWXogQ/viewform?usp=sharing)
+- Or email [help@justajobapp.com](mailto:help@justajobapp.com)
 
-🎥 **Sneak Peek**: https://www.youtube.com/watch?v=-cOKR4JtceY
+## Want to Get Involved?
+We’re building the job search app we wish we had, together, in public.
+Designers. Writers. Developers. Ops. You?
 
-[![Watch the video](http://img.youtube.com/vi/-cOKR4JtceY/maxresdefault.jpg)](https://www.youtube.com/watch?v=-cOKR4JtceY)
+🛠 [Become a contributor](https://app.formbricks.com/s/tq4y6lav6f3qdb4mkoiyslpn)
 
-## 🛠 **Features in Development**
+Don't forget to subscribe to our events page: https://lu.ma/justajobapp
 
-- ✅ Built-in networking tools to engage friends & family in your search.
-- ✅ Customized job search filter
-- ✅ Pending interview & task management to keep you organized.
-- ✅ Job application analytics for smarter decision-making.
-- ✅ Ghosting reports to hold companies accountable.
+Curious what kind of tasks are available for volunteers? Take a look [here](https://github.com/just-a-job-app/jobseeker-analytics/issues?q=is%3Aissue%20state%3Aopen%20label%3A%22help%20wanted%22%20no%3Aassignee).
 
-## 🤝 **Contributing**
+## Contributors Hall of Fame
+Want to join the hall of fame? [Volunteer](https://app.formbricks.com/s/tq4y6lav6f3qdb4mkoiyslpn). 
 
-jobba.help is open-source and community-driven. We welcome contributions from developers, designers, and jobseekers alike! 
+<a href="https://github.com/just-a-job-app/jobseeker-analytics/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=just-a-job-app/jobseeker-analytics" />
+</a>
 
-You do not have to have experience with our tech stack to contribute.
-
-View contributing guidelines [here.](https://github.com/lnovitz/jobseeker-analytics/blob/main/CONTRIBUTING.md)
-
- 🏗 **Tech Stack**
+##  🏗 **Tech Stack**
 
 - **Frontend:** Next.js, TypeScript
 - **Backend:** FastAPI, Python
@@ -65,34 +55,14 @@ View contributing guidelines [here.](https://github.com/lnovitz/jobseeker-analyt
 
 ## 🔒 **Privacy & Security**
 
-We take data privacy seriously. jobba.help is currently in beta (100 user testing limit), and we have a code scanning tool in place to actively address security issues. Since jobba.help integrates with Gmail, the application will undergo a strict verification process before it is published to the public. 
-
-If you see something (a vulnerability), say something! 
-
-mailto:security@jobba.help
+- In closed beta (limit 100 users)
+- GitHub code scanning active
+- Gmail integration will undergo OAuth verification
+- Found a vulnerability? Email security@justajobapp.com
 
 ## 📢 **A note from the maintainer**
 
-Help us build the first open-source job search platform. Join our Discord at [https://discord.gg/5tTT6WVQyw](https://discord.gg/5tTT6WVQyw)
+- Just a Job App is open source. Fork it, remix it, or carry it on if I ever disappear to open a cat café. 🐾
+- FYI, our sustainability model is still evolving. The goal is to keep it free for jobseekers, forever.
+- Later on, we may introduce an enterprise offering to support that mission.
 
-Why open-source, you might ask?
-
-Companies often prioritize their own interests over those of jobseekers, focusing on profit rather than genuine support.
-
-My goal is different.
-
-I envision a community-driven tool, built by the people, for the people, ensuring it remains accessible and beneficial to all jobseekers.
-
-Because it's open-source, future developers can always fork this project and continue the work. 
-
-This is especially important if I, the maintainer, ever win the lottery, retire my computer, and open a cat café. 👀 
-
--Lianna
-
-## **Support & Feedback**
-
-If you experience any errors or want to share feedback, join our Discord at [https://discord.gg/5tTT6WVQyw](https://discord.gg/5tTT6WVQyw).
-
-Or submit feedback by form: https://docs.google.com/forms/d/e/1FAIpQLSeTJB5JDo-SNdVn2Ga3caExaYlwempeYHhWbEiao3jNCWXogQ/viewform?usp=sharing
-
-You can also always email us at [help@jobba.help](mailto:help@jobba.help).

@@ -1,7 +1,7 @@
 from unittest import mock
 import pytest
 
-from test_constants import SAMPLE_MESSAGE, SUBJECT_LINE
+from tests.test_constants import SAMPLE_MESSAGE, SUBJECT_LINE
 import utils.email_utils as email_utils
 import db.utils.user_email_utils as user_email_utils
 

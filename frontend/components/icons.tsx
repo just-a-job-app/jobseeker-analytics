@@ -223,3 +223,326 @@ export const SortIcon: React.FC<IconSvgProps> = ({ size = 24, width, height, ...
 		</svg>
 	);
 };
+
+export const NeverSearchAloneIcon: React.FC<IconSvgProps> = ({ size = 24, width, height, ...props }) => (
+	<svg
+		className="h-6 w-6 text-emerald-600 dark:text-emerald-300"
+		fill="none"
+		height={size || height}
+		stroke="currentColor"
+		strokeWidth="2"
+		viewBox="0 0 24 24"
+		width={size || width}
+		{...props}
+	>
+		<path
+			d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+			strokeLinecap="round"
+			strokeLinejoin="round"
+		/>
+	</svg>
+);
+
+export const DiscordIcon2: React.FC<IconSvgProps> = ({ size = 24, width, height, ...props }) => (
+	<svg
+		className="h-6 w-6 text-indigo-600 dark:text-indigo-300"
+		fill="currentColor"
+		height={size || height}
+		viewBox="0 0 24 24"
+		width={size || width}
+		{...props}
+	>
+		<path d="M20.317 4.492c-1.53-.69-3.17-1.2-4.885-1.49a.075.075 0 0 0-.079.036c-.21.39-.444.885-.608 1.28a18.566 18.566 0 0 0-5.487 0 12.217 12.217 0 0 0-.617-1.28.077.077 0 0 0-.079-.036c-1.714.29-3.354.8-4.885 1.491a.07.07 0 0 0-.032.027C.533 9.093-.32 13.555.099 17.961a.08.08 0 0 0 .031.055 20.03 20.03 0 0 0 5.993 2.98.078.078 0 0 0 .084-.026 13.83 13.83 0 0 0 1.226-1.963.074.074 0 0 0-.041-.104 13.201 13.201 0 0 1-1.872-.878.075.075 0 0 1-.008-.125c.126-.093.252-.19.372-.287a.075.075 0 0 1 .078-.01c3.927 1.764 8.18 1.764 12.061 0a.075.075 0 0 1 .078.009c.12.098.246.195.372.288a.075.075 0 0 1-.006.125c-.598.344-1.22.635-1.873.877a.075.075 0 0 0-.041.105c.36.687.772 1.341 1.225 1.962a.077.077 0 0 0 .084.028 19.963 19.963 0 0 0 6.002-2.981.076.076 0 0 0 .032-.054c.5-5.094-.838-9.52-3.549-13.442a.06.06 0 0 0-.031-.028zM8.02 15.278c-1.182 0-2.157-1.069-2.157-2.38 0-1.312.956-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.956 2.38-2.157 2.38zm7.975 0c-1.183 0-2.157-1.069-2.157-2.38 0-1.312.955-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.946 2.38-2.157 2.38z" />
+	</svg>
+);
+
+export const CheckCircleIcon: React.FC<IconSvgProps> = ({ size = 24, width, height, ...props }) => (
+	<svg
+		className="h-5 w-5 text-blue-600 dark:text-blue-400"
+		fill="none"
+		height={size || height}
+		stroke="currentColor"
+		viewBox="0 0 24 24"
+		width={size || width}
+		{...props}
+	>
+		<path
+			d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+			strokeLinecap="round"
+			strokeLinejoin="round"
+			strokeWidth={2}
+		/>
+	</svg>
+);
+
+export const ClockIcon: React.FC<IconSvgProps> = ({ size = 16, width, height, ...props }) => (
+	<svg
+		fill="none"
+		height={size || height}
+		stroke="currentColor"
+		strokeLinecap="round"
+		strokeLinejoin="round"
+		strokeWidth="2"
+		viewBox="0 0 24 24"
+		width={size || width}
+		{...props}
+	>
+		<circle cx="12" cy="12" r="10" />
+		<polyline points="12 6 12 12 16 14" />
+	</svg>
+);
+
+export const TrashIcon: React.FC<IconSvgProps> = ({ size = 24, width, height, ...props }) => (
+	<svg
+		height={size || height}
+		viewBox="0 0 512 512"
+		width={size || width}
+		xmlns="http://www.w3.org/2000/svg"
+		{...props}
+	>
+		<g>
+			<path
+				d="M88.594,464.731C90.958,491.486,113.368,512,140.234,512h231.523c26.858,0,49.276-20.514,51.641-47.269
+		  l25.642-335.928H62.952L88.594,464.731z M420.847,154.93l-23.474,307.496c-1.182,13.37-12.195,23.448-25.616,23.448H140.234
+		  c-13.42,0-24.434-10.078-25.591-23.132L91.145,154.93H420.847z"
+				fill="currentColor"
+			/>
+			<path
+				d="M182.954,435.339c5.877-0.349,10.35-5.4,9.992-11.269l-10.137-202.234c-0.358-5.876-5.401-10.349-11.278-9.992
+		  c-5.877,0.357-10.35,5.409-9.993,11.277l10.137,202.234C172.033,431.231,177.085,435.696,182.954,435.339z"
+				fill="currentColor"
+			/>
+			<path
+				d="M256,435.364c5.885,0,10.656-4.763,10.656-10.648V222.474c0-5.885-4.771-10.648-10.656-10.648
+		  c-5.885,0-10.657,4.763-10.657,10.648v202.242C245.344,430.601,250.115,435.364,256,435.364z"
+				fill="currentColor"
+			/>
+			<path
+				d="M329.046,435.339c5.878,0.357,10.921-4.108,11.278-9.984l10.129-202.234c0.348-5.868-4.116-10.92-9.993-11.277
+		  c-5.877-0.357-10.92,4.116-11.277,9.992L319.054,424.07C318.697,429.938,323.17,434.99,329.046,435.339z"
+				fill="currentColor"
+			/>
+			<path
+				d="M439.115,64.517c0,0-34.078-5.664-43.34-8.479c-8.301-2.526-80.795-13.566-80.795-13.566l-2.722-19.297
+		  C310.388,9.857,299.484,0,286.642,0h-30.651H225.34c-12.825,0-23.728,9.857-25.616,23.175l-2.721,19.297
+		  c0,0-72.469,11.039-80.778,13.566c-9.261,2.815-43.357,8.479-43.357,8.479C62.544,67.365,55.332,77.172,55.332,88.38v21.926h200.66
+		  h200.676V88.38C456.668,77.172,449.456,67.365,439.115,64.517z M276.318,38.824h-40.636c-3.606,0-6.532-2.925-6.532-6.532
+		  s2.926-6.532,6.532-6.532h40.636c3.606,0,6.532,2.925,6.532,6.532S279.924,38.824,276.318,38.824z"
+				fill="currentColor"
+			/>
+		</g>
+	</svg>
+);
+
+export const ChevronRightIcon: React.FC<IconSvgProps> = ({ size = 24, width, height, ...props }) => (
+	<svg
+		fill="none"
+		height={size || height}
+		stroke="currentColor"
+		strokeLinecap="round"
+		strokeLinejoin="round"
+		strokeWidth="2"
+		viewBox="0 0 24 24"
+		width={size || width}
+		{...props}
+	>
+		<polyline points="9 18 15 12 9 6" />
+	</svg>
+);
+
+export const LineChartIcon: React.FC<IconSvgProps> = ({ size = 24, width, height, ...props }) => (
+	<svg
+		fill="none"
+		height={size || height}
+		stroke="currentColor"
+		strokeLinecap="round"
+		strokeLinejoin="round"
+		strokeWidth="2"
+		viewBox="0 0 24 24"
+		width={size || width}
+		{...props}
+	>
+		<path d="M3 3v18h18" />
+		<path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3" />
+	</svg>
+);
+
+export const PlayIcon: React.FC<IconSvgProps> = ({ size = 24, width, height, ...props }) => (
+	<svg
+		fill="none"
+		height={size || height}
+		stroke="currentColor"
+		strokeLinecap="round"
+		strokeLinejoin="round"
+		strokeWidth="2"
+		viewBox="0 0 24 24"
+		width={size || width}
+		{...props}
+	>
+		<polygon points="5 3 19 12 5 21 5 3" />
+	</svg>
+);
+
+export const CheckCircle2Icon: React.FC<IconSvgProps> = ({ size = 24, width, height, ...props }) => (
+	<svg
+		fill="none"
+		height={size || height}
+		stroke="currentColor"
+		strokeLinecap="round"
+		strokeLinejoin="round"
+		strokeWidth="2"
+		viewBox="0 0 24 24"
+		width={size || width}
+		{...props}
+	>
+		<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+		<polyline points="22 4 12 14.01 9 11.01" />
+	</svg>
+);
+
+// Add this to your icons.tsx file
+export const ExternalLinkIcon: React.FC<IconSvgProps> = ({ size = 24, width, height, ...props }) => (
+	<svg
+		fill="none"
+		height={size || height}
+		stroke="currentColor"
+		strokeLinecap="round"
+		strokeLinejoin="round"
+		strokeWidth="2"
+		viewBox="0 0 24 24"
+		width={size || width}
+		{...props}
+	>
+		<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+		<polyline points="15 3 21 3 21 9" />
+		<line x1="10" x2="21" y1="14" y2="3" />
+	</svg>
+);
+
+export const EmailIcon: React.FC<IconSvgProps> = ({ size = 24, width, height, ...props }) => (
+	<svg
+		fill="none"
+		height={size || height}
+		stroke="currentColor"
+		strokeLinecap="round"
+		strokeLinejoin="round"
+		strokeWidth="2"
+		viewBox="0 0 24 24"
+		width={size || width}
+		{...props}
+	>
+		<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+		<polyline points="22,6 12,13 2,6" />
+	</svg>
+);
+
+export const UsersIcon: React.FC<IconSvgProps> = ({ size = 24, width, height, ...props }) => (
+	<svg
+		fill="none"
+		height={size || height}
+		stroke="currentColor"
+		strokeLinecap="round"
+		strokeLinejoin="round"
+		strokeWidth="2"
+		viewBox="0 0 24 24"
+		width={size || width}
+		{...props}
+	>
+		<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+		<circle cx="9" cy="7" r="4" />
+		<path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+		<path d="M16 3.13a4 4 0 0 1 0 7.75" />
+	</svg>
+);
+
+export const CodeIcon: React.FC<IconSvgProps> = ({ size = 24, width, height, ...props }) => (
+	<svg
+		fill="none"
+		height={size || height}
+		stroke="currentColor"
+		strokeLinecap="round"
+		strokeLinejoin="round"
+		strokeWidth="2"
+		viewBox="0 0 24 24"
+		width={size || width}
+		{...props}
+	>
+		<polyline points="16 18 22 12 16 6" />
+		<polyline points="8 6 2 12 8 18" />
+	</svg>
+);
+
+export const CalendarIcon: React.FC<IconSvgProps> = ({ size = 24, width, height, ...props }) => (
+	<svg
+		fill="none"
+		height={size || height}
+		stroke="currentColor"
+		strokeLinecap="round"
+		strokeLinejoin="round"
+		strokeWidth="2"
+		viewBox="0 0 24 24"
+		width={size || width}
+		{...props}
+	>
+		<rect height="18" rx="2" ry="2" width="18" x="3" y="4" />
+		<line x1="16" x2="16" y1="2" y2="6" />
+		<line x1="8" x2="8" y1="2" y2="6" />
+		<line x1="3" x2="21" y1="10" y2="10" />
+	</svg>
+);
+
+export const InfoIcon: React.FC<IconSvgProps> = ({ size = 24, width, height, ...props }) => (
+	<svg
+		fill="none"
+		height={size || height}
+		stroke="currentColor"
+		strokeLinecap="round"
+		strokeLinejoin="round"
+		strokeWidth="2"
+		viewBox="0 0 24 24"
+		width={size || width}
+		{...props}
+	>
+		<circle cx="12" cy="12" r="10" />
+		<line x1="12" x2="12" y1="16" y2="12" />
+		<line x1="12" x2="12.01" y1="8" y2="8" />
+	</svg>
+);
+
+export const MessageSquareIcon = ({ size = 24, ...props }: IconSvgProps) => (
+	<svg
+		fill="none"
+		height={size}
+		stroke="currentColor"
+		strokeLinecap="round"
+		strokeLinejoin="round"
+		strokeWidth="2"
+		viewBox="0 0 24 24"
+		width={size}
+		{...props}
+	>
+		<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+	</svg>
+);
+
+export const BugIcon = ({ size = 24, ...props }: IconSvgProps) => (
+	<svg
+		fill="none"
+		height={size}
+		stroke="currentColor"
+		strokeLinecap="round"
+		strokeLinejoin="round"
+		strokeWidth="2"
+		viewBox="0 0 24 24"
+		width={size}
+		{...props}
+	>
+		<path d="M8 2v4" />
+		<path d="M16 2v4" />
+		<path d="M12 2v4" />
+		<path d="M3 10h18" />
+		<path d="M3 14h18" />
+		<path d="M3 18h18" />
+		<path d="M8 22h8" />
+	</svg>
+);

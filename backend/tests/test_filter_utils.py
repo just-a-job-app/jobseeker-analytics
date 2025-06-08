@@ -9,7 +9,7 @@ from typing import List, Dict, Union
 from utils.filter_utils import (
     parse_base_filter_config,
 )  # , parse_override_filter_config
-from test_constants import SAMPLE_FILTER_PATH, EXPECTED_SAMPLE_QUERY_STRING
+from tests.test_constants import SAMPLE_FILTER_PATH, EXPECTED_SAMPLE_QUERY_STRING
 
 FilterConfigType = List[Dict[str, Union[str, int, bool, list, dict]]]
 

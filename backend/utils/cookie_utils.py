@@ -24,7 +24,7 @@ def set_conditional_cookie(
     # Add environment-specific parameters
     if settings.is_publicly_deployed:
         cookie_params.update(
-            {"domain": ".jobba.help", "secure": True, "samesite": "Strict"}
+            {"domain": settings.ORIGIN, "secure": True, "samesite": "Strict"}
         )
     else:
         cookie_params.update({"secure": False, "samesite": "Lax"})

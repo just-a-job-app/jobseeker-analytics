@@ -1,8 +1,10 @@
 import { test, expect } from "@playwright/test";
 
 test.describe("Navbar Tests", () => {
+	const HOMEPAGE_URL = "http://localhost:3000";
+
 	test.beforeEach(async ({ page }) => {
-		await page.goto("http://localhost:3000");
+		await page.goto(HOMEPAGE_URL);
 	});
 
 	test("should render navbar properly", async ({ page }) => {
@@ -31,7 +33,7 @@ test.describe("Navbar Tests", () => {
 	test("should contain Sponsor button with correct link", async ({ page }) => {
 		const sponsorButton = await page.locator('[data-testid="Sponsor"]');
 		await expect(sponsorButton).toBeVisible();
-		await expect(sponsorButton).toHaveAttribute("href", "https://buymeacoffee.com/liano");
+		await expect(sponsorButton).toHaveAttribute("href", "https://buymeacoffee.com/Just a Job App");
 	});
 
 	test("should show login button on the home page", async ({ page }) => {

@@ -1,7 +1,7 @@
 export type SiteConfig = typeof siteConfig;
 
 export const siteConfig = {
-	name: "jobba.help",
+	name: "Just a Job App",
 	description: "Your job hunt made easy!",
 	navItems: [
 		{
@@ -53,6 +53,6 @@ export const siteConfig = {
 	],
 	links: {
 		github: "https://github.com/lnovitz/jobseeker-analytics",
-		sponsor: "https://buymeacoffee.com/liano"
+		sponsor: "https://github.com/sponsors/lnovitz"
 	}
 };

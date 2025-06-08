@@ -51,5 +51,5 @@ body:
     label: Code of Conduct
     description: By submitting this issue, you agree to follow our [Code of Conduct](https://github.com/lnovitz/jobseeker-analytics/blob/main/CODE_OF_CONDUCT.md)
     options:
-      - label: I've read the Code of Conduct and understand my responsibilities as a member of the jobba.help Community
+      - label: I've read the Code of Conduct and understand my responsibilities as a member of the Just a Job App Community
         required: true

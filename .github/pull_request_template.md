@@ -61,25 +61,21 @@ Fixes #
 <!-- If your PR includes database changes, describe them here -->
 - [ ] No database changes
 - [ ] Database changes included (describe below):
-  - 
 
 ## API Changes
 <!-- If your PR includes API changes, describe them here -->
 - [ ] No API changes
 - [ ] API changes included (describe below):
-  - 
 
 ## Performance Impact
 <!-- Describe any performance impacts this change may have -->
 - [ ] No performance impact
 - [ ] Performance impact (describe below):
-  - 
 
 ## Security Considerations
 <!-- Describe any security implications this change may have -->
 - [ ] No security implications
 - [ ] Security implications considered (describe below):
-  - 
 
 ## Additional Notes
 <!-- Add any additional notes or context about the PR here -->
@@ -93,7 +89,7 @@ Fixes #
 <!-- List any steps needed after deploying this PR -->
 - [ ] No post-deployment steps needed
 - [ ] Post-deployment steps required (describe below):
-  - 
+
 
 ---
 

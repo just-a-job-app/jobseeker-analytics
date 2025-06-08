@@ -194,6 +194,8 @@ SAMPLE_MESSAGE = {
 DESIRED_PASS_APPLIED_EMAIL_FILTER_SUBJECT = [
     "Thank you for your Application!",
     "Jobba, your application was sent to The Huts",
+    "Your Interview with",
+    "Thank you for your job application"
 ]
 
 DESIRED_FAIL_APPLIED_EMAIL_FILTER_FROM = [
@@ -204,12 +206,14 @@ DESIRED_FAIL_APPLIED_EMAIL_FILTER_FROM = [
     "insights@careerseeker.accenture.com",
     "personalemail@domain.com",
     "accenture@myworkday.com",
+    "hello@stratascratch.com"
 ]
 
 DESIRED_FAIL_APPLIED_EMAIL_FILTER_SUBJECT = [
     "Apply to",
     "Apply now",
     "New job",
+    "Job Search Council Matching - Next Steps"
 ]
 
 DESIRED_PASS_APPLIED_EMAIL_FILTER_FROM = ["hit-reply@linkedin.com", "myworkday.com"]

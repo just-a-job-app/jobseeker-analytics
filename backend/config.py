@@ -18,7 +18,8 @@ class Settings(BaseSettings):
     CLIENT_SECRETS_FILE: str = "credentials.json"
     ENV: str = "dev"
     APP_URL: str
-    DATABASE_URL: str
+    ORIGIN: str = ".jobba.help"
+    DATABASE_URL: str = "default-for-local"
     DATABASE_URL_LOCAL_VIRTUAL_ENV: str = (
         "postgresql://postgres:postgres@localhost:5433/jobseeker_analytics"
     )
@@ -29,14 +30,14 @@ class Settings(BaseSettings):
     @field_validator("GOOGLE_SCOPES", mode="before")
     @classmethod
     def decode_scopes(cls, v: str) -> List[str]:
-        logger.info("Decoding scopes from string: %s", v)
+        logger.info("Decoded scopes from string: %s", json.loads(v.strip("'\"")))
         return json.loads(v.strip("'\""))
 
     @property
     def is_publicly_deployed(self) -> bool:
         return self.ENV in ["prod", "staging"]
 
-    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
+    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="allow")
 
 
 settings = Settings(_env_file=".env", _env_file_encoding="utf-8")

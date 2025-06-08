@@ -12,7 +12,7 @@ import yaml
 from typing import List, Dict, Union
 import re
 from constants import APPLIED_FILTER_PATH  # , APPLIED_FILTER_OVERRIDES_PATH
-from test_constants import (
+from tests.test_constants import (
     DESIRED_FAIL_APPLIED_EMAIL_FILTER_SUBJECT,
     DESIRED_PASS_APPLIED_EMAIL_FILTER_FROM,
     SAMPLE_FILTER_PATH,

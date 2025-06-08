@@ -7,16 +7,18 @@ import {
 	NavbarBrand,
 	NavbarItem,
 	NavbarMenu,
-	NavbarMenuItem
+	NavbarMenuItem,
+	Button,
+	Link,
+	Tooltip
 } from "@heroui/react";
-import { Button, Link } from "@heroui/react";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
 import NextLink from "next/link";
 
 import { siteConfig } from "@/config/site";
 import { ThemeSwitch } from "@/components/theme-switch";
-import { GithubIcon, HeartFilledIcon, GoogleIcon, LogOutIcon } from "@/components/icons";
+import { GithubIcon, HeartFilledIcon, GoogleIcon, LogOutIcon, InfoIcon } from "@/components/icons";
 
 export const Navbar = () => {
 	const pathname = usePathname();
@@ -32,15 +34,30 @@ export const Navbar = () => {
 		router.push(`${apiUrl}/logout`);
 	};
 
+	const loginTooltipContent = (
+		<div className="px-1 py-2 max-w-xs">
+			<div className="text-sm font-bold mb-1">Beta Users Only</div>
+			<div className="text-xs">
+				This login is only for existing beta users. If you're not a beta user yet, please join our waitlist
+				below.
+			</div>
+		</div>
+	);
+
 	return (
-		<HeroUINavbar maxWidth="xl" position="sticky">
+		<HeroUINavbar
+			isBordered
+			className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
+			maxWidth="xl"
+		>
 			<NavbarContent className="basis-1/5 sm:basis-full" justify="start">
 				<NavbarBrand as="li" className="gap-3 max-w-fit">
 					<NextLink className="flex justify-start items-center gap-1" href="/">
-						<div>
-							<p className="text-md font-bold text-inherit" data-testid="Logo">
-								jobba.help
-							</p>
+						<div className="flex items-center gap-2">
+							<span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-indigo-600">
+								Just a Job App
+							</span>
+							<span className="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-full">Beta</span>
 						</div>
 					</NextLink>
 				</NavbarBrand>
@@ -67,16 +84,25 @@ export const Navbar = () => {
 					</Button>
 				</NavbarItem>
 				<NavbarItem>
-					{pathname === "/" ? (
-						<Button
-							className="w-full text-sm font-normal text-default-600 bg-default-100"
-							data-testid="GoogleLogin"
-							startContent={<GoogleIcon className="text-danger" />}
-							variant="flat"
-							onPress={handleGoogleLogin}
+					{pathname === "/" || pathname.startsWith("/preview") ? (
+						<Tooltip
+							closeDelay={0}
+							color="foreground"
+							content={loginTooltipContent}
+							delay={200}
+							placement="bottom"
 						>
-							Login with Google
-						</Button>
+							<Button
+								className="w-full text-sm font-normal text-default-600 bg-default-100"
+								data-testid="GoogleLogin"
+								endContent={<InfoIcon className="text-default-400" size={14} />}
+								startContent={<GoogleIcon className="text-danger" />}
+								variant="flat"
+								onPress={handleGoogleLogin}
+							>
+								Login with Google
+							</Button>
+						</Tooltip>
 					) : (
 						<Button
 							className="w-full text-sm font-normal text-default-600 bg-default-100"
@@ -94,15 +120,24 @@ export const Navbar = () => {
 			{/* Smaller screens */}
 			<NavbarContent className="md:hidden" justify="end">
 				{pathname === "/" ? (
-					<Button
-						className="w-auto text-sm font-normal text-default-600 bg-default-100"
-						data-testid="GoogleLoginSmallScreen"
-						startContent={<GoogleIcon className="text-danger" />}
-						variant="flat"
-						onPress={handleGoogleLogin}
+					<Tooltip
+						closeDelay={0}
+						color="foreground"
+						content={loginTooltipContent}
+						delay={200}
+						placement="bottom"
 					>
-						Login with Google
-					</Button>
+						<Button
+							className="w-auto text-sm font-normal text-default-600 bg-default-100"
+							data-testid="GoogleLoginSmallScreen"
+							endContent={<InfoIcon className="text-default-400" size={14} />}
+							startContent={<GoogleIcon className="text-danger" />}
+							variant="flat"
+							onPress={handleGoogleLogin}
+						>
+							Login
+						</Button>
+					</Tooltip>
 				) : (
 					<Button
 						className="w-auto text-sm font-normal text-default-600 bg-default-100 px-7"

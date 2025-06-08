@@ -1,29 +1,55 @@
 import { test, expect } from "@playwright/test";
 
-// Test to check if the Google Login button is visible on the screen.
-test("Google Login button is visible", async ({ page }) => {
-	await page.goto("http://localhost:3000");
+test.describe("Homepage Tests", () => {
+	const HOMEPAGE_URL = "http://localhost:3000";
 
-	const button = page
-		.locator("div")
-		.filter({ hasText: /^Login with Google$/ })
-		.getByRole("button");
-	await expect(button).toBeVisible();
-});
+	test.beforeEach(async ({ page }) => {
+		await page.goto(HOMEPAGE_URL);
+	});
 
-// Test to check if the Website Email link is visible on the screen.
-test("Email link is visible", async ({ page }) => {
-	await page.goto("http://localhost:3000");
+	test("Google Login button is visible (Desktop)", async ({ page }) => {
+		await page.setViewportSize({ width: 1280, height: 800 });
+		await page.goto("http://localhost:3000");
+	});
 
-	const buttons = page.getByRole("link", { name: "send us an email" });
-	await expect(buttons.first()).toBeVisible();
-	await expect(buttons.nth(1)).toBeVisible();
-});
+	test("Email input box is visible", async ({ page }) => {
+		const emailInput = page.locator("input[type='email']");
+		await expect(emailInput).toBeVisible();
+	});
 
-// Test to check if the Youtube Demo Video link is visible on the screen.
-test("Iframe (YouTube video) is present", async ({ page }) => {
-	await page.goto("http://localhost:3000");
+	test("Opt-in checkbox is visible", async ({ page }) => {
+		const optInCheckbox = page.locator(
+			'input[aria-label="Opt in to receive updates by email about Just a Job App"]'
+		);
+		await expect(optInCheckbox).toBeVisible();
+	});
 
-	const iframe = page.locator('iframe[title="YouTube video player"]');
-	await expect(iframe).toBeVisible();
+	test("reCAPTCHA box is visible", async ({ page }) => {
+		const recaptchaIframe = page.locator("iframe[src*='recaptcha']");
+		await expect(recaptchaIframe).toBeVisible();
+	});
+
+	test("Subscribe button is visible", async ({ page }) => {
+		const subscribeButton = page.locator("button", { hasText: "Subscribe" });
+		await expect(subscribeButton).toBeVisible();
+		const button = page.locator('[data-testid="GoogleLogin"]');
+		await expect(button).toBeVisible();
+	});
+
+	test("Discord card is visible and clickable", async ({ page }) => {
+		const discordCard = page.locator("button:has-text('Just a Job App Community on Discord')");
+		await expect(discordCard).toBeVisible();
+
+		await discordCard.click();
+		await expect(page).toHaveURL("https://discord.com/invite/5tTT6WVQyw");
+	});
+
+	test("Never Search Alone card is visible and clickable", async ({ page }) => {
+		await page.setViewportSize({ width: 1280, height: 800 });
+		const neverSearchAloneCard = page.locator('button:has-text("Never Search Alone - phyl.org")');
+		await expect(neverSearchAloneCard).toBeVisible();
+
+		await neverSearchAloneCard.click();
+		await expect(page).toHaveURL(/phyl\.org/);
+	});
 });
