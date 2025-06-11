@@ -2,6 +2,7 @@
 
 1. [Welcome!](#welcome)
 2. [How can I install the app directly on my computer?](#how-can-i-install-the-app-directly-on-my-computer-%EF%B8%8F-back-to-table-of-contents)
+    - [Install the Prerequisites](#install-the-prerequisites)
     - [Clone the repo](#clone-the-repo)
     - [Get a Google AI API key](#get-a-google-ai-api-key)
     - [Create a Google OAuth App](#create-a-google-oauth-app)
@@ -40,15 +41,38 @@ Keep reading to install the app.
 You may run into issues - email help@justajobapp.com for help :)
 
 ## How can I install the app directly on my computer? [⬆️ Back to Table of Contents](#table-of-contents)
-
+**Estimated time to complete installation:** 25-50 minutes.
+*This is an estimate and can vary depending on your internet speed and familiarity with the tools. The first-time setup with Docker will take the longest.*
+### Install the Prerequisites
+(everything is free to install)
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+- [Visual Studio Code](https://code.visualstudio.com/)
+- [git](https://git-scm.com/downloads)
+- [DBeaver](https://dbeaver.io/download/)
+  
 ### Clone the repo
-1. On Windows: We recommend that you use WSL2. [Installation instructions here](https://learn.microsoft.com/en-us/windows/wsl/). 
-2. On Windows: start WSL 
-3. In Github, fork the repository
-4. Clone this fork  using ```git clone https://github.com/just-a-job-app/jobseeker-analytics.git```
-5. ```cd jobseeker-analytics``` into the repo you just cloned
+_Estimated time: 2-5 minutes_
+
+Note for **Windows** users: We recommend that you use WSL2. [Install here](https://learn.microsoft.com/en-us/windows/wsl/). Open the application when installed.
+1. In [Github](https://github.com/just-a-job-app/jobseeker-analytics), fork the repository.
+   
+![CleanShot 2025-06-07 at 21 40 35](https://github.com/user-attachments/assets/9312b5ba-d491-49a1-9f04-218eefffceb6)
+
+2. In Visual Studio Code, go to the Terminal > New Terminal.
+3. Edit the clone command below with your actual username instead of `your-username`
+
+   e.g. my username is `lnovitz`, so my clone command is: `git clone https://github.com/lnovitz/jobseeker-analytics.git`
+5. Paste the command from Step 3 below into the terminal. Press Enter to download the app to your computer. 
+```sh
+git clone https://github.com/your-username/jobseeker-analytics.git
+```
+4. Paste the command below into the terminal. Press Enter to navigate to the app directory.
+```sh
+cd jobseeker-analytics
+```
 
 ### Get a Google AI API key
+_Estimated time: 2-3 minutes_
 1. Go to [https://aistudio.google.com/app/apikey](https://aistudio.google.com/app/apikey)
 2. Click **Create and API Key**
 3. Copy your API key and save it for later
@@ -56,13 +80,13 @@ You may run into issues - email help@justajobapp.com for help :)
 ---
 
 ### Create a Google OAuth App
+_Estimated time: 10-20 minutes_
 1. Go to the [Google Cloud Console](https://console.cloud.google.com/) and create a new project (or use an existing one).  
 2. Navigate to **APIs & Services** → **Credentials**.  
 3. If this is your first time creating credentials with this project, you will have to configure the OAuth consent screen.
 4. Click **Create Credentials** → **OAuth 2.0 Client IDs**.  
 5. Set the application type to **Web Application**.  
-6. Under "Authorized redirect URIs," add:  
-   - https://jobseeker-analytics.onrender.com/login
+6. Under "Authorized redirect URIs," add the following and save to update:  
    - http://localhost:8000/login
 7. Copy the **Client ID** for later.  
 8. Next to Client Secret is a download button. Click it and save it to the `backend` folder with filename ```credentials.json```
@@ -71,8 +95,12 @@ You may run into issues - email help@justajobapp.com for help :)
 11. At the top of the list, check 
    - .../auth/userinfo.email  
    - openid
+
+Don't forget to press **Save**. Twice.
+
 ![CleanShot 2025-05-20 at 23 11 20](https://github.com/user-attachments/assets/dd9f339e-7111-4aa5-8b77-b8900c62b2c4)
 ![CleanShot 2025-05-20 at 23 11 34](https://github.com/user-attachments/assets/82a60ab2-a4b1-412e-a5a5-75568900043e)
+
 12. Search for "Gmail API" at the top search bar, click **Enable**
 13. Click on **Data Access** again, **Add or remove scopes**
 14. Click the filter field above those checkboxes, and enter "gmail". It will probably autocomplete so you can click "Gmail API" or press enter.
@@ -83,6 +111,7 @@ You may run into issues - email help@justajobapp.com for help :)
 ---
 
 ### Set Up Environment Variables
+_Estimated time: 3-5 minutes_
 1. Copy `backend\.env.example` to `backend\.env`:
    ```sh
    cp backend/.env.example backend/.env
@@ -101,7 +130,7 @@ You may run into issues - email help@justajobapp.com for help :)
 
 
 ### Run the App: Two options
-
+_Estimated time: 10-25 minutes_
 #### Option 1: Docker Compose (Preferred Option) [⬆️ Back to Table of Contents](#table-of-contents)
 
 1. If this is your first time using Docker, install as below:
