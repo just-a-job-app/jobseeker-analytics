@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, Request
 from db.feedback_submissions import FeedbackSubmission
 from datetime import datetime
-from utils.auth_utils import validate_session
+from session.session_layer import validate_session
 import database
 
 router = APIRouter()
