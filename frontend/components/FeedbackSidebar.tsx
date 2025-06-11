@@ -14,6 +14,7 @@ export default function FeedbackSidebar({ className = "" }: FeedbackSidebarProps
 	const [issueDescription, setIssueDescription] = useState("");
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle");
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 	const handleFeedbackSubmit = async () => {
 		if (!feedback.trim()) return;
@@ -31,12 +32,11 @@ export default function FeedbackSidebar({ className = "" }: FeedbackSidebarProps
 			if (!response.ok) throw new Error("Failed to submit feedback");
 			const data = await response.json();
 			const github_issue_id = data.issueNumber;
-
-			await fetch("/api/feedback-submission", {
+			await fetch(`${apiUrl}/feedback-submission`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({
-					github_issue_id,
+					github_issue_id
 				})
 			});
 
