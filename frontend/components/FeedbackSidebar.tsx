@@ -14,7 +14,7 @@ export default function FeedbackSidebar({ className = "" }: FeedbackSidebarProps
 	const [issueDescription, setIssueDescription] = useState("");
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle");
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+	const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 	const handleFeedbackSubmit = async () => {
 		if (!feedback.trim()) return;
