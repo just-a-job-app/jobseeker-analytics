@@ -29,6 +29,16 @@ export default function FeedbackSidebar({ className = "" }: FeedbackSidebarProps
 			});
 
 			if (!response.ok) throw new Error("Failed to submit feedback");
+			const data = await response.json();
+			const github_issue_id = data.issueNumber;
+
+			await fetch("/api/feedback-submission", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					github_issue_id,
+				})
+			});
 
 			setSubmitStatus("success");
 			setFeedback("");
