@@ -6,6 +6,8 @@ import database
 import logging
 from slowapi import Limiter
 from slowapi.util import get_remote_address
+from pydantic import BaseModel
+from typing import Optional
 
 logger = logging.getLogger(__name__)
 
@@ -13,17 +15,20 @@ limiter = Limiter(key_func=get_remote_address)
 
 router = APIRouter()
 
+class FeedbackSubmissionModel(BaseModel):
+    github_issue_id: int
+
 @limiter.limit("6/minute")
 @router.post("/feedback-submission")
 def create_feedback_submission(
-    request: Request,
-    github_issue_id: int,
+    submission: FeedbackSubmissionModel,
     db_session: database.DBSession,
+    request: Request,
     user_id: str = Depends(validate_session),
 ):
     feedback = FeedbackSubmission(
         user_id=user_id,
-        github_issue_id=github_issue_id,
+        github_issue_id=submission.github_issue_id,
         created_at=datetime.utcnow(),
     )
     try:
