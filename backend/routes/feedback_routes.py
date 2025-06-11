@@ -4,11 +4,16 @@ from datetime import datetime
 from session.session_layer import validate_session
 import database
 import logging
+from slowapi import Limiter
+from slowapi.util import get_remote_address
 
 logger = logging.getLogger(__name__)
 
+limiter = Limiter(key_func=get_remote_address)
+
 router = APIRouter()
 
+@limiter.limit("6/minute")
 @router.post("/feedback-submission")
 def create_feedback_submission(
     request: Request,
