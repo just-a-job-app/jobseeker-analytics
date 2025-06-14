@@ -9,7 +9,7 @@ from db import processing_tasks as task_models
 from db.utils.user_email_utils import create_user_email
 from utils.auth_utils import AuthenticatedUser
 from utils.email_utils import get_email_ids, get_email
-from utils.llm_utils import process_email
+from utils.classification_utils import process_email
 from utils.config_utils import get_settings
 from session.session_layer import validate_session
 import database
@@ -188,6 +188,9 @@ def fetch_emails_to_db(user: AuthenticatedUser, request: Request, last_updated: 
         is_new_user = request.session.get("is_new_user")
 
         query = start_date_query
+        # # save the start date query to a file
+        # with open("start_date_query.txt", "w") as f:
+        #     f.write(start_date_query)
         # check for users last updated email
         if last_updated:
             # this converts our date time to number of seconds 
