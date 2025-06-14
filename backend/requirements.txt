@@ -54,7 +54,7 @@ packaging==24.2
 plotly==6.0.1
 pluggy==1.5.0
 preshed==3.0.9
-proto-plus==1.25.0
+proto-plus==1.26.1
 protobuf==5.29.2
 psycopg2==2.9.10
 pyasn1==0.6.1
