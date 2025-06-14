@@ -53,6 +53,39 @@ const getInitialSortKey = (key: string) => {
 	return typeof window !== "undefined" ? localStorage.getItem("sortKey") || key : key;
 };
 
+//Function to get the CSS class based on application status
+function getStatusClass(status: string) {
+	const normalized = status?.toLowerCase();
+	switch (normalized) {
+		case "rejection":
+			return "bg-red-100 text-red-800";
+		case "offer made":
+			return "bg-green-100 text-green-800";
+		case "application confirmation":
+			return "bg-blue-100 text-blue-800";
+		case "availability request":
+			return "bg-emerald-100 text-emerald-800";
+		case "information request":
+			return "bg-teal-100 text-teal-800";
+		case "assessment sent":
+			return "bg-yellow-100 text-yellow-800";
+		case "interview invitation":
+			return "bg-cyan-100 text-cyan-800";
+		case "did not apply - inbound request":
+			return "bg-purple-100 text-purple-800";
+		case "action required from company":
+			return "bg-lime-100 text-lime-800";
+		case "hiring freeze notification":
+			return "bg-orange-100 text-orange-800";
+		case "withdrew application":
+			return "bg-fuchsia-100 text-fuchsia-800";
+		case "false positive":
+			return "bg-amber-100 text-amber-800";
+		default:
+			return "bg-zinc-200 text-zinc-800"; // For any unknown status
+	}
+}
+
 export default function JobApplicationsDashboard({
 	title = "Job Applications Dashboard",
 	data,
@@ -326,11 +359,7 @@ export default function JobApplicationsDashboard({
 									<TableCell>{item.company_name || "--"}</TableCell>
 									<TableCell>
 										<span
-											className={`inline-flex items-center justify-center px-2 py-1 rounded ${
-												item.application_status.toLowerCase() === "rejected"
-													? "bg-red-100 text-red-800"
-													: "bg-green-100 text-green-800"
-											}`}
+											className={`inline-flex items-center justify-center px-2 py-1 rounded text-sm font-medium ${getStatusClass(item.application_status)}`}
 										>
 											{item.application_status || "--"}
 										</span>

@@ -19,9 +19,10 @@ No manual tracking. No extra tabs. Just a simpler job search.
 [Get on the waitlist](https://app.formbricks.com/s/cmagfwkuu3f8bug01e340supq) to reserve your spot.
 
 **Option 2: Do-It-Yourself (DIY) Install**
-
-- Already familiar with GitHub? Start with [CONTRIBUTING.md](https://github.com/lnovitz/jobseeker-analytics/blob/main/CONTRIBUTING.md). If you run into issues, hop into [Discord](https://discord.gg/5tTT6WVQyw).
-- Not technical? We’ll help you get set up! [Email us](mailto:help@justajobapp.com?subject=Help%20Running%20App%20On%20Personal%20Computer) to book time with a friendly developer
+-  📹 Video tutorial: https://youtu.be/6LXlCdcsXPE 
+- Already familiar with GitHub? Start with [CONTRIBUTING.md](https://github.com/lnovitz/jobseeker-analytics/blob/main/CONTRIBUTING.md).
+- If you run into issues, hop into [Discord](https://discord.gg/5tTT6WVQyw).
+- Not familiar with GitHub? We’ll help you get set up! [Email us](mailto:help@justajobapp.com?subject=Help%20Running%20App%20On%20Personal%20Computer) to book time with a friendly developer
 
 ## **Support & Feedback**
 
