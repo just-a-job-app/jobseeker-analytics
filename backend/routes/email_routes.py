@@ -307,7 +307,7 @@ def fetch_emails_to_db(user: AuthenticatedUser, request: Request, last_updated: 
                 # Query all existing companies in one go
                 existing_companies = set(
                     (c.name, c.email_domain)
-                    for c in db_session.query(Companies).filter(
+                    for c in db_session.exec(Companies).filter(
                         Companies.name.in_([name for name, _ in company_pairs]),
                         Companies.email_domain.in_([domain for _, domain in company_pairs])
                     ).all()
