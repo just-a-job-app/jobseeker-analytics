@@ -5,6 +5,7 @@ from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from sqlmodel import Session, select, desc
 from googleapiclient.discovery import build
 from db.user_emails import UserEmails
+from db.companies import Companies
 from db import processing_tasks as task_models
 from db.utils.user_email_utils import create_user_email
 from utils.auth_utils import AuthenticatedUser
@@ -286,6 +287,34 @@ def fetch_emails_to_db(user: AuthenticatedUser, request: Request, last_updated: 
                 f"Added {len(email_records)} email records for user {user_id}"
             )
 
+             # Collect unique company (name, domain) pairs from email_records
+            try: 
+                company_pairs = set(
+                    (record.company_name, record.email_from)
+                    for record in email_records
+                    if record.company_name and record.email_from
+                )
+
+                # Query all existing companies in one go
+                existing_companies = set(
+                    (c.name, c.email_domain)
+                    for c in db_session.query(Companies).filter(
+                        Companies.name.in_([name for name, _ in company_pairs]),
+                        Companies.email_domain.in_([domain for _, domain in company_pairs])
+                    ).all()
+                )
+
+                # Find which companies are missing
+                missing_companies = company_pairs - existing_companies
+            except Exception as e:
+                logger.error(f"Error checking existing companies: {e}")
+
+            try:
+                for name, domain in missing_companies:
+                    add_company(name, domain)
+            except Exception as e:
+                logger.error(f"Error adding missing companies: {e}")
+                    
         process_task_run.status = task_models.FINISHED
         db_session.commit()
 
