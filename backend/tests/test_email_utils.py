@@ -169,3 +169,12 @@ def test_clean_whitespace():
     assert email_utils.clean_whitespace("") == ""
     assert email_utils.clean_whitespace(None) == ""
     
+def test_email_is_similar():
+    """
+    To run this test, use the following command:
+    pytest -v backend/tests/test_email_utils.py::test_email_is_similar
+    """
+    assert user_email_utils.email_is_similar("Test Macintosh", "test.macintosh@email.com")
+    assert user_email_utils.email_is_similar("Test McTester <test.macintosh@email.com>", "test.macintosh@email.com")
+    assert not user_email_utils.email_is_similar("Test McTester", "test.macintosh@email.com")
+    assert not user_email_utils.email_is_similar("Test McTester <test.macintosh@email.com>", "test.apple@email.com")
