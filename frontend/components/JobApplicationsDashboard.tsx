@@ -58,31 +58,31 @@ function getStatusClass(status: string) {
 	const normalized = status?.toLowerCase();
 	switch (normalized) {
 		case "rejection":
-			return "bg-red-100 text-red-800";
+			return "bg-red-100 text-red-800 dark:bg-red-600 dark:text-white";
 		case "offer made":
-			return "bg-green-100 text-green-800";
+			return "bg-green-100 text-green-800 dark:bg-success dark:text-white";
 		case "application confirmation":
-			return "bg-blue-100 text-blue-800";
+			return "bg-blue-100 text-blue-800 dark:bg-primary dark:text-white";
 		case "availability request":
-			return "bg-emerald-100 text-emerald-800";
+			return "bg-emerald-100 text-emerald-800 dark:bg-emerald-600 dark:text-white";
 		case "information request":
-			return "bg-teal-100 text-teal-800";
+			return "bg-teal-100 text-teal-800 dark:bg-teal-600 dark:text-white";
 		case "assessment sent":
-			return "bg-yellow-100 text-yellow-800";
+			return "bg-yellow-100 text-yellow-800 dark:bg-yellow-600 dark:text-white";
 		case "interview invitation":
-			return "bg-cyan-100 text-cyan-800";
+			return "bg-cyan-100 text-cyan-800 dark:bg-cyan-600 dark:text-white";
 		case "did not apply - inbound request":
-			return "bg-purple-100 text-purple-800";
+			return "bg-purple-100 text-purple-800 dark:bg-purple-600 dark:text-white";
 		case "action required from company":
-			return "bg-lime-100 text-lime-800";
+			return "bg-lime-100 text-lime-800 dark:bg-lime-600 dark:text-white";
 		case "hiring freeze notification":
-			return "bg-orange-100 text-orange-800";
+			return "bg-orange-100 text-orange-800 dark:bg-orange-600 dark:text-white";
 		case "withdrew application":
-			return "bg-fuchsia-100 text-fuchsia-800";
+			return "bg-fuchsia-100 text-fuchsia-800 dark:bg-fuchsia-600 dark:text-white";
 		case "false positive":
-			return "bg-amber-100 text-amber-800";
+			return "bg-amber-100 text-amber-800 dark:bg-amber-600 dark:text-white";
 		default:
-			return "bg-zinc-200 text-zinc-800"; // For any unknown status
+			return "bg-zinc-200 text-zinc-800 dark:bg-zinc-600 dark:text-white";
 	}
 }
 
@@ -342,13 +342,13 @@ export default function JobApplicationsDashboard({
 				<div className="overflow-x-auto bg-white dark:bg-black shadow-md rounded-lg">
 					<Table aria-label="Applications Table">
 						<TableHeader>
-							<TableColumn>Company</TableColumn>
-							<TableColumn>Status</TableColumn>
-							<TableColumn>Received</TableColumn>
-							<TableColumn>Job Title</TableColumn>
-							<TableColumn>Subject</TableColumn>
-							<TableColumn>Sender</TableColumn>
-							<TableColumn>Actions</TableColumn>
+							<TableColumn className="text-center">Company</TableColumn>
+							<TableColumn className="text-center">Status</TableColumn>
+							<TableColumn className="text-center">Received</TableColumn>
+							<TableColumn className="text-center">Job Title</TableColumn>
+							<TableColumn className="text-center">Subject</TableColumn>
+							<TableColumn className="text-center">Sender</TableColumn>
+							<TableColumn className="text-center">Actions</TableColumn>
 						</TableHeader>
 						<TableBody>
 							{paginatedData.map((item) => (
@@ -356,18 +356,18 @@ export default function JobApplicationsDashboard({
 									key={item.id || item.received_at}
 									className="hover:bg-default-100 transition-colors"
 								>
-									<TableCell>{item.company_name || "--"}</TableCell>
-									<TableCell>
+									<TableCell className="max-w-[100px] text-center">{item.company_name || "--"}</TableCell>
+									<TableCell className="max-w-[120px] break-words whitespace-normal text-center">
 										<span
-											className={`inline-flex items-center justify-center px-2 py-1 rounded text-sm font-medium ${getStatusClass(item.application_status)}`}
+											className={`inline-flex items-center justify-center px-1.5 py-1 rounded text-s font-medium ${getStatusClass(item.application_status)}`}
 										>
 											{item.application_status || "--"}
 										</span>
 									</TableCell>
-									<TableCell>{new Date(item.received_at).toLocaleDateString() || "--"}</TableCell>
-									<TableCell>{item.job_title || "--"}</TableCell>
-									<TableCell className="max-w-[300px] truncate">{item.subject || "--"}</TableCell>
-									<TableCell>{item.email_from || "--"}</TableCell>
+									<TableCell className="text-center">{new Date(item.received_at).toLocaleDateString() || "--"}</TableCell>
+									<TableCell className="max-w-[136px] break-words whitespace-normal text-center">{item.job_title || "--"}</TableCell>
+									<TableCell className="max-w-[200px] break-words text-center">{item.subject || "--"}</TableCell>
+									<TableCell className="max-w-[220px] break-words whitespace-normal text-center">{item.email_from || "--"}</TableCell>
 									<TableCell className="text-center">
 										<Tooltip content="Remove">
 											<Button
