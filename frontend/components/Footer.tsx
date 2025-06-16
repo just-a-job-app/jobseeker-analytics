@@ -8,7 +8,8 @@ const Footer = () => {
 					<div>
 						<h3 className="text-lg font-semibold mb-4">Support open source</h3>
 						<p className="text-default-500 mb-4">
-							If you're a developer, please consider starring us on GitHub to help spread the word about this project.
+							If you're a developer, please consider starring us on GitHub to help spread the word about
+							this project.
 						</p>
 						<a
 							className="flex items-center gap-2 text-sm text-default-500 hover:text-foreground transition-colors"
