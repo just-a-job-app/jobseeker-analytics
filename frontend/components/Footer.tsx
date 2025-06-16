@@ -6,26 +6,62 @@ const Footer = () => {
 			<div className="container mx-auto px-4">
 				<div className="grid grid-cols-1 md:grid-cols-3 gap-8">
 					<div>
-						<h3 className="text-lg font-semibold mb-4">About Just a Job App</h3>
+						<h3 className="text-lg font-semibold mb-4">Support open source</h3>
 						<p className="text-default-500 mb-4">
-							Built by jobseekers, for jobseekers. Track your applications automatically, straight from
-							your inbox.
+							If you're a developer, please consider starring us on GitHub to help spread the word about this project.
 						</p>
-						<p className="text-sm text-default-500">Currently in beta (100 user testing limit)</p>
+						<a
+							className="flex items-center gap-2 text-sm text-default-500 hover:text-foreground transition-colors"
+							href="https://github.com/just-a-job-app/jobseeker-analytics"
+							rel="noopener noreferrer"
+							target="_blank"
+						>
+							<ExternalLinkIcon size={16} />
+							Star us on GitHub
+						</a>
 					</div>
 
 					<div>
-						<h3 className="text-lg font-semibold mb-4">Tech Stack</h3>
+						<h3 className="text-lg font-semibold mb-4">Bookmark these free resources</h3>
 						<ul className="space-y-2 text-default-500">
-							<li>Frontend: Next.js, TypeScript</li>
-							<li>Backend: FastAPI, Python</li>
-							<li>Database: PostgreSQL</li>
-							<li>Integrations: Gmail API, Posthog</li>
+							<li>
+								<a
+									className="flex items-center gap-2 text-sm hover:text-foreground transition-colors"
+									href="https://hiring.cafe/"
+									rel="noopener noreferrer"
+									target="_blank"
+								>
+									<ExternalLinkIcon size={16} />
+									Hiring Cafe - The best job board out there
+								</a>
+							</li>
+							<li>
+								<a
+									className="flex items-center gap-2 text-sm hover:text-foreground transition-colors"
+									href="https://www.phyl.org/join-jsc"
+									rel="noopener noreferrer"
+									target="_blank"
+								>
+									<ExternalLinkIcon size={16} />
+									Never Search Alone - Find your Job Search Crew
+								</a>
+							</li>
+							<li>
+								<a
+									className="flex items-center gap-2 text-sm hover:text-foreground transition-colors"
+									href="https://randsinrepose.com/welcome-to-rands-leadership-slack/"
+									rel="noopener noreferrer"
+									target="_blank"
+								>
+									<ExternalLinkIcon size={16} />
+									Rands Community - The one Slack you get to keep
+								</a>
+							</li>
 						</ul>
 					</div>
 
 					<div>
-						<h3 className="text-lg font-semibold mb-4">Connect With Us</h3>
+						<h3 className="text-lg font-semibold mb-4">Contact us</h3>
 						<div className="space-y-4">
 							<a
 								className="flex items-center gap-2 text-sm text-default-500 hover:text-foreground transition-colors"
@@ -55,11 +91,7 @@ const Footer = () => {
 				</div>
 
 				<div className="mt-12 pt-6 border-t text-center text-sm text-default-500">
-					<p>
-						Just a Job App is open source - future developers can always fork this project and continue the
-						work.
-					</p>
-					<p className="mt-2">© {new Date().getFullYear()} Just a Job App</p>
+					<p className="mt-2">© {new Date().getFullYear()} Just a Job App (JAJA)</p>
 				</div>
 			</div>
 		</footer>
