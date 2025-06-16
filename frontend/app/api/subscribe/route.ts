@@ -32,27 +32,26 @@ export async function POST(request: Request) {
 
 		const groupId = type === "founding" ? MAILERLITE_FOUNDING_GROUP_ID : MAILERLITE_UPDATES_GROUP_ID;
 
-		const response = await fetch("https://api.mailerlite.com/api/v2/subscribers", {
+		// First, create or update the subscriber
+		const subscriberResponse = await fetch("https://connect.mailerlite.com/api/subscribers", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
-				"X-MailerLite-ApiKey": MAILERLITE_API_KEY,
+				"Accept": "application/json",
+				"Authorization": `Bearer ${MAILERLITE_API_KEY}`,
 			},
 			body: JSON.stringify({
-				email,
-				resubscribe: true,
-				autoresponders: true,
-				type: "active",
-				groups: [groupId],
+				"email": email,
+				"groups": [groupId],
 			}),
 		});
 
-		if (!response.ok) {
-			const error = await response.json();
+		if (!subscriberResponse.ok) {
+			const error = await subscriberResponse.json();
 			console.error("MailerLite API error:", error);
 			return NextResponse.json(
-				{ error: "Failed to subscribe" },
-				{ status: response.status }
+				{ error: "Failed to create subscriber" },
+				{ status: subscriberResponse.status }
 			);
 		}
 
