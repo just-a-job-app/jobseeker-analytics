@@ -1,86 +1,67 @@
-import { NextResponse, NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 
-interface SubscriberData {
-	email: string;
-	name?: string;
-	formType?: "waitlist" | "setup";
-}
+const MAILERLITE_API_KEY = process.env.MAILERLITE_API_KEY;
+const MAILERLITE_FOUNDING_GROUP_ID = process.env.MAILERLITE_FOUNDING_GROUP_ID;
+const MAILERLITE_UPDATES_GROUP_ID = process.env.MAILERLITE_UPDATES_GROUP_ID;
 
-async function createSubscriber(data: SubscriberData, apiKey: string): Promise<Response> {
-	return fetch("https://api.convertkit.com/v4/subscribers", {
-		method: "POST",
-		headers: {
-			"Content-Type": "application/json",
-			"X-Kit-Api-Key": apiKey
-		},
-		body: JSON.stringify({
-			email_address: data.email,
-			first_name: data.name,
-			state: "inactive"
-		})
-	});
-}
-
-async function addSubscriberToForm(email: string, apiKey: string, formId: string): Promise<Response> {
-	const url = `https://api.convertkit.com/v4/forms/${formId}/subscribers`;
-	return fetch(url, {
-		method: "POST",
-		headers: {
-			"Content-Type": "application/json",
-			"X-Kit-Api-Key": apiKey
-		},
-		body: JSON.stringify({ email_address: email })
-	});
-}
-
-export async function POST(req: NextRequest) {
+export async function POST(request: Request) {
 	try {
-		const { email, name, formType = "waitlist" } = await req.json();
+		const { email, type } = await request.json();
 
-		if (!email || !email.includes("@")) {
-			return NextResponse.json({ success: false, message: "Valid email is required" }, { status: 400 });
-		}
-
-		const apiKey = process.env.CONVERTKIT_API_KEY;
-
-		// Choose the appropriate form ID based on the formType parameter
-		const formId = formType === "setup" ? process.env.CONVERTKIT_SETUP_FORM_ID : process.env.CONVERTKIT_FORM_ID;
-
-		if (!apiKey || !formId) {
-			console.error(`ConvertKit API key or ${formType} Form ID is missing`);
-			return NextResponse.json({ success: false, message: "Server configuration error" }, { status: 500 });
-		}
-
-		// Step 1: Create an inactive subscriber
-		const createResponse = await createSubscriber({ email, name, formType }, apiKey);
-
-		if (!createResponse.ok) {
-			const error = await createResponse.json();
-			console.error("Failed to create subscriber:", error);
-			return NextResponse.json({ success: false, message: "Failed to add to list" }, { status: 500 });
-		}
-
-		// Step 2: Add subscriber to form
-		const formResponse = await addSubscriberToForm(email, apiKey, formId);
-
-		if (!formResponse.ok) {
-			const error = await formResponse.json();
-			console.error(`Failed to add subscriber to ${formType} form:`, error);
+		if (!email) {
 			return NextResponse.json(
-				{ success: false, message: "Added to list but confirmation may fail" },
+				{ error: "Email is required" },
+				{ status: 400 }
+			);
+		}
+
+		if (!type || !["founding", "updates"].includes(type)) {
+			return NextResponse.json(
+				{ error: "Invalid subscription type" },
+				{ status: 400 }
+			);
+		}
+
+		if (!MAILERLITE_API_KEY || !MAILERLITE_FOUNDING_GROUP_ID || !MAILERLITE_UPDATES_GROUP_ID) {
+			console.error("Missing MailerLite configuration");
+			return NextResponse.json(
+				{ error: "Server configuration error" },
 				{ status: 500 }
 			);
 		}
 
-		const successMessage =
-			formType === "setup" ? "Setup session requested successfully" : "Successfully added to waitlist";
+		const groupId = type === "founding" ? MAILERLITE_FOUNDING_GROUP_ID : MAILERLITE_UPDATES_GROUP_ID;
 
-		return NextResponse.json({
-			success: true,
-			message: successMessage
+		const response = await fetch("https://api.mailerlite.com/api/v2/subscribers", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				"X-MailerLite-ApiKey": MAILERLITE_API_KEY,
+			},
+			body: JSON.stringify({
+				email,
+				resubscribe: true,
+				autoresponders: true,
+				type: "active",
+				groups: [groupId],
+			}),
 		});
+
+		if (!response.ok) {
+			const error = await response.json();
+			console.error("MailerLite API error:", error);
+			return NextResponse.json(
+				{ error: "Failed to subscribe" },
+				{ status: response.status }
+			);
+		}
+
+		return NextResponse.json({ success: true });
 	} catch (error) {
-		console.error("Error adding subscriber:", error);
-		return NextResponse.json({ success: false, message: "Server error" }, { status: 500 });
+		console.error("Subscription error:", error);
+		return NextResponse.json(
+			{ error: "Internal server error" },
+			{ status: 500 }
+		);
 	}
 }

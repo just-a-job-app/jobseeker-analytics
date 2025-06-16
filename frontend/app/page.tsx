@@ -9,10 +9,44 @@ import Footer from "@/components/Footer";
 const Index = () => {
 	const [tab, setTab] = useState("waitlist");
 	const [email, setEmail] = useState("");
+	const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+	const [message, setMessage] = useState("");
 
-	const handleNewsletterSignup = async (e: React.FormEvent) => {
+	const scrollToOptions = () => {
+		const optionsSection = document.getElementById("join-options");
+		if (optionsSection) {
+			optionsSection.scrollIntoView({ behavior: "smooth" });
+		}
+	};
+
+	const handleNewsletterSignup = async (e: React.FormEvent, type: "founding" | "updates") => {
 		e.preventDefault();
-		// TODO: Implement newsletter signup
+		setStatus("loading");
+
+		try {
+			const response = await fetch("/api/subscribe", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ email, type }),
+			});
+
+			if (!response.ok) {
+				throw new Error("Subscription failed");
+			}
+
+			setStatus("success");
+			setMessage(
+				type === "founding"
+					? "Welcome to the founding members group! We'll be in touch soon with early access details."
+					: "Thanks for subscribing! You'll receive our monthly progress updates."
+			);
+			setEmail("");
+		} catch (error) {
+			setStatus("error");
+			setMessage("Something went wrong. Please try again later.");
+		}
 	};
 
 	return (
@@ -34,14 +68,9 @@ const Index = () => {
 						<Button
 							className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-6 text-lg h-auto"
 							color="primary"
-							onPress={() => {
-								setTab("waitlist");
-								setTimeout(() => {
-									document.getElementById("email-input")?.focus();
-								}, 100);
-							}}
+							onPress={scrollToOptions}
 						>
-							Help Build the Future
+							Help Fix the Job Search
 						</Button>
 					</section>
 
@@ -230,57 +259,77 @@ const Index = () => {
 							</p>
 							<p>
 								I'm not asking you to buy a product. I'm asking you to believe in a mission and to join
-								a small, dedicated group of founding members to help me build it right. Your voice and
+								a small, dedicated group of founding jobseekers to help me build it right. Your voice and
 								your experience are more valuable than any line of code I could write right now.
 							</p>
 						</div>
 					</section>
 
 					{/* Section 7: The Final CTA */}
-					<section className="max-w-4xl mx-auto py-12">
-						<h2 className="text-3xl font-bold text-center mb-8">Help Me Build This Platform</h2>
+					<section id="join-options" className="max-w-4xl mx-auto py-12">
+						<h2 className="text-3xl font-bold text-center mb-8">Help Fix the Job Search</h2>
+						{status === "success" && (
+							<div className="mb-8 p-4 bg-green-100 text-green-800 rounded-lg text-center">
+								{message}
+							</div>
+						)}
+						{status === "error" && (
+							<div className="mb-8 p-4 bg-red-100 text-red-800 rounded-lg text-center">
+								{message}
+							</div>
+						)}
 						<div className="grid md:grid-cols-2 gap-8">
 							<Card>
 								<div className="p-6">
-									<h3 className="text-xl font-semibold mb-4">Option 1: Become a Founding Member</h3>
+									<h3 className="text-xl font-semibold mb-4">Option 1: Become an Insider</h3>
 									<p className="text-default-500 mb-6">
-										This is the inner circle. You'll get behind-the-scenes updates and be the very
-										first to test the earliest, imperfect prototypes. Your feedback will directly
-										shape the future of this platform.
+										Tired of applying into a black hole? Get exclusive access to our private beta and help shape a tool that puts jobseekers first.
 									</p>
-									<Button
-										className="w-full bg-purple-600 hover:bg-purple-700"
-										color="primary"
-										onPress={() => {
-											setTab("waitlist");
-											setTimeout(() => {
-												document.getElementById("email-input")?.focus();
-											}, 100);
-										}}
-									>
-										I'm In. Add Me to the Founding Members List
-									</Button>
-								</div>
-							</Card>
-
-							<Card>
-								<div className="p-6">
-									<h3 className="text-xl font-semibold mb-4">Option 2: Follow Our Progress</h3>
-									<p className="text-default-500 mb-6">
-										Not ready to be a founding member? No problem. Sign up for our public progress
-										newsletter. About once a month, I'll share updates, what I've learned, and let
-										you know when we hit major milestones. No pressure, no commitment.
-									</p>
-									<form className="space-y-4" onSubmit={handleNewsletterSignup}>
+									<form className="space-y-4" onSubmit={(e) => handleNewsletterSignup(e, "founding")}>
 										<Input
 											className="w-full"
 											placeholder="Your Email Address"
 											type="email"
 											value={email}
 											onChange={(e) => setEmail(e.target.value)}
+											required
+											disabled={status === "loading"}
 										/>
-										<Button className="w-full" type="submit" variant="bordered">
-											Get Updates
+										<Button
+											className="w-full bg-purple-600 hover:bg-purple-700"
+											color="primary"
+											type="submit"
+											isLoading={status === "loading"}
+										>
+											I Want Insider Access
+										</Button>
+									</form>
+								</div>
+							</Card>
+
+							<Card>
+								<div className="p-6">
+									<h3 className="text-xl font-semibold mb-4">Option 2: Follow the Launch</h3>
+									<p className="text-default-500 mb-6">
+										Want to see if we can actually build a better way to find work? Sign up and we'll only email you with major milestone updates.
+									</p>
+									<form className="space-y-4" onSubmit={(e) => handleNewsletterSignup(e, "updates")}>
+										<Input
+											className="w-full"
+											placeholder="Your Email Address"
+											type="email"
+											value={email}
+											onChange={(e) => setEmail(e.target.value)}
+											required
+											disabled={status === "loading"}
+										/>
+										<Button 
+											className="w-full" 
+											type="submit" 
+											variant="bordered"
+											isLoading={status === "loading"}
+										>
+											Keep Me Posted
 										</Button>
 									</form>
 								</div>

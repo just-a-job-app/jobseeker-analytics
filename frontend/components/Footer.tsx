@@ -55,7 +55,7 @@ const Footer = () => {
 									target="_blank"
 								>
 									<ExternalLinkIcon size={16} />
-									Rands Community - The one Slack you get to keep
+									Rands - The one Slack you can keep after a layoff
 								</a>
 							</li>
 						</ul>
