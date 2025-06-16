@@ -45,46 +45,72 @@ export const Navbar = () => {
 	);
 
 	return (
-		<HeroUINavbar
-			isBordered
-			className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
-			maxWidth="xl"
-		>
-			<NavbarContent className="basis-1/5 sm:basis-full" justify="start">
-				<NavbarBrand as="li" className="gap-3 max-w-fit">
-					<NextLink className="flex justify-start items-center gap-1" href="/">
-						<div className="flex items-center gap-2">
-							<span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-indigo-600">
-								Just a Job App
-							</span>
-							<span className="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-full">Beta</span>
-						</div>
-					</NextLink>
-				</NavbarBrand>
-			</NavbarContent>
+		<>
+			<div className="bg-purple-100 text-purple-800 text-center py-1 text-sm">
+				<span className="font-medium">Beta Access:</span> If you're a beta user, use the Google login button below. Not a beta user? Join our waitlist.
+			</div>
+			<HeroUINavbar
+				isBordered
+				className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
+				maxWidth="xl"
+			>
+				<NavbarContent className="basis-1/5 sm:basis-full" justify="start">
+					<NavbarBrand as="li" className="gap-3 max-w-fit">
+						<NextLink className="flex justify-start items-center gap-1" href="/">
+							<div className="flex items-center gap-2">
+								<span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-indigo-600">
+									Just a Job App
+								</span>
+								<span className="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-full">Beta</span>
+							</div>
+						</NextLink>
+					</NavbarBrand>
+				</NavbarContent>
 
-			<NavbarContent className="hidden md:flex basis-1/5 sm:basis-full" justify="end">
-				<NavbarItem className="flex gap-2">
-					<Link isExternal aria-label="Github" href={siteConfig.links.github}>
-						<GithubIcon className="text-default-500" />
-					</Link>
-					<ThemeSwitch />
-				</NavbarItem>
-				<NavbarItem>
-					<Button
-						isExternal
-						as={Link}
-						className="text-sm font-normal text-default-600 bg-default-100"
-						data-testid="Sponsor"
-						href={siteConfig.links.sponsor}
-						startContent={<HeartFilledIcon className="text-danger" />}
-						variant="flat"
-					>
-						Sponsor
-					</Button>
-				</NavbarItem>
-				<NavbarItem>
-					{pathname === "/" || pathname.startsWith("/preview") ? (
+				<NavbarContent className="hidden md:flex basis-1/5 sm:basis-full" justify="end">
+					<NavbarItem className="flex gap-2">
+						<Link isExternal aria-label="Github" href={siteConfig.links.github}>
+							<GithubIcon className="text-default-500" />
+						</Link>
+						<ThemeSwitch />
+					</NavbarItem>
+					<NavbarItem>
+						{pathname === "/" || pathname.startsWith("/preview") ? (
+							<Tooltip
+								closeDelay={0}
+								color="foreground"
+								content={loginTooltipContent}
+								delay={200}
+								placement="bottom"
+							>
+								<Button
+									className="w-full text-sm font-normal text-default-600 bg-default-100"
+									data-testid="GoogleLogin"
+									endContent={<InfoIcon className="text-default-400" size={14} />}
+									startContent={<GoogleIcon className="text-danger" />}
+									variant="flat"
+									onPress={handleGoogleLogin}
+								>
+									Login with Google
+								</Button>
+							</Tooltip>
+						) : (
+							<Button
+								className="w-full text-sm font-normal text-default-600 bg-default-100"
+								data-testid="GoogleLogout"
+								startContent={<LogOutIcon />}
+								variant="flat"
+								onPress={handleGoogleLogout}
+							>
+								Logout
+							</Button>
+						)}
+					</NavbarItem>
+				</NavbarContent>
+
+				{/* Smaller screens */}
+				<NavbarContent className="md:hidden" justify="end">
+					{pathname === "/" ? (
 						<Tooltip
 							closeDelay={0}
 							color="foreground"
@@ -93,20 +119,20 @@ export const Navbar = () => {
 							placement="bottom"
 						>
 							<Button
-								className="w-full text-sm font-normal text-default-600 bg-default-100"
-								data-testid="GoogleLogin"
+								className="w-auto text-sm font-normal text-default-600 bg-default-100"
+								data-testid="GoogleLoginSmallScreen"
 								endContent={<InfoIcon className="text-default-400" size={14} />}
 								startContent={<GoogleIcon className="text-danger" />}
 								variant="flat"
 								onPress={handleGoogleLogin}
 							>
-								Login with Google
+								Login
 							</Button>
 						</Tooltip>
 					) : (
 						<Button
-							className="w-full text-sm font-normal text-default-600 bg-default-100"
-							data-testid="GoogleLogout"
+							className="w-auto text-sm font-normal text-default-600 bg-default-100 px-7"
+							data-testid="GoogleLogoutSmallScreen"
 							startContent={<LogOutIcon />}
 							variant="flat"
 							onPress={handleGoogleLogout}
@@ -114,76 +140,40 @@ export const Navbar = () => {
 							Logout
 						</Button>
 					)}
-				</NavbarItem>
-			</NavbarContent>
+					<NavbarMenuToggle />
+				</NavbarContent>
 
-			{/* Smaller screens */}
-			<NavbarContent className="md:hidden" justify="end">
-				{pathname === "/" ? (
-					<Tooltip
-						closeDelay={0}
-						color="foreground"
-						content={loginTooltipContent}
-						delay={200}
-						placement="bottom"
-					>
-						<Button
-							className="w-auto text-sm font-normal text-default-600 bg-default-100"
-							data-testid="GoogleLoginSmallScreen"
-							endContent={<InfoIcon className="text-default-400" size={14} />}
-							startContent={<GoogleIcon className="text-danger" />}
-							variant="flat"
-							onPress={handleGoogleLogin}
+				<NavbarMenu className="flex flex-col items-center gap-3">
+					<NavbarMenuItem>
+						<Link
+							isExternal
+							aria-label="Github"
+							className="w-auto flex items-center justify-center gap-2 text-sm font-medium text-default-600 hover:text-default-900 bg-default-100 px-4 py-2 rounded-md transition"
+							href={siteConfig.links.github}
 						>
-							Login
+							<GithubIcon className="w-5 h-5 text-default-500" />
+							<span>View code</span>
+						</Link>
+					</NavbarMenuItem>
+
+					<NavbarMenuItem>
+						<ThemeSwitch className="w-auto flex items-center justify-center gap-2 text-sm font-medium text-default-600 hover:text-default-900 bg-default-100 px-4 py-2 rounded-md transition">
+							<span>Change theme</span>
+						</ThemeSwitch>
+					</NavbarMenuItem>
+
+					<NavbarMenuItem>
+						<Button
+							className="w-auto text-sm font-medium text-default-600 bg-default-100 px-4 py-2 rounded-md transition"
+							onPress={() => {
+								window.location.href = "https://app.justajobapp.com/login";
+							}}
+						>
+							Login to Beta
 						</Button>
-					</Tooltip>
-				) : (
-					<Button
-						className="w-auto text-sm font-normal text-default-600 bg-default-100 px-7"
-						data-testid="GoogleLogoutSmallScreen"
-						startContent={<LogOutIcon />}
-						variant="flat"
-						onPress={handleGoogleLogout}
-					>
-						Logout
-					</Button>
-				)}
-				<NavbarMenuToggle />
-			</NavbarContent>
-
-			<NavbarMenu className="flex flex-col items-center gap-3">
-				<NavbarMenuItem>
-					<Link
-						isExternal
-						aria-label="Github"
-						className="w-auto flex items-center justify-center gap-2 text-sm font-medium text-default-600 hover:text-default-900 bg-default-100 px-4 py-2 rounded-md transition"
-						href={siteConfig.links.github}
-					>
-						<GithubIcon className="w-5 h-5 text-default-500" />
-						<span>View code</span>
-					</Link>
-				</NavbarMenuItem>
-
-				<NavbarMenuItem>
-					<ThemeSwitch className="w-auto flex items-center justify-center gap-2 text-sm font-medium text-default-600 hover:text-default-900 bg-default-100 px-4 py-2 rounded-md transition">
-						<span>Change theme</span>
-					</ThemeSwitch>
-				</NavbarMenuItem>
-
-				<NavbarMenuItem>
-					<Button
-						isExternal
-						as={Link}
-						className="w-auto text-sm font-medium text-default-600 bg-default-100 px-4 py-2 rounded-md transition"
-						href={siteConfig.links.sponsor}
-						startContent={<HeartFilledIcon className="text-danger" />}
-						variant="flat"
-					>
-						Sponsor
-					</Button>
-				</NavbarMenuItem>
-			</NavbarMenu>
-		</HeroUINavbar>
+					</NavbarMenuItem>
+				</NavbarMenu>
+			</HeroUINavbar>
+		</>
 	);
 };
