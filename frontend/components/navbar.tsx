@@ -18,7 +18,7 @@ import NextLink from "next/link";
 
 import { siteConfig } from "@/config/site";
 import { ThemeSwitch } from "@/components/theme-switch";
-import { GithubIcon, HeartFilledIcon, GoogleIcon, LogOutIcon, InfoIcon } from "@/components/icons";
+import { GithubIcon, GoogleIcon, LogOutIcon, InfoIcon } from "@/components/icons";
 
 export const Navbar = () => {
 	const pathname = usePathname();
@@ -47,7 +47,8 @@ export const Navbar = () => {
 	return (
 		<>
 			<div className="bg-purple-100 text-purple-800 text-center py-1 text-sm">
-				<span className="font-medium">Beta Access:</span> If you're a beta user, use the Google login button below. Not a beta user? Join our waitlist.
+				<span className="font-medium">Beta Access:</span> If you're a beta user, use the Google login button
+				below. Not a beta user? Join our waitlist.
 			</div>
 			<HeroUINavbar
 				isBordered
@@ -61,7 +62,9 @@ export const Navbar = () => {
 								<span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-indigo-600">
 									Just a Job App
 								</span>
-								<span className="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-full">Beta</span>
+								<span className="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-full">
+									Beta
+								</span>
 							</div>
 						</NextLink>
 					</NavbarBrand>
