@@ -104,8 +104,7 @@ const Index = () => {
 									</p>
 									<div className="bg-default-100 p-4 rounded-lg">
 										<p className="text-sm italic text-default-600">
-											THE INPUT: "I'm a senior professional with around 4-10 years in HCM/CPG,
-											looking for a good role at a mid-to-large company. Flexible on location."
+											THE INPUT: "I'm a mobile developer with around 10 years in HCM/CPG, looking for my next role."
 										</p>
 									</div>
 								</div>
@@ -135,9 +134,8 @@ const Index = () => {
 									</p>
 									<div className="bg-default-100 p-4 rounded-lg">
 										<p className="text-sm italic text-default-600">
-											THE GOAL: "I'm a Senior Product Manager with 8 years of experience helping
-											B2B SaaS companies (50-200 employees) scale their user activation. I am
-											looking for a fully remote role based in the US."
+											THE GOAL: "Senior mobile engineer with experience in HR and retail software, 
+											seeking a native Android developer role at a mid-sized company in the Denver area."
 										</p>
 									</div>
 								</div>
