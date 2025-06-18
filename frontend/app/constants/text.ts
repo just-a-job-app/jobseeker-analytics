@@ -1,8 +1,8 @@
 export const PAGE_TEXT = {
   header: {
-    title: "Your LinkedIn Profile Says \"Seeking New Opportunities.\" That's a Cry for Help,\nNot a Strategy.",
-    subtitle: "The job search is broken. I have a blueprint for a tool that focuses on what truly matters—clarity and human connection—but it's not built yet. I'm looking for frustrated job seekers to help me create it.",
-    cta: "Help Fix the Job Search"
+    title: "Your LinkedIn Profile Screams \"I Can Do Anything!\" That's a Cry for Help,\nNot a Strategy.",
+    subtitle: "It seems counterintuitive, but the more specific you are about the role you want, the easier it will be to find your next role. And so I have a blueprint for a tool that will help you gain and share your role clarity with the people you know and have yet to meet.",
+    cta: "Help me target my next role"
   },
   problem: {
     title: "Why Your Job Search Feels Hopeless",
