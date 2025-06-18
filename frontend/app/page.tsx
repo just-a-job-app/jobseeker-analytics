@@ -281,9 +281,9 @@ const Index = () => {
 						<div className="grid md:grid-cols-2 gap-8">
 							<Card>
 								<div className="p-6">
-									<h3 className="text-xl font-semibold mb-4">Option 1: Become an Insider</h3>
+									<h3 className="text-xl font-semibold mb-4">Option 1: Sign up for Updates</h3>
 									<p className="text-default-500 mb-6">
-										Tired of applying into a black hole? Get exclusive access to our private beta and help shape a tool that puts jobseekers first.
+									Join the email list for updates when we launch.
 									</p>
 									<form className="space-y-4" onSubmit={(e) => handleNewsletterSignup(e, "founding")}>
 										<Input
@@ -301,7 +301,7 @@ const Index = () => {
 											type="submit"
 											isLoading={status === "loading"}
 										>
-											I Want Insider Access
+											I Want a Better Job Search
 										</Button>
 									</form>
 								</div>
@@ -309,29 +309,28 @@ const Index = () => {
 
 							<Card>
 								<div className="p-6">
-									<h3 className="text-xl font-semibold mb-4">Option 2: Follow the Launch</h3>
+									<h3 className="text-xl font-semibold mb-4">Option 2: DIY Install</h3>
+									<div className="aspect-w-16 aspect-h-9 mb-4">
+										<iframe
+											src="https://www.youtube.com/embed/6LXlCdcsXPE"
+											title="Step-by-step DIY Install Tutorial"
+											allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+											allowFullScreen
+											className="w-full h-full rounded-lg"
+										></iframe>
+									</div>
 									<p className="text-default-500 mb-6">
-										Want to see if we can actually build a better way to find work? Sign up and we'll only email you with major milestone updates.
-									</p>
-									<form className="space-y-4" onSubmit={(e) => handleNewsletterSignup(e, "updates")}>
-										<Input
-											className="w-full"
-											placeholder="Your Email Address"
-											type="email"
-											value={email}
-											onChange={(e) => setEmail(e.target.value)}
-											required
-											disabled={status === "loading"}
-										/>
-										<Button 
-											className="w-full" 
-											type="submit" 
-											variant="bordered"
-											isLoading={status === "loading"}
+										For people familiar with GitHub who prefer a hands-on setup, watch the step-by-step video tutorial above and follow the instructions {' '}
+										<a
+											href="https://github.com/just-a-job-app/jobseeker-analytics/blob/main/CONTRIBUTING.md"
+											target="_blank"
+											rel="noopener noreferrer"
+											className="text-purple-700 underline hover:text-purple-900"
 										>
-											Keep Me Posted
-										</Button>
-									</form>
+											here
+										</a>
+										. <br></br><br></br>No need to wait for a public launch.
+									</p>
 								</div>
 							</Card>
 						</div>
