@@ -48,7 +48,18 @@ export const Navbar = () => {
 		<>
 			<div className="bg-purple-100 text-purple-800 text-center py-1 text-sm">
 				<span className="font-medium">Beta Access:</span> If you're a beta user, use the Google login button
-				below. Not a beta user? Join our waitlist.
+				below. Not a beta user?{' '}
+				<button
+					type="button"
+					className="text-purple-700 underline hover:text-purple-900 focus:outline-none bg-transparent border-0 p-0 m-0 inline"
+					onClick={() => {
+						const el = document.getElementById('join-options');
+						if (el) el.scrollIntoView({ behavior: 'smooth' });
+					}}
+				>
+					Sign up
+				</button>
+				.
 			</div>
 			<HeroUINavbar
 				isBordered

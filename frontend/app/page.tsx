@@ -56,7 +56,7 @@ const Index = () => {
 				<div className="container mx-auto px-4 py-6 space-y-16">
 					{/* Section 1: The Header - The Focused Hook */}
 					<section className="max-w-4xl mx-auto text-center py-12">
-						<h1 className="text-4xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-indigo-600 leading-tight">
+						<h1 className="text-4xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-indigo-600 leading-normal">
 							Your LinkedIn Profile Says "Seeking New Opportunities." That's a Cry for Help, Not a
 							Strategy.
 						</h1>
