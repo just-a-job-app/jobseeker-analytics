@@ -1,0 +1,8 @@
+firecrawl>=0.1.0
+langchain-anthropic>=0.1.0
+langchain-core>=0.1.0
+python-docx>=0.8.11
+PyPDF2>=3.0.0
+latex2text>=0.1.0
+tqdm>=4.65.0
+python-dotenv>=1.0.0 
