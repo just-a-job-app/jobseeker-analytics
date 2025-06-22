@@ -9,7 +9,7 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers.json import SimpleJsonOutputParser
 from docx import Document
 from PyPDF2 import PdfReader
-from pylatexenc import latex2text
+from pylatexenc.latex2text import LatexNodes2Text
 from dotenv import load_dotenv
 from typing import Dict, List
 from datetime import datetime
@@ -182,8 +182,8 @@ Example matching_skills format with points:
             elif file_ext in ['.tex', '.ltx']:
                 with open(resume_path, 'r', encoding='utf-8') as f:
                     latex_content = f.read()
-                converter = latex2text()
-                return converter.convert(latex_content)
+                converter = LatexNodes2Text()
+                return converter.latex_to_text(latex_content)
             
             else:
                 raise ValueError(f"Unsupported file format: {file_ext}. Supported formats are: .txt, .pdf, .docx, .tex, .ltx")
