@@ -1,0 +1,89 @@
+name: Deploy to AWS Lightsail
+
+on:
+  push:
+    branches:
+    - main
+    - lightsail # remove before merge
+
+env:
+  LIGHTSAIL_SERVICE_NAME: just-a-job-app
+  CONTAINER_NAME: backend
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-24.04
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up AWS CLI
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.AWS_REGION }}
+
+    - name: Install Lightsail plugin
+      run: |
+        curl "https://s3.us-west-2.amazonaws.com/lightsailctl/latest/linux-amd64/lightsailctl" -o "/usr/local/bin/lightsailctl"
+        chmod +x /usr/local/bin/lightsailctl
+
+    - name: Build and push Docker image
+      env:
+        LIGHTSAIL_SERVICE_NAME: just-a-job-app
+        CONTAINER_NAME: backend
+      run: |
+        # Build Docker image
+        docker build -t ${LIGHTSAIL_SERVICE_NAME}-${CONTAINER_NAME}:${{ github.sha }} --platform=linux/amd64 ./backend
+        
+        # Push to Lightsail
+        aws lightsail push-container-image \
+          --service-name ${LIGHTSAIL_SERVICE_NAME} \
+          --label ${CONTAINER_NAME} \
+          --image ${LIGHTSAIL_SERVICE_NAME}-${CONTAINER_NAME}:${{ github.sha }}
+
+    - name: Deploy to Lightsail
+      env:
+        CONTAINER_PORT: 8000
+        PUBLIC_PORT: 80
+      run: |
+        # Create deployment JSON
+        cat > lc.json << EOF
+        {
+          "serviceName": "${LIGHTSAIL_SERVICE_NAME}",
+          "containers": {
+            "${CONTAINER_NAME}": {
+              "image": ":${LIGHTSAIL_SERVICE_NAME}.${CONTAINER_NAME}.latest",
+              "environment": {
+                "GOOGLE_SCOPES": "[]",
+                "REDIRECT_URI": "http://localhost:8000/login",
+                "GOOGLE_CLIENT_ID": "...",
+                "GOOGLE_API_KEY": "...",
+                "COOKIE_SECRET": "...",
+                "APP_URL": "http://localhost:3000",
+                "ENV": "staging"
+              },
+              "ports": {
+                "${CONTAINER_PORT}": "HTTP"
+              }
+            }
+          },
+          "publicEndpoint": {
+            "containerName": "${CONTAINER_NAME}",
+            "containerPort": ${CONTAINER_PORT},
+            "healthCheck": {
+              "healthyThreshold": 2,
+              "unhealthyThreshold": 2,
+              "timeoutSeconds": 5,
+              "intervalSeconds": 10,
+              "path": "/",
+              "successCodes": "200-499"
+            }
+          }
+        }
+        EOF
+        
+        # Deploy to Lightsail
+        aws lightsail create-container-service-deployment \
+          --cli-input-json file://lc.json
