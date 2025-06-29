@@ -56,7 +56,7 @@ pluggy==1.5.0
 preshed==3.0.9
 proto-plus==1.25.0
 protobuf==5.29.2
-psycopg2-binary==2.9.9
+psycopg2==2.9.10
 pyasn1==0.6.1
 pyasn1_modules==0.4.1
 pydantic==2.10.4
