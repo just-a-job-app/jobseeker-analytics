@@ -1,6 +1,6 @@
 import datetime
 import logging
-from fastapi import APIRouter, Depends, HTTPException, Request, BackgroundTasks
+from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import RedirectResponse, HTMLResponse
 from google_auth_oauthlib.flow import Flow
 
@@ -9,7 +9,8 @@ from utils.auth_utils import AuthenticatedUser
 from session.session_layer import create_random_session_string, validate_session
 from utils.config_utils import get_settings
 from utils.cookie_utils import set_conditional_cookie
-from routes.email_routes import fetch_emails_to_db
+import json
+from tasks.email_tasks import fetch_and_process_emails as celery_fetch_emails
 from slowapi import Limiter
 from slowapi.util import get_remote_address
 
@@ -28,7 +29,7 @@ APP_URL = settings.APP_URL
 
 @router.get("/login")
 @limiter.limit("10/minute")
-async def login(request: Request, background_tasks: BackgroundTasks):
+async def login(request: Request):
     """Handles Google OAuth2 login and authorization code exchange."""
     code = request.query_params.get("code")
     flow = Flow.from_client_secrets_file(
@@ -87,8 +88,18 @@ async def login(request: Request, background_tasks: BackgroundTasks):
             response = RedirectResponse(
                 url=f"{settings.APP_URL}/processing", status_code=303
             )
-            background_tasks.add_task(fetch_emails_to_db, user, request, last_fetched_date, user_id=user.user_id)
-            logger.info("Background task started for user_id: %s", user.user_id)
+            # Start Celery task for existing users
+            creds_dict = creds.to_json()
+            creds_dict = json.loads(creds_dict)
+            last_updated = last_fetched_date.isoformat() if last_fetched_date else None
+            task = celery_fetch_emails.delay(
+                user_id=user.user_id,
+                creds_dict=creds_dict,
+                start_date=None,
+                is_new_user=False,
+                last_updated=last_updated
+            )
+            logger.info("Celery task started for user_id: %s with task_id: %s", user.user_id, task.id)
         else:
             request.session["is_new_user"] = True
             response = RedirectResponse(

@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(docker*:*)",
+      "Bash(mkdir:*)",
+      "Bash(alembic revision:*)",
+      "Bash(ls:*)",
+      "Bash(mv:*)",
+      "Bash(*:*)",
+      "Bash(chmod:*)",
+      "Bash(pip install:*)"
+    ],
+    "deny": []
+  }
+}

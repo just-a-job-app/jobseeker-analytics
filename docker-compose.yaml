@@ -33,6 +33,25 @@ services:
       - postgres_data:/var/lib/postgresql/data  # Persist database data
       - ./backend/db/init.sql:/docker-entrypoint-initdb.d/init.sql
 
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    restart: always
+
+  celery_worker:
+    build: ./backend
+    command: celery -A celery_app worker --loglevel=info --queues=email_processing,default
+    volumes:
+      - ./backend:/app
+    env_file: "./backend/.env"
+    environment:
+      - IS_DOCKER_CONTAINER=1
+    depends_on:
+      - db
+      - redis
+    restart: always
+
 
 volumes:
   postgres_data:

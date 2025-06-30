@@ -1,0 +1,2 @@
+-- This file marks that we should skip old migrations
+-- The database is already in the correct state

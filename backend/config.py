@@ -26,6 +26,11 @@ class Settings(BaseSettings):
     DATABASE_URL_DOCKER: str = (
         "postgresql://postgres:postgres@db:5432/jobseeker_analytics"
     )
+    
+    # Gemini API Configuration
+    GEMINI_REQUESTS_PER_MINUTE: int = 10
+    GEMINI_MODEL: str = "gemini-2.0-flash-lite"
+    GEMINI_BATCH_SIZE: int = 1
 
     @field_validator("GOOGLE_SCOPES", mode="before")
     @classmethod

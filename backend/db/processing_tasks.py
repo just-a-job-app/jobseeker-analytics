@@ -19,5 +19,7 @@ class TaskRuns(SQLModel, table=True):
     status: str = Field(nullable=False)
     total_emails: int = 0
     processed_emails: int = 0
+    celery_task_id: str | None = Field(default=None, nullable=True)
+    error_message: str | None = Field(default=None, nullable=True)
 
     user: Users = Relationship()

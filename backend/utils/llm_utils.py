@@ -10,7 +10,7 @@ settings = get_settings()
 
 # Configure Google Gemini API
 genai.configure(api_key=settings.GOOGLE_API_KEY)
-model = genai.GenerativeModel("gemini-2.0-flash-lite")
+model = genai.GenerativeModel(settings.GEMINI_MODEL)
 logger = logging.getLogger(__name__)
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
@@ -100,8 +100,8 @@ def process_email(email_text):
         Email: {email_text}
     """
 
-    retries = 3  # Max retries
-    delay = 60  # Initial delay
+    retries = 5  # Max retries (increased from 3)
+    initial_delay = 30  # Initial delay in seconds
     for attempt in range(retries):
         try:
             logger.info("Calling generate_content")
@@ -128,10 +128,58 @@ def process_email(email_text):
                 logger.error("Empty response received from the model.")
                 return None
         except Exception as e:
-            if "429" in str(e):
+            if "429" in str(e) or "quota" in str(e).lower() or "resource_exhausted" in str(e).lower():
+                # Parse the error to understand the limit type
+                error_str = str(e)
+                logger.error(f"Gemini API rate limit error details: {error_str}")
+                
+                # Try to extract retry information
+                retry_info = "Unknown"
+                if "Retry after" in error_str:
+                    # Extract retry time if available
+                    import re
+                    match = re.search(r'Retry after ([\d.]+) seconds', error_str)
+                    if match:
+                        retry_info = f"{match.group(1)} seconds"
+                
+                # Check if it's RPM (requests per minute) or RPD (requests per day)
+                limit_type = "Unknown"
+                if "per minute" in error_str.lower():
+                    limit_type = "Requests Per Minute (RPM)"
+                elif "per day" in error_str.lower():
+                    limit_type = "Requests Per Day (RPD)"
+                elif "resource_exhausted" in error_str.lower():
+                    limit_type = "Resource Exhausted (likely daily quota)"
+                
+                # Exponential backoff: 30s, 60s, 120s, 240s, 480s
+                delay = initial_delay * (2 ** attempt)
+                
                 logger.warning(
-                    f"Rate limit hit. Retrying in {delay} seconds (attempt {attempt + 1})."
+                    f"\n=== GEMINI RATE LIMIT HIT ===\n"
+                    f"Limit Type: {limit_type}\n"
+                    f"Google Says: {error_str}\n"
+                    f"Retry Info: {retry_info}\n"
+                    f"Our Retry: Waiting {delay} seconds (attempt {attempt + 1}/{retries})\n"
+                    f"==========================="
                 )
+                
+                # Log to a separate file for analysis
+                import json
+                from datetime import datetime
+                rate_limit_log = {
+                    "timestamp": datetime.now().isoformat(),
+                    "error": error_str,
+                    "limit_type": limit_type,
+                    "retry_info": retry_info,
+                    "attempt": attempt + 1
+                }
+                
+                try:
+                    with open("gemini_rate_limits.log", "a") as f:
+                        f.write(json.dumps(rate_limit_log) + "\n")
+                except:
+                    pass
+                
                 time.sleep(delay)
             else:
                 logger.error(f"process_email exception: {e}")
