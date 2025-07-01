@@ -21,11 +21,11 @@ GENERIC_ATS_DOMAINS = [
     "otta.com",
 ]
 
-DEFAULT_DAYS_AGO = 30
+DEFAULT_DAYS_AGO = 90  # 3 months of emails
 # Get the current date
 current_date = datetime.now()
 
-# Subtract 30 days
+# Subtract specified days
 date_days_ago = current_date - timedelta(days=DEFAULT_DAYS_AGO)
 
 # Format the date in the required format (YYYY/MM/DD)

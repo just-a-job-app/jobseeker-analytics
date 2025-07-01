@@ -15,8 +15,21 @@ from db.utils.user_email_utils import create_user_email, check_email_exists
 from utils.email_utils import get_email_ids, get_email
 from utils.llm_utils import process_email
 from utils.config_utils import get_settings
-from utils.llm_optimization import BatchProcessor, RateLimitManager, check_pattern_cache
-from utils.gemini_retry import should_retry_task
+# Import Gemini-specific modules only if using Gemini
+import os
+if os.getenv("LLM_PROVIDER", "claude").lower() == "gemini":
+    from utils.llm_optimization import BatchProcessor, RateLimitManager, check_pattern_cache
+    from utils.gemini_retry import should_retry_task
+else:
+    # Dummy implementations for non-Gemini providers
+    class RateLimitManager:
+        def can_make_request(self): return True
+        def record_request(self): pass
+        def get_wait_time(self): return 0
+    
+    def should_retry_task(error): return False
+    def check_pattern_cache(email): return None
+    BatchProcessor = None
 from start_date.storage import get_start_date_email_filter
 from constants import QUERY_APPLIED_EMAIL_FILTER
 import time
@@ -120,19 +133,17 @@ def fetch_and_process_emails(
             db_session.commit()
             return {"status": "error", "message": "User not found"}
         
-        # Build query
-        start_date_query = get_start_date_email_filter(start_date) if start_date else ""
-        query = start_date_query
+        # Build query - ALWAYS use the 90-day filter
+        query = QUERY_APPLIED_EMAIL_FILTER
         
         if last_updated:
             last_updated_dt = datetime.fromisoformat(last_updated)
             additional_time = int(last_updated_dt.timestamp())
-            if not start_date or not is_new_user:
-                query = QUERY_APPLIED_EMAIL_FILTER
-                query += f" after:{additional_time}"
-            logger.info(f"Fetching emails after {last_updated}")
+            # Only fetch emails newer than last_updated
+            query += f" after:{additional_time}"
+            logger.info(f"Fetching emails after {last_updated} with query: {query}")
         else:
-            logger.info(f"Fetching all emails for user {user_id}")
+            logger.info(f"Fetching emails from last 90 days for user {user_id} with query: {query}")
         
         # Build Gmail service
         service = build("gmail", "v1", credentials=creds)
@@ -151,8 +162,12 @@ def fetch_and_process_emails(
         db_session.commit()
         
         # Initialize batch processor and rate limiter
-        batch_processor = BatchProcessor()
-        rate_limiter = RateLimitManager()
+        if os.getenv("LLM_PROVIDER", "claude").lower() == "gemini":
+            batch_processor = BatchProcessor()
+            rate_limiter = RateLimitManager()
+        else:
+            batch_processor = None
+            rate_limiter = RateLimitManager()  # Uses dummy implementation
         
         # Process emails
         email_records = []
@@ -199,11 +214,12 @@ def fetch_and_process_emails(
                         result = cached_result
                         logger.info(f"Using cached pattern for email {idx+1}")
                     else:
-                        # Wait if rate limit reached
-                        wait_time = rate_limiter.wait_time()
-                        if wait_time > 0:
-                            logger.info(f"Rate limit reached, waiting {wait_time:.1f} seconds...")
-                            time.sleep(wait_time)
+                        # Wait if rate limit reached (only for Gemini)
+                        if os.getenv("LLM_PROVIDER", "claude").lower() == "gemini":
+                            wait_time = rate_limiter.get_wait_time()
+                            if wait_time > 0:
+                                logger.info(f"Rate limit reached, waiting {wait_time:.1f} seconds...")
+                                time.sleep(wait_time)
                         
                         # Process with LLM
                         rate_limiter.record_request()

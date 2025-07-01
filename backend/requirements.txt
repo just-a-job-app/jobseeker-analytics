@@ -107,3 +107,5 @@ wrapt==1.17.0
 python-multipart==0.0.18
 celery==5.3.4
 redis==5.0.1
+anthropic==0.31.0
+openai==1.35.0
