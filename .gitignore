@@ -36,6 +36,7 @@ backend/*.db
 backend/*.csv
 backend/data/
 backend/.vscode/
+backend/users/
 
 # Alembic-specific excludes
 # Nothing to exclude as database migration files should be committed

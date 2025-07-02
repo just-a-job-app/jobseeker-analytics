@@ -6,9 +6,15 @@
       "Bash(alembic revision:*)",
       "Bash(ls:*)",
       "Bash(mv:*)",
-      "Bash(*:*)",
       "Bash(chmod:*)",
-      "Bash(pip install:*)"
+      "Bash(pip install:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(docker-compose up:*)",
+      "Bash(docker-compose:*)",
+      "Bash(curl:*)",
+      "Bash(docker cp:*)"
     ],
     "deny": []
   }

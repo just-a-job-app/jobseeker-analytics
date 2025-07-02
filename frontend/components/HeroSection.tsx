@@ -53,27 +53,11 @@ const HeroSection = ({ onTabChange }: HeroSectionProps) => {
 				</div>
 			</div>
 
-			<div className="relative overflow-hidden rounded-xl border border-muted shadow-xl mx-auto max-w-5xl">
-				<div className="bg-muted/50 absolute top-0 left-0 right-0 h-12 flex items-center px-4">
-					<div className="flex space-x-2">
-						<div className="h-3 w-3 rounded-full bg-red-500" />
-						<div className="h-3 w-3 rounded-full bg-yellow-500" />
-						<div className="h-3 w-3 rounded-full bg-green-500" />
-					</div>
-				</div>
-				<div className="pt-12 pb-2">
-					<img
-						alt="Just a Job App application screenshot"
-						className="w-full h-auto"
-						src="/sankey_diagram.png"
-					/>
-					<div className="bg-background/80 backdrop-blur-sm py-2 px-4 text-center">
-						<p className="text-sm text-default-600 font-medium">
-							No more abandoned spreadsheets. No more forgotten Notion tables.{" "}
-							<span className="text-purple-600 font-bold">Open source and free to use.</span>
-						</p>
-					</div>
-				</div>
+			<div className="text-center mt-12">
+				<p className="text-lg text-default-600 font-medium">
+					No more abandoned spreadsheets. No more forgotten Notion tables.{" "}
+					<span className="text-purple-600 font-bold">Open source and free to use.</span>
+				</p>
 			</div>
 		</section>
 	);

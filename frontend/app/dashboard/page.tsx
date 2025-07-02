@@ -5,8 +5,10 @@ import { addToast } from "@heroui/toast";
 import React from "react";
 
 import JobApplicationsDashboard, { Application } from "@/components/JobApplicationsDashboard";
-import ResponseRateCard from "@/components/response_rate_card";
-import UniqueOpenRateChart from "@/components/response_rate_chart";
+import StatsOverview from "@/components/StatsOverview";
+import StatusPieChart from "@/components/StatusPieChart";
+import WeeklyApplicationsGraph from "@/components/WeeklyApplicationsGraph";
+import SankeyDiagram from "@/components/SankeyDiagram";
 import { checkAuth } from "@/utils/auth";
 
 export default function Dashboard() {
@@ -17,6 +19,8 @@ export default function Dashboard() {
 	const [error, setError] = useState<string | null>(null);
 	const [currentPage, setCurrentPage] = useState(1);
 	const [totalPages, setTotalPages] = useState(1);
+	const [stats, setStats] = useState<any>(null);
+	const [statsLoading, setStatsLoading] = useState(true);
 	const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 	useEffect(() => {
@@ -60,6 +64,29 @@ export default function Dashboard() {
 
 		fetchData();
 	}, [apiUrl, router, currentPage]);
+
+	// Fetch stats data
+	useEffect(() => {
+		const fetchStats = async () => {
+			try {
+				const response = await fetch(`${apiUrl}/api/stats`, {
+					method: "GET",
+					credentials: "include"
+				});
+
+				if (response.ok) {
+					const result = await response.json();
+					setStats(result);
+				}
+			} catch (error) {
+				console.error("Failed to load stats:", error);
+			} finally {
+				setStatsLoading(false);
+			}
+		};
+
+		fetchStats();
+	}, [apiUrl]);
 
 	const nextPage = () => {
 		if (currentPage < totalPages) {
@@ -178,6 +205,98 @@ export default function Dashboard() {
 		}
 	}
 
+	async function downloadPieChart() {
+		setDownloading(true);
+		try {
+			const response = await fetch(`${apiUrl}/process-pie-chart`, {
+				method: "GET",
+				credentials: "include"
+			});
+
+			if (!response.ok) {
+				let description = "Something went wrong. Please try again.";
+
+				if (response.status === 429) {
+					description = "Download limit reached. Please wait before trying again.";
+				} else {
+					description = "Please try again or contact help@justajobapp.com if the issue persists.";
+				}
+
+				addToast({
+					title: "Failed to download Pie Chart",
+					description,
+					color: "danger"
+				});
+
+				return;
+			}
+
+			const blob = await response.blob();
+			const link = document.createElement("a");
+			const url = URL.createObjectURL(blob);
+			link.href = url;
+			link.download = `status_pie_chart_${new Date().toISOString().split("T")[0]}.png`;
+			document.body.appendChild(link);
+			link.click();
+			document.body.removeChild(link);
+			URL.revokeObjectURL(url);
+		} catch {
+			addToast({
+				title: "Something went wrong",
+				description: "Please try again",
+				color: "danger"
+			});
+		} finally {
+			setDownloading(false);
+		}
+	}
+
+	async function downloadWeeklyGraph() {
+		setDownloading(true);
+		try {
+			const response = await fetch(`${apiUrl}/process-weekly-graph`, {
+				method: "GET",
+				credentials: "include"
+			});
+
+			if (!response.ok) {
+				let description = "Something went wrong. Please try again.";
+
+				if (response.status === 429) {
+					description = "Download limit reached. Please wait before trying again.";
+				} else {
+					description = "Please try again or contact help@justajobapp.com if the issue persists.";
+				}
+
+				addToast({
+					title: "Failed to download Weekly Graph",
+					description,
+					color: "danger"
+				});
+
+				return;
+			}
+
+			const blob = await response.blob();
+			const link = document.createElement("a");
+			const url = URL.createObjectURL(blob);
+			link.href = url;
+			link.download = `weekly_applications_graph_${new Date().toISOString().split("T")[0]}.png`;
+			document.body.appendChild(link);
+			link.click();
+			document.body.removeChild(link);
+			URL.revokeObjectURL(url);
+		} catch {
+			addToast({
+				title: "Something went wrong",
+				description: "Please try again",
+				color: "danger"
+			});
+		} finally {
+			setDownloading(false);
+		}
+	}
+
 	const handleRemoveItem = async (id: string) => {
 		try {
 			// Make a DELETE request to the backend
@@ -209,14 +328,26 @@ export default function Dashboard() {
 
 	const responseRateContent = (
 		<>
-			<div className="flex flex-col gap-4 mt-4 mb-6 md:flex-row">
-				<div className="w-full md:w-[30%]">
-					<ResponseRateCard />
-				</div>
-				<div className="md:w-[70%]">
-					<UniqueOpenRateChart />
-				</div>
+			{/* Stats Overview */}
+			<div className="mt-4 mb-6">
+				<StatsOverview stats={stats} loading={statsLoading} />
 			</div>
+
+			{/* Sankey Diagram - Full Width */}
+			<div className="mb-6 w-full">
+				<SankeyDiagram data={data} />
+			</div>
+
+			{/* Status Pie Chart */}
+			<div className="mb-6 w-full">
+				<StatusPieChart data={data} />
+			</div>
+			
+			{/* Weekly Graph - Full Width */}
+			<div className="mb-6 w-full">
+				<WeeklyApplicationsGraph data={data} />
+			</div>
+
 		</>
 	);
 
@@ -229,7 +360,6 @@ export default function Dashboard() {
 			responseRate={responseRateContent}
 			totalPages={totalPages}
 			onDownloadCsv={downloadCsv}
-			onDownloadSankey={downloadSankey}
 			onNextPage={nextPage}
 			onPrevPage={prevPage}
 			onRemoveItem={handleRemoveItem}

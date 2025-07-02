@@ -38,7 +38,6 @@ interface JobApplicationsDashboardProps {
 	loading: boolean;
 	downloading: boolean;
 	onDownloadCsv: () => void;
-	onDownloadSankey: () => void;
 	onRemoveItem: (id: string) => void;
 	initialSortKey?: string;
 	responseRate?: React.ReactNode;
@@ -92,7 +91,6 @@ export default function JobApplicationsDashboard({
 	loading,
 	downloading,
 	onDownloadCsv,
-	onDownloadSankey,
 	onRemoveItem, // Accept the callback
 	initialSortKey = "Date (Newest)",
 	responseRate
@@ -314,16 +312,6 @@ export default function JobApplicationsDashboard({
 						</DropdownSection>
 					</DropdownMenu>
 				</Dropdown>
-				<Button
-					className="w-full sm:w-auto text-white"
-					color="primary"
-					isDisabled={!data || data.length === 0}
-					isLoading={downloading}
-					startContent={<DownloadIcon />}
-					onPress={onDownloadSankey}
-				>
-					Download Sankey Diagram
-				</Button>
 				<Button
 					className="w-full sm:w-auto text-white"
 					color="success"

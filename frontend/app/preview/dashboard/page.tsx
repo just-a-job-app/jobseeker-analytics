@@ -172,7 +172,6 @@ export default function PreviewDashboard() {
 			title="Preview Dashboard"
 			totalPages={totalPages}
 			onDownloadCsv={downloadCsv}
-			onDownloadSankey={downloadSankey}
 			onNextPage={nextPage}
 			onPrevPage={prevPage}
 			onRemoveItem={handleRemoveItem}
