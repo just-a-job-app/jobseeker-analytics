@@ -1,0 +1,29 @@
+name: Deploy to AWS Lightsail
+
+on:
+  push:
+    branches:
+    - main
+    - lightsail # remove before merge
+
+env:
+  LIGHTSAIL_SERVICE_NAME: just-a-job-app
+  CONTAINER_NAME: backend
+
+jobs:
+  deploy-to-staging:
+    runs-on: ubuntu-24.04
+    environment: staging
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - id: deploy
+      uses: ./.github/actions/deploy-to-lightsail
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-region: ${{ secrets.AWS_REGION }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        google-credentials-file-content: ${{ secrets.GOOGLE_CREDENTIALS_FILE_CONTENT }}
+        ls-database-name: ${{ secrets.LS_DATABASE_NAME }}
+        redirect-uri: ${{ secrets.REDIRECT_URI }}

@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 
 class Settings(BaseSettings):
-    GOOGLE_SCOPES: Annotated[List[str], NoDecode]
+    GOOGLE_SCOPES: Annotated[List[str], NoDecode] = '["https://www.googleapis.com/auth/gmail.readonly", "openid", "https://www.googleapis.com/auth/userinfo.email"]'
     REDIRECT_URI: str
     GOOGLE_CLIENT_ID: str
     GOOGLE_API_KEY: str
