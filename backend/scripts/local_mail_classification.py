@@ -271,29 +271,28 @@ def preprocess_email(agent: EmailClassifierAgent, item: dict) -> tuple:
 def process_email_classification(agent: EmailClassifierAgent, data: List[dict], experiment_name=None):
     """
     Process and classify emails, calculating accuracy metrics.
-    
+
     Args:
         agent: The EmailClassifierAgent instance
         data: List of email data items
         experiment_name (str): Optional experiment name
     """
-    # Initialize counters
-    correct_predictions = 0
-    processed_items = 0
-    processed_all_items = 0
-    job_related_correct = 0
-    job_related_total = 0
-    total_items_to_process = len(data)
+    # Only track metrics used in the README table
+    correct_predictions = 0  # Correct category predictions
+    job_related_correct = 0  # Correct job-related predictions
+    job_related_total = 0    # Total emails for job-related check
+    job_related_classified = 0  # Number of job-related emails classified into categories
+    total_items_to_process = len(data)  # Total emails processed
 
     print(f"Starting classification for {total_items_to_process} items...")
 
     with open('exp.txt', 'w', encoding='utf-8') as f_out, \
          open('predictions.txt', 'w', encoding='utf-8') as f_pred, \
          open('wrong_classifications.txt', 'w', encoding='utf-8') as f_wrong:
-        
+
         # Clear the wrong boolean classification file
         open('wrong_boolean_classification.txt', 'w').close()
-        
+
         for i, item in enumerate(data):
             # Preprocess email
             sequence_to_classify, was_trimmed = preprocess_email(agent, item)
@@ -305,25 +304,23 @@ def process_email_classification(agent: EmailClassifierAgent, data: List[dict], 
             if was_trimmed:
                 print(f"Trimmed mail replay to the latest for ID {item.get('id', 'unknown')}")
 
-            processed_all_items += 1
-            
             # Truncate email content to prevent token limit issues
             max_email_length = 512
             truncated_email = sequence_to_classify[:max_email_length]
 
             # Check if email is job-related
             job_related = agent.check_emails_if_job_related(item.get('subject', ''), truncated_email)
-            
+
             # Track job-related classification accuracy
             job_related_total += 1
             actual_is_job_related = actual_label not in ["False positive, not related to job search", "Not Job-Related"]
-            
+
             if job_related == actual_is_job_related:
                 job_related_correct += 1
             else:
                 # Save wrong job-related prediction
                 agent.save_job_related_wrong_prediction(item, job_related, actual_is_job_related, truncated_email)
-            
+
             print(f"Job-related prediction: {job_related}, Actual: {actual_is_job_related}")
 
             # Skip non-job-related emails
@@ -334,73 +331,94 @@ def process_email_classification(agent: EmailClassifierAgent, data: List[dict], 
                 print(f"Skipping item {i + 1} (ID: {item.get('id', 'unknown')}) - Predicted as Not Job Related")
                 continue
 
-            processed_items += 1
+            # Category classification
+            job_related_classified += 1
 
-            # Classify email category
             try:
                 predicted_label, confidence, result = agent.classify_email_category(truncated_email)
-                
+
                 print(f"Raw classifier output: {result}")
                 print(f"Predicted: {predicted_label} (confidence: {confidence:.3f})")
-                
+
             except Exception as e:
                 print(f"Error during classification: {e}")
                 continue
 
             # Check if prediction is correct
-            is_correct = agent.is_prediction_correct(predicted_label, actual_label)
-            
+            is_prediction_correct = agent.is_prediction_correct(predicted_label, actual_label)
+
             # Enhanced print output with clear formatting
             print(f"\n--- Item {i + 1} (ID: {item.get('id', 'unknown')}) ---")
             print(f"Predicted Category: {predicted_label}")
             print(f"Actual Label: {actual_label}")
-            print(f"Prediction Result: {'✅ CORRECT' if is_correct else '❌ WRONG'}")
-            if not is_correct:
+            print(f"Prediction Result: {'✅ CORRECT' if is_prediction_correct else '❌ WRONG'}")
+            if not is_prediction_correct:
                 print(f"Expected categories for '{predicted_label}': {agent.label_map.get(predicted_label, [])}")
             print("-" * 60)
 
-            if is_correct:
+            if is_prediction_correct:
                 correct_predictions += 1
             else:
                 # Save wrong predictions
-                agent.save_wrong_predictions(item, predicted_label, actual_label, confidence, 
-                                           result, sequence_to_classify, f_pred, f_wrong, i + 1)
-            
+                agent.save_wrong_predictions(item, predicted_label, actual_label, confidence,
+                                             result, sequence_to_classify, f_pred, f_wrong, i + 1)
+
             # Summary line for the log file
-            status_emoji = "✅" if is_correct else "❌"
-            output_line = f"{status_emoji} Item {i + 1}/{total_items_to_process} -> Predicted: '{predicted_label}' | Actual: '{actual_label}' | Result: {'CORRECT' if is_correct else 'WRONG'}"
+            status_emoji = "✅" if is_prediction_correct else "❌"
+            output_line = f"{status_emoji} Item {i + 1}/{total_items_to_process} -> Predicted: '{predicted_label}' | Actual: '{actual_label}' | Result: {'CORRECT' if is_prediction_correct else 'WRONG'}"
             f_out.write(output_line + '\n')
 
         # Calculate and write final accuracy
-        if processed_items > 0:
-            accuracy = (correct_predictions / processed_items) * 100
-            job_related_accuracy = (job_related_correct / job_related_total) * 100 if job_related_total > 0 else 0
-            
-            summary_lines = [
-                "\n--- Classification Complete ---",
-                f"Total items processed: {processed_all_items}",
-                f"Job-related items classified: {processed_items}",
-                f"Correct category predictions: {correct_predictions}",
-                f"Category classification accuracy: {accuracy:.2f}%",
-                "",
-                "--- Job-Related Classification Results ---",
-                f"Total job-related classifications: {job_related_total}",
-                f"Correct job-related predictions: {job_related_correct}",
-                f"Job-related classification accuracy: {job_related_accuracy:.2f}%"
-            ]
-            
-            for line in summary_lines:
-                print(line)
-                f_out.write(line.lstrip() + '\n')
+        if job_related_total > 0:
+            job_related_accuracy = (job_related_correct / job_related_total) * 100
+        else:
+            job_related_accuracy = 0.0
 
-            # Save experiment results to README_experiments.md
-            if experiment_name is not None:
-                readme_path = os.path.join(os.path.dirname(__file__), 'README_experiments.md')
-                with open(readme_path, 'a', encoding='utf-8') as f_readme:
-                    f_readme.write(f"## Experiment: {experiment_name}\n")
-                    for line in summary_lines:
-                        f_readme.write(line + '\n')
-                    f_readme.write('\n---\n\n')
+        if job_related_classified > 0:
+            subcategory_accuracy = (correct_predictions / job_related_classified) * 100
+        else:
+            subcategory_accuracy = 0.0
+
+        # Markdown table row (with updated label)
+        table_row = (
+            f"| {experiment_name} | {total_items_to_process} | {job_related_correct} | "
+            f"{job_related_accuracy:.2f}% | {correct_predictions} | {subcategory_accuracy:.2f}% |\n"
+        )
+
+        # Append to README_experiments.md table
+        readme_path = os.path.join(os.path.dirname(__file__), 'README_experiments.md')
+        header = (
+            "| Experiment ID | Total Emails | Correct Job-Related Predictions | "
+            "Job-Related Detection Accuracy | Correct Job-Related Subcategory Predictions | Job-Related Subcategory Accuracy |\n"
+            "|---------------|-------------|-------------------------------|-------------------------------|--------------------------------------|-------------------------------|\n"
+        )
+        if not os.path.exists(readme_path) or header not in open(readme_path, encoding='utf-8').read():
+            with open(readme_path, 'a', encoding='utf-8') as f_readme:
+                f_readme.write(header)
+        with open(readme_path, 'a', encoding='utf-8') as f_readme:
+            f_readme.write(table_row)
+
+        summary_lines = [
+            "\n--- Classification Complete ---",
+            f"Total emails processed: {total_items_to_process}",
+            f"Correct job-related predictions: {job_related_correct}",
+            f"Job-related detection accuracy: {job_related_accuracy:.2f}%",
+            f"Job-related emails classified into subcategories: {job_related_classified}",
+            f"Correct job-related subcategory predictions: {correct_predictions}",
+            f"Job-related subcategory accuracy: {subcategory_accuracy:.2f}%"
+        ]
+
+        for line in summary_lines:
+            print(line)
+            f_out.write(line.lstrip() + '\n')
+
+        # Save experiment results to README_experiments.md (legacy section)
+        if experiment_name is not None:
+            with open(readme_path, 'a', encoding='utf-8') as f_readme:
+                f_readme.write(f"\n## Experiment: {experiment_name}\n")
+                for line in summary_lines:
+                    f_readme.write(line + '\n')
+                f_readme.write('\n---\n\n')
         else:
             no_data_msg = "No data was classified."
             print(no_data_msg)
