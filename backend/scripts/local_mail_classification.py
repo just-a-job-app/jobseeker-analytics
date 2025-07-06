@@ -134,11 +134,12 @@ class EmailClassifierAgent:
             bool: True if the email is related to a job application, False otherwise.
         """
         text = f"{subject} {body}"
-        candidate_labels = ["Job Related", "Not Job Related"]
+        candidate_labels = ["Related to Specific Job Role (application, recruiter, real interview, offer, rejection, hiring process)",
+    "Not Job Related (mock interview, meetup, event, newsletter, or unrelated)"]
         result = self.classifier(text, candidate_labels)
         predicted_label = result['labels'][0]
         
-        return predicted_label == "Job Related"
+        return predicted_label == "Related to Specific Job Role (application, recruiter, real interview, offer, rejection, hiring process)"
 
     def classify_email_category(self, text: str) -> tuple:
         """
