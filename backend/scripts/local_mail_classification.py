@@ -5,6 +5,8 @@ import torch
 import re
 from typing import List
 import argparse
+import subprocess
+import os
 
 
 class EmailClassifierAgent:
@@ -266,13 +268,14 @@ def preprocess_email(agent: EmailClassifierAgent, item: dict) -> tuple:
     return sequence_to_classify, was_trimmed
 
 
-def process_email_classification(agent: EmailClassifierAgent, data: List[dict]):
+def process_email_classification(agent: EmailClassifierAgent, data: List[dict], experiment_name=None):
     """
     Process and classify emails, calculating accuracy metrics.
     
     Args:
         agent: The EmailClassifierAgent instance
         data: List of email data items
+        experiment_name (str): Optional experiment name
     """
     # Initialize counters
     correct_predictions = 0
@@ -389,6 +392,15 @@ def process_email_classification(agent: EmailClassifierAgent, data: List[dict]):
             for line in summary_lines:
                 print(line)
                 f_out.write(line.lstrip() + '\n')
+
+            # Save experiment results to README_experiments.md
+            if experiment_name is not None:
+                readme_path = os.path.join(os.path.dirname(__file__), 'README_experiments.md')
+                with open(readme_path, 'a', encoding='utf-8') as f_readme:
+                    f_readme.write(f"## Experiment: {experiment_name}\n")
+                    for line in summary_lines:
+                        f_readme.write(line + '\n')
+                    f_readme.write('\n---\n\n')
         else:
             no_data_msg = "No data was classified."
             print(no_data_msg)
@@ -405,8 +417,19 @@ def main():
     parser.add_argument('--filename', type=str, 
                        default='training_data_cleaned.json',
                        help='Full path to the training data JSON file')
-    
+    parser.add_argument('--experiment', type=str, default=None, help='Experiment name (defaults to last git commit ID)')
     args = parser.parse_args()
+
+    # Get last git commit ID if experiment not provided
+    experiment_name = args.experiment
+    if experiment_name is None:
+        try:
+            experiment_name = subprocess.check_output(['git', 'rev-parse', 'HEAD']).decode('utf-8').strip()[:6]
+        except Exception as e:
+            print(f"Warning: Could not fetch git commit ID: {e}")
+            experiment_name = 'unknown_commit'
+    if experiment_name == 'unknown_commit':
+        experiment_name = input('Please enter an experiment name: ')
 
     # Initialize the classifier agent
     agent = EmailClassifierAgent()
@@ -417,7 +440,7 @@ def main():
         return
     
     # Process and classify emails
-    process_email_classification(agent, data)
+    process_email_classification(agent, data, experiment_name=experiment_name)
 
 
 if __name__ == "__main__":
