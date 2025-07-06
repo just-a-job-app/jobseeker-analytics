@@ -30,32 +30,33 @@ class EmailClassifierAgent:
         )
 
         self.candidate_labels = [
-            "Rejection",
-            "Other",
-            "Interview Invitation",
-            "Application Confirmation",
-            "Assessment Sent",
-            "Availability Request",
-            "Action Required From Company",
-            "Did Not Apply - Inbound Request",
-            "Information Request"
+            "Closed – Rejection / Freeze / Withdrawn",
+            "Offer / Paperwork",
+            "Interview Invitation or Assessment sent",
+            "Initial Contact / Application Received",
+            "Offer Declined / Other"
         ]
 
         self.label_map = {
-            "Rejection": [
-                "Rejection"
+            "Closed – Rejection / Freeze / Withdrawn": [
+                "Rejection",
+                "Hiring freeze notification",
+                "Withdrew application"
             ],
-            "Other": ["Offer made", "Hiring freeze notification",
-                "Withdrew application", "Informational Outreach"],
-            "Interview Invitation": [
-                "Interview invitation"
+            "Offer / Paperwork": ["Offer made"],
+            "Interview Invitation or Assessment sent": [
+                "Interview invitation",
+                "Assessment sent",
+                "Availability request",
+                "Information request"  
             ],
-            "Application Confirmation": ["Application confirmation"],
-            "Assessment Sent": ["Assessment sent"],
-            "Availability Request": ["Availability request"],
-            "Action Required From Company": ["Action required from company"],
-            "Did Not Apply - Inbound Request": ["Did not apply - inbound request"],
-            "Information Request": ["Information request"]
+            "Initial Contact / Application Received": [
+                "Application confirmation",
+                "Did not apply - inbound request",
+            ],
+            "Offer Declined / Other": [
+                "Action required from company"
+            ]
         }
 
     def extract_latest_email(self, text: str) -> str:
@@ -125,7 +126,7 @@ class EmailClassifierAgent:
         head = re.sub(r"\s+\n", "\n", head)              # trim trailing spaces before newlines
         return head.strip()
 
-    def check_emails_if_job_related(self, subject: str, body: str) -> bool:
+    def check_emails_if_job_related(self, body: str) -> bool:
         """
         Check if the email text is related to a job application.
         
@@ -135,13 +136,12 @@ class EmailClassifierAgent:
         Returns:
             bool: True if the email is related to a job application, False otherwise.
         """
-        text = f"{subject} {body}"
-        candidate_labels = ["Related to Specific Job Role (application, recruiter, real interview, offer, rejection, hiring process)",
-    "Not Job Related (mock interview, meetup, event, newsletter, or unrelated)"]
-        result = self.classifier(text, candidate_labels)
+        # text = f"{subject} {body}"
+        candidate_labels = ["Job Related", "Not Job Related"]
+        result = self.classifier(body, candidate_labels)
         predicted_label = result['labels'][0]
         
-        return predicted_label == "Related to Specific Job Role (application, recruiter, real interview, offer, rejection, hiring process)"
+        return predicted_label == "Job Related"
 
     def classify_email_category(self, text: str) -> tuple:
         """
@@ -308,8 +308,9 @@ def process_email_classification(agent: EmailClassifierAgent, data: List[dict], 
             max_email_length = 512
             truncated_email = sequence_to_classify[:max_email_length]
 
+            # subject = item.get('subject', '')
             # Check if email is job-related
-            job_related = agent.check_emails_if_job_related(item.get('subject', ''), truncated_email)
+            job_related = agent.check_emails_if_job_related(truncated_email)
 
             # Track job-related classification accuracy
             job_related_total += 1
