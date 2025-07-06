@@ -36,25 +36,20 @@ class EmailClassifierAgent:
         ]
 
         self.label_map = {
-            "Closed – Rejection / Freeze / Withdrawn": [
-                "Rejection",
-                "Hiring freeze notification",
-                "Withdrew application"
+            "Rejection": [
+                "Rejection"
             ],
-            "Offer / Paperwork": ["Offer made"],
-            "Interview Invitation or Assessment sent": [
-                "Interview invitation",
-                "Assessment sent",
-                "Availability request",
-                "Information request"  
+            "Other": ["Offer made", "Hiring freeze notification",
+                "Withdrew application", "Informational Outreach"],
+            "Interview Invitation": [
+                "Interview invitation"
             ],
-            "Initial Contact / Application Received": [
-                "Application confirmation",
-                "Did not apply - inbound request",
-            ],
-            "Offer Declined / Other": [
-                "Action required from company"
-            ]
+            "Application confirmation": ["Application confirmation"],
+            "Assessment sent": ["Assessment sent"],
+            "Availability request": ["Availability request"],
+            "Action required from company": ["Action required from company"],
+            "Did not apply - inbound request": ["Did not apply - inbound request"],
+            "Information request": ["Information request"]
         }
 
     def extract_latest_email(self, text: str) -> str:
@@ -124,7 +119,7 @@ class EmailClassifierAgent:
         head = re.sub(r"\s+\n", "\n", head)              # trim trailing spaces before newlines
         return head.strip()
 
-    def check_emails_if_job_related(self, text: str) -> bool:
+    def check_emails_if_job_related(self, subject: str, body: str) -> bool:
         """
         Check if the email text is related to a job application.
         
@@ -134,6 +129,7 @@ class EmailClassifierAgent:
         Returns:
             bool: True if the email is related to a job application, False otherwise.
         """
+        text = f"{subject} {body}"
         candidate_labels = ["Job Related", "Not Job Related"]
         result = self.classifier(text, candidate_labels)
         predicted_label = result['labels'][0]
@@ -150,7 +146,7 @@ class EmailClassifierAgent:
         Returns:
             tuple: (predicted_label, confidence, full_result)
         """
-        result = self.classifier(text, self.candidate_labels)
+        result = self.classifier(text, self.candidate_labels) 
         predicted_label = result['labels'][0]
         confidence = result['scores'][0]
         
@@ -308,7 +304,7 @@ def process_email_classification(agent: EmailClassifierAgent, data: List[dict]):
             truncated_email = sequence_to_classify[:max_email_length]
 
             # Check if email is job-related
-            job_related = agent.check_emails_if_job_related(truncated_email)
+            job_related = agent.check_emails_if_job_related(item.get('subject', ''), truncated_email)
             
             # Track job-related classification accuracy
             job_related_total += 1
