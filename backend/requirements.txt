@@ -57,6 +57,7 @@ narwhals==1.38.0
 numpy==1.26.4
 oauthlib==3.2.2
 packaging==24.2
+pandas==2.3.0
 plotly==6.0.1
 pluggy==1.5.0
 preshed==3.0.9
