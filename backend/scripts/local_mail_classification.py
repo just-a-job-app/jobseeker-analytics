@@ -28,11 +28,15 @@ class EmailClassifierAgent:
         )
 
         self.candidate_labels = [
-            "Closed – Rejection / Freeze / Withdrawn",
-            "Offer / Paperwork",
-            "Interview Invitation or Assessment sent",
-            "Initial Contact / Application Received",
-            "Offer Declined / Other"
+            "Rejection",
+            "Other",
+            "Interview Invitation",
+            "Application Confirmation",
+            "Assessment Sent",
+            "Availability Request",
+            "Action Required From Company",
+            "Did Not Apply - Inbound Request",
+            "Information Request"
         ]
 
         self.label_map = {
@@ -44,12 +48,12 @@ class EmailClassifierAgent:
             "Interview Invitation": [
                 "Interview invitation"
             ],
-            "Application confirmation": ["Application confirmation"],
-            "Assessment sent": ["Assessment sent"],
-            "Availability request": ["Availability request"],
-            "Action required from company": ["Action required from company"],
-            "Did not apply - inbound request": ["Did not apply - inbound request"],
-            "Information request": ["Information request"]
+            "Application Confirmation": ["Application confirmation"],
+            "Assessment Sent": ["Assessment sent"],
+            "Availability Request": ["Availability request"],
+            "Action Required From Company": ["Action required from company"],
+            "Did Not Apply - Inbound Request": ["Did not apply - inbound request"],
+            "Information Request": ["Information request"]
         }
 
     def extract_latest_email(self, text: str) -> str:
