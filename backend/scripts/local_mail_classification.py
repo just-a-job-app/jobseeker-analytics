@@ -379,16 +379,17 @@ def process_email_classification(agent: EmailClassifierAgent, data: List[dict], 
         else:
             subcategory_accuracy = 0.0
 
+        timestamp = subprocess.check_output(['date', '+%Y-%m-%d %H:%M:%S']).decode('utf-8').strip()
         # Markdown table row (with updated label)
         table_row = (
-            f"| {experiment_name} | {total_items_to_process} | {job_related_correct} | "
+            f"| {experiment_name} | {timestamp} | {total_items_to_process} | {job_related_correct} | "
             f"{job_related_accuracy:.2f}% | {correct_predictions} | {subcategory_accuracy:.2f}% |\n"
         )
 
         # Append to README_experiments.md table
         readme_path = os.path.join(os.path.dirname(__file__), 'README_experiments.md')
         header = (
-            "| Experiment ID | Total Emails | Correct Job-Related Predictions | "
+            "| Experiment ID | Timestamp | Total Emails | Correct Job-Related Predictions | "
             "Job-Related Detection Accuracy | Correct Job-Related Subcategory Predictions | Job-Related Subcategory Accuracy |\n"
             "|---------------|-------------|-------------------------------|-------------------------------|--------------------------------------|-------------------------------|\n"
         )
@@ -398,31 +399,6 @@ def process_email_classification(agent: EmailClassifierAgent, data: List[dict], 
         with open(readme_path, 'a', encoding='utf-8') as f_readme:
             f_readme.write(table_row)
 
-        summary_lines = [
-            "\n--- Classification Complete ---",
-            f"Total emails processed: {total_items_to_process}",
-            f"Correct job-related predictions: {job_related_correct}",
-            f"Job-related detection accuracy: {job_related_accuracy:.2f}%",
-            f"Job-related emails classified into subcategories: {job_related_classified}",
-            f"Correct job-related subcategory predictions: {correct_predictions}",
-            f"Job-related subcategory accuracy: {subcategory_accuracy:.2f}%"
-        ]
-
-        for line in summary_lines:
-            print(line)
-            f_out.write(line.lstrip() + '\n')
-
-        # Save experiment results to README_experiments.md (legacy section)
-        if experiment_name is not None:
-            with open(readme_path, 'a', encoding='utf-8') as f_readme:
-                f_readme.write(f"\n## Experiment: {experiment_name}\n")
-                for line in summary_lines:
-                    f_readme.write(line + '\n')
-                f_readme.write('\n---\n\n')
-        else:
-            no_data_msg = "No data was classified."
-            print(no_data_msg)
-            f_out.write(no_data_msg + '\n')
 
 
 def main():
