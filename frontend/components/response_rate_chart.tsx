@@ -43,7 +43,7 @@ export default function JobTitleResponseChart() {
 				if (!response.ok) {
 					addToast({
 						title: "An error occurred while loading the response rate",
-						description: "Please try again or contact help@jobba.help if the issue persists.",
+						description: "Please try again or contact help@justajobapp.com if the issue persists.",
 						color: "danger"
 					});
 					return;

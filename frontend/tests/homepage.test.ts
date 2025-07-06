@@ -18,7 +18,9 @@ test.describe("Homepage Tests", () => {
 	});
 
 	test("Opt-in checkbox is visible", async ({ page }) => {
-		const optInCheckbox = page.locator('input[aria-label="Opt in to receive updates by email about jobba.help"]');
+		const optInCheckbox = page.locator(
+			'input[aria-label="Opt in to receive updates by email about Just a Job App"]'
+		);
 		await expect(optInCheckbox).toBeVisible();
 	});
 
@@ -35,11 +37,11 @@ test.describe("Homepage Tests", () => {
 	});
 
 	test("Discord card is visible and clickable", async ({ page }) => {
-		const discordCard = page.locator("button:has-text('jobba.help Community on Discord')");
+		const discordCard = page.locator("button:has-text('Just a Job App Community on Discord')");
 		await expect(discordCard).toBeVisible();
 
 		await discordCard.click();
-		await expect(page).toHaveURL("https://discord.com/invite/5tTT6WVQyw");
+		await expect(page).toHaveURL("https://discord.com/invite/gsdpMchCam");
 	});
 
 	test("Never Search Alone card is visible and clickable", async ({ page }) => {

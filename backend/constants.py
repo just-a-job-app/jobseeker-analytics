@@ -40,7 +40,7 @@ APPLIED_FILTER_OVERRIDES_PATH = (
     / "applied_email_filter_overrides.yaml"
 )
 QUERY_APPLIED_EMAIL_FILTER = (
-    f"after:{formatted_date} AND ({parse_base_filter_config(APPLIED_FILTER_PATH)})"
+    f"after:{formatted_date} -from:me -in:sent AND ({parse_base_filter_config(APPLIED_FILTER_PATH)})"
 )
 
 # ------ implement override filter later!! #

@@ -6,10 +6,10 @@ const Footer = () => {
 			<div className="container mx-auto px-4">
 				<div className="grid grid-cols-1 md:grid-cols-3 gap-8">
 					<div>
-						<h3 className="text-lg font-semibold mb-4">About jobba.help</h3>
+						<h3 className="text-lg font-semibold mb-4">About Just a Job App</h3>
 						<p className="text-default-500 mb-4">
-							Treat job hunting like a sales funnel – track response rates, follow-ups, and conversions,
-							just like a business. Be data-driven.
+							Built by jobseekers, for jobseekers. Track your applications automatically, straight from
+							your inbox.
 						</p>
 						<p className="text-sm text-default-500">Currently in beta (100 user testing limit)</p>
 					</div>
@@ -29,7 +29,7 @@ const Footer = () => {
 						<div className="space-y-4">
 							<a
 								className="flex items-center gap-2 text-sm text-default-500 hover:text-foreground transition-colors"
-								href="https://discord.gg/5tTT6WVQyw"
+								href="https://discord.gg/gsdpMchCam"
 								rel="noopener noreferrer"
 								target="_blank"
 							>
@@ -38,17 +38,17 @@ const Footer = () => {
 							</a>
 							<a
 								className="flex items-center gap-2 text-sm text-default-500 hover:text-foreground transition-colors"
-								href="mailto:help@jobba.help"
+								href="mailto:help@justajobapp.com"
 							>
 								<EmailIcon size={16} />
-								help@jobba.help
+								help@justajobapp.com
 							</a>
 							<a
 								className="flex items-center gap-2 text-sm text-default-500 hover:text-foreground transition-colors"
-								href="mailto:security@jobba.help"
+								href="mailto:security@justajobapp.com"
 							>
 								<EmailIcon size={16} />
-								security@jobba.help
+								security@justajobapp.com
 							</a>
 						</div>
 					</div>
@@ -56,10 +56,10 @@ const Footer = () => {
 
 				<div className="mt-12 pt-6 border-t text-center text-sm text-default-500">
 					<p>
-						jobba.help is open source - future developers can always fork this project and continue the
+						Just a Job App is open source - future developers can always fork this project and continue the
 						work.
 					</p>
-					<p className="mt-2">© {new Date().getFullYear()} jobba.help</p>
+					<p className="mt-2">© {new Date().getFullYear()} Just a Job App</p>
 				</div>
 			</div>
 		</footer>

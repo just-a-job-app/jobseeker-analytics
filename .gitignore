@@ -9,6 +9,7 @@ credentials.json
 .venv/
 venv/
 __pycache__/
+.idea/
 
 # Ignore all .env files
 .env

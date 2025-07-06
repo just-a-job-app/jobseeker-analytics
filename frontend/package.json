@@ -20,6 +20,8 @@
 		"@heroui/system": "^2.4.12",
 		"@heroui/theme": "^2.4.12",
 		"@heroui/toast": "^2.0.6",
+		"@octokit/auth-app": "^8.0.1",
+		"@octokit/rest": "^22.0.0",
 		"@react-aria/ssr": "3.9.7",
 		"@react-aria/visually-hidden": "3.8.18",
 		"clsx": "2.1.1",

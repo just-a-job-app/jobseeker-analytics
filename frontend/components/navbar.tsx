@@ -55,7 +55,7 @@ export const Navbar = () => {
 					<NextLink className="flex justify-start items-center gap-1" href="/">
 						<div className="flex items-center gap-2">
 							<span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-indigo-600">
-								jobba.help
+								Just a Job App
 							</span>
 							<span className="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-full">Beta</span>
 						</div>

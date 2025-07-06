@@ -1,0 +1,57 @@
+name: Manage Stale Assigned Issues
+
+on:
+  schedule:
+    # Runs daily at midnight UTC to check for inactive assigned issues.
+    # Adjust cron schedule as needed (e.g., "0 0 * * *" for daily at midnight UTC).
+    - cron: '0 0 * * *'
+  issue_comment:
+    types: [created]
+  # Allows manual triggering for testing or immediate cleanup.
+  workflow_dispatch:
+
+jobs:
+  unassign_stale_issues:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write # Required to unassign issues and post comments.
+
+    steps:
+      - name: Unassign stale issues and send reminders
+        uses: takanome-dev/assign-issue-action@v2.2
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          maintainers: 'lnovitz' # A list of maintainers authorized to use /assign and /unassign commands.
+          # Define 'Y' days: Unassign issue after 14 days of no activity
+          days_until_unassign: 30
+          # Enable the assignee ping
+          enable_reminder: true
+          max_assignments: 1
+          # Define 'X' days: Send reminder after 7 days of inactivity (halfway point of 14 days)
+          # Set to 'auto' for (days_until_unassign / 2) or a specific number like '7'
+          reminder_days: 14
+          # Customize the ping message to the assignee
+          reminder_comment: >
+            Hi @{{assignee}}! I'm checking in on issue "{{issue_title}}".
+            I completely understand that volunteer projects like this are not a priority,
+            and I certainly don't want to add any unnecessary stress or make you feel forced to volunteer.
+
+            We haven't seen any updates in this GitHub issue. Sometimes folks aren't sure what kind of update to provide,
+            so even something simple like these examples would be great:
+
+            - "Haven't had a chance to start this yet, but I'm still interested and plan to look at it by [specific date]."
+            - "I've done some initial research into [mention specific area, e.g., 'the API documentation'], but haven't written code yet."
+            - "I've started on this locally and hope to push a draft PR soon, even if it's just a few lines."
+
+            As the maintainer for this project, I'm just trying to keep us both accountable and make sure you're still interested in moving forward with this task.
+            
+            If I don't see any activity on this issue (even a quick comment saying you're planning on working on it)
+            in the next {{days_remaining}} days, I'll unassign you from the issue.
+            
+            This isn't meant to pressure you, but rather to ensure the task keeps moving forward and to give someone else the opportunity if your focus has shifted.
+
+            Please let me know if you have any questions or if there's anything I can do to support you.
+
+            Need help? Message the #chat channel in [Discord](https://discord.gg/gsdpMchCam). 
+            
+            When asking for help, please include the issue number, what you're stuck on, and what you've already tried.

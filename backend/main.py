@@ -44,8 +44,7 @@ app.state.limiter = limiter  # Ensure limiter is assigned
 # Configure CORS
 if settings.is_publicly_deployed:
     # Production CORS settings
-    origins = ["https://www.jobba.help", "https://www.staging.jobba.help", 
-    "https://www.app.justajobapp.com", "https://www.api.justajobapp.com"]
+    origins = ["https://www.justajobapp.com", "https://www.api.justajobapp.com"]
 else:
     # Development CORS settings
     origins = [

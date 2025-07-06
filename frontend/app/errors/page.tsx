@@ -45,7 +45,7 @@ function ErrorContent() {
 						Failed to fetch credentials from Google. Please{" "}
 						<a
 							className="text-blue-600 hover:underline font-semibold"
-							href={`mailto:help@jobba.help?subject=Login%20Credentials%20Error&body=${emailBody}`}
+							href={`mailto:help@justajobapp.com?subject=Login%20Credentials%20Error&body=${emailBody}`}
 						>
 							email our support team
 						</a>{" "}

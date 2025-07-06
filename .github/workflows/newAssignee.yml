@@ -1,0 +1,32 @@
+name: Auto-label assigned issues
+
+on:
+  issues:
+    types: [assigned]
+
+permissions:
+  issues: write
+
+jobs:
+  add-assigned-label:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Add "assigned" label to newly assigned issues
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const labelName = "📍 Assigned";
+            const issue_number = context.payload.issue.number;
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+
+            // Get current labels
+            const labels = context.payload.issue.labels.map(l => l.name);
+            if (!labels.includes(labelName)) {
+              await github.rest.issues.addLabels({
+                owner,
+                repo,
+                issue_number,
+                labels: [labelName]
+              });
+            }

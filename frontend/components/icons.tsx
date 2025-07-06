@@ -508,3 +508,41 @@ export const InfoIcon: React.FC<IconSvgProps> = ({ size = 24, width, height, ...
 		<line x1="12" x2="12.01" y1="8" y2="8" />
 	</svg>
 );
+
+export const MessageSquareIcon = ({ size = 24, ...props }: IconSvgProps) => (
+	<svg
+		fill="none"
+		height={size}
+		stroke="currentColor"
+		strokeLinecap="round"
+		strokeLinejoin="round"
+		strokeWidth="2"
+		viewBox="0 0 24 24"
+		width={size}
+		{...props}
+	>
+		<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+	</svg>
+);
+
+export const BugIcon = ({ size = 24, ...props }: IconSvgProps) => (
+	<svg
+		fill="none"
+		height={size}
+		stroke="currentColor"
+		strokeLinecap="round"
+		strokeLinejoin="round"
+		strokeWidth="2"
+		viewBox="0 0 24 24"
+		width={size}
+		{...props}
+	>
+		<path d="M8 2v4" />
+		<path d="M16 2v4" />
+		<path d="M12 2v4" />
+		<path d="M3 10h18" />
+		<path d="M3 14h18" />
+		<path d="M3 18h18" />
+		<path d="M8 22h8" />
+	</svg>
+);

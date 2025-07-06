@@ -10,6 +10,8 @@ Just a Job App tracks your job applications — automatically, straight from you
 
 No manual tracking. No extra tabs. Just a simpler job search.
 
+![sneakpeek](https://github.com/user-attachments/assets/ccfac1bd-ce57-4f62-894c-c55682ff2fb4)
+
 🎥 [Watch a demo](https://youtube.com/shorts/YT7qzTh2Q7A?feature=share)
 
 ## **Try the App**
@@ -19,13 +21,14 @@ No manual tracking. No extra tabs. Just a simpler job search.
 [Get on the waitlist](https://app.formbricks.com/s/cmagfwkuu3f8bug01e340supq) to reserve your spot.
 
 **Option 2: Do-It-Yourself (DIY) Install**
-
-- Already familiar with GitHub? Start with [CONTRIBUTING.md](https://github.com/lnovitz/jobseeker-analytics/blob/main/CONTRIBUTING.md). If you run into issues, hop into [Discord](https://discord.gg/5tTT6WVQyw).
-- Not technical? We’ll help you get set up! [Email us](mailto:help@justajobapp.com?subject=Help%20Running%20App%20On%20Personal%20Computer) to book time with a friendly developer
+-  📹 Video tutorial: https://youtu.be/6LXlCdcsXPE 
+- Already familiar with GitHub? Start with [CONTRIBUTING.md](https://github.com/lnovitz/jobseeker-analytics/blob/main/CONTRIBUTING.md).
+- If you run into issues, hop into [Discord](https://discord.gg/gsdpMchCam).
+- Not familiar with GitHub? We’ll help you get set up! [Email us](mailto:help@justajobapp.com?subject=Help%20Running%20App%20On%20Personal%20Computer) to book time with a friendly developer
 
 ## **Support & Feedback**
 
-- Join our [Discord community](https://discord.gg/5tTT6WVQyw)
+- Join our [Discord community](https://discord.gg/gsdpMchCam)
 - [Send us feedback](https://docs.google.com/forms/d/e/1FAIpQLSeTJB5JDo-SNdVn2Ga3caExaYlwempeYHhWbEiao3jNCWXogQ/viewform?usp=sharing)
 - Or email [help@justajobapp.com](mailto:help@justajobapp.com)
 

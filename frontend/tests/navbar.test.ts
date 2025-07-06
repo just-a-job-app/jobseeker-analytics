@@ -33,7 +33,7 @@ test.describe("Navbar Tests", () => {
 	test("should contain Sponsor button with correct link", async ({ page }) => {
 		const sponsorButton = await page.locator('[data-testid="Sponsor"]');
 		await expect(sponsorButton).toBeVisible();
-		await expect(sponsorButton).toHaveAttribute("href", "https://buymeacoffee.com/jobba.help");
+		await expect(sponsorButton).toHaveAttribute("href", "https://buymeacoffee.com/Just a Job App");
 	});
 
 	test("should show login button on the home page", async ({ page }) => {

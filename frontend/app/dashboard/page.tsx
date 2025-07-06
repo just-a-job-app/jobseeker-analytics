@@ -87,7 +87,7 @@ export default function Dashboard() {
 				if (response.status === 429) {
 					description = "Download limit reached. Please wait before trying again.";
 				} else {
-					description = "Please try again or contact help@jobba.help if the issue persists.";
+					description = "Please try again or contact help@justajobapp.com if the issue persists.";
 				}
 
 				addToast({
@@ -145,7 +145,7 @@ export default function Dashboard() {
 				if (response.status === 429) {
 					description = "Download limit reached. Please wait before trying again.";
 				} else {
-					description = "Please try again or contact help@jobba.help if the issue persists.";
+					description = "Please try again or contact help@justajobapp.com if the issue persists.";
 				}
 
 				addToast({

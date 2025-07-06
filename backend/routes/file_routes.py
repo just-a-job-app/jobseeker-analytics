@@ -10,7 +10,9 @@ import database
 from utils.file_utils import get_user_filepath
 from session.session_layer import validate_session
 from routes.email_routes import query_emails
+from utils.config_utils import get_settings
 
+settings = get_settings()
 
 # Logger setup
 logger = logging.getLogger(__name__)
@@ -30,50 +32,6 @@ async def download_file(request: Request, user_id: str = Depends(validate_sessio
         logger.info("user_id:%s downloading from filepath %s", user_id, filepath)
         return FileResponse(filepath)
     raise HTTPException(status_code=400, detail="File not found")
-
-
-@router.get("/write-to-csv")
-async def write_to_csv(request: Request, db_session: database.DBSession, user_id: str = Depends(validate_session)):
-    if not user_id:
-        return RedirectResponse("/logout", status_code=303)
-
-    # Get job related email data from DB
-    emails = query_emails(request, db_session=db_session, user_id=user_id)
-    if not emails:
-        raise HTTPException(status_code=400, detail="No data found to write")
-
-    directory = get_user_filepath(user_id)
-    os.makedirs(directory, exist_ok=True)  # Ensure the directory exists
-
-    filename = "emails.csv"
-    filepath = os.path.join(directory, filename)
-
-    # Key: DB field name; Value: Human-readable field name
-    field_mapping = {
-        "company_name": "Company Name",
-        "application_status": "Application Status",
-        "received_at": "Received At",
-        "subject": "Subject",
-        "email_from": "Sender"
-    }
-
-    selected_fields = list(field_mapping.keys())
-    headers = list(field_mapping.values())
-
-    # Filter out unwanted fields
-    processed_emails = [
-        {key: value for key, value in email if key in selected_fields} for email in emails
-    ]
-
-    # Write to CSV
-    with open(filepath, mode="w", newline="") as file:
-        writer = csv.writer(file)
-        writer.writerow(headers)
-        for row in processed_emails:
-            writer.writerow([row[field] for field in selected_fields])
-
-    logger.info("CSV file created at %s", filepath)
-    return {"message": f"CSV file written successfully at {filepath}"}
 
 
 # Write and download csv
@@ -103,6 +61,10 @@ async def process_csv(request: Request, db_session: database.DBSession, user_id:
         "subject": "Subject",
         "email_from": "Sender"
     }
+
+    if not settings.is_publicly_deployed:
+        logger.info("DEBUG: Adding message id to output")
+        field_mapping.update({"id": "Message ID"})
 
     selected_fields = list(field_mapping.keys())
     headers = list(field_mapping.values())

@@ -1,0 +1,32 @@
+name: "Welcome new contributors"
+
+on:
+  issues:
+    types: opened
+  pull_request_target:
+    types: opened
+
+permissions:
+  pull-requests: write
+  issues: write
+
+jobs:
+  welcome-message:
+    name: Welcoming New Users
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: github.event.action == 'opened'
+    steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@0634a2670c59f64b4a01f0f96f84700a4088b9f0 # v2.12.0
+        with:
+          egress-policy: audit
+
+      - uses: actions/first-interaction@3c71ce730280171fd1cfb57c00c774f8998586f7 # v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          pr-message: |-
+            Thank you so much for making your first Pull Request and taking the time to improve Just A Job App! 🙏
+            Feel free to join the conversation on [Discord](https://discord.gg/gsdpMchCam) if you need any help or have any questions.
+          issue-message: |
+            Thank you for opening your first issue! 🙏 A maintainer will get back to you as soon as possible.

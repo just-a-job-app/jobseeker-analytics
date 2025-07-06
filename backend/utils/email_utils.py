@@ -14,8 +14,10 @@ logger = logging.getLogger(__name__)
 
 def clean_whitespace(text: str) -> str:
     """
-    remove \n, \r, and \t from strings
+    remove \n, \r, and \t from strings. If text is None, return an empty string.
     """
+    if text is None:
+        return ""
     return text.replace("\n", "").replace("\r", "").replace("\t", "")
 
 
@@ -82,7 +84,7 @@ def get_email_content(email_data: Dict[str, Any]) -> str:
     return text_content
 
 
-def get_email(message_id: str, gmail_instance=None):
+def get_email(message_id: str, gmail_instance=None, user_email: str = None):
     if gmail_instance:
         try:
             message = (
@@ -95,8 +97,6 @@ def get_email(message_id: str, gmail_instance=None):
                 "utf-8"
             )
             mime_msg = email.message_from_string(msg_str)
-            # logger.info("mime_msg: %s", mime_msg)
-            # logger.info("msg_str: %s", msg_str)
             email_data = {
                 "id": message_id,
                 "threadId": message.get("threadId", None),
@@ -113,6 +113,13 @@ def get_email(message_id: str, gmail_instance=None):
             email_data["to"] = clean_whitespace(mime_msg.get("To"))
             email_data["subject"] = clean_whitespace(mime_msg.get("Subject"))
             email_data["date"] = mime_msg.get("Date")
+
+            # Exclude if sender is user_email and to is not user_email
+            if user_email:
+                from_addr = email_data["from"] or ""
+                to_addr = email_data["to"] or ""
+                if user_email.lower() in from_addr.lower() and user_email.lower() not in to_addr.lower():
+                    return None
 
             # Extract body of the email
             if mime_msg.is_multipart():
