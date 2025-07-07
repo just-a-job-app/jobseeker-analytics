@@ -173,6 +173,7 @@ def get_email_ids(query: tuple = None, gmail_instance=None):
             .list(
                 userId="me",
                 q=query,
+                format="full",
                 includeSpamTrash=True,
                 pageToken=page_token,
             )
