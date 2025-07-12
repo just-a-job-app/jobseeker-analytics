@@ -111,32 +111,74 @@ async def process_sankey(request: Request, db_session: database.DBSession, user_
     emails = query_emails(request, db_session=db_session, user_id=user_id)
     if not emails:
         raise HTTPException(status_code=400, detail="No data found to write")
- 
+    
     for email in emails:
         # normalize the output
         status = email.application_status.strip().lower()
-        num_applications += 1   
-        if status == "offer":
+        num_applications += 1
+        
+        # Use more flexible matching to handle variations in LLM output
+        if any(keyword in status for keyword in ["offer", "offer made", "congratulations", "pleased to offer"]):
             num_offers += 1
-        elif status == "rejected":
+        elif any(keyword in status for keyword in ["reject", "rejected", "rejection", "regret", "unfortunately"]):
             num_rejected += 1
-        elif status == "request for availability":
+        elif any(keyword in status for keyword in ["availability", "request for availability", "schedule", "when are you available"]):
             num_request_for_availability += 1
-        elif status == "interview scheduled":
+        elif any(keyword in status for keyword in ["interview", "call", "meeting", "invite"]):
             num_interview_scheduled += 1
-        elif status == "no response":
+        elif any(keyword in status for keyword in ["no response", "no reply", "unresponsive", "freeze", "hold", "paused", "canceled"]):
             num_no_response += 1
+        elif any(keyword in status for keyword in ["assessment", "test", "challenge", "assignment"]):
+            num_interview_scheduled += 1
+        else:
+            # Fallback: treat unknown statuses as no response
+            num_no_response += 1
+    
+    # Check if we have any categorized data
+    total_categorized = num_offers + num_rejected + num_request_for_availability + num_interview_scheduled + num_no_response
+    if total_categorized == 0:
+        logger.warning("user_id:%s - No emails matched any status categories, creating fallback diagram", user_id)
+        # Create a simple fallback diagram
+        num_no_response = num_applications
 
-    # Create the Sankey diagram
+    # Create the enhanced Sankey diagram
     fig = go.Figure(go.Sankey(
-        node=dict(label=[f"Applications ({num_applications})", 
-                         f"Offers ({num_offers})", 
-                         f"Rejected ({num_rejected})", 
-                         f"Request for Availability ({num_request_for_availability})", 
-                         f"Interview Scheduled ({num_interview_scheduled})", 
-                         f"No Response ({num_no_response})"]),
-        link=dict(source=[0, 0, 0, 0, 0], target=[1, 2, 3, 4, 5], 
-                  value=[num_offers, num_rejected, num_request_for_availability, num_interview_scheduled, num_no_response])))
+        node=dict(
+            pad=20,
+            thickness=25,
+            line=dict(color="black", width=1),
+            label=[f"Applications ({num_applications})", 
+                   f"Offers ({num_offers})", 
+                   f"Rejected ({num_rejected})", 
+                   f"Request for Availability ({num_request_for_availability})", 
+                   f"Interview Scheduled ({num_interview_scheduled})", 
+                   f"No Response ({num_no_response})"],
+            color=["#1f77b4", "#2ca02c", "#d62728", "#ff7f0e", "#9467bd", "#8c564b"]
+        ),
+        link=dict(
+            source=[0, 0, 0, 0, 0], 
+            target=[1, 2, 3, 4, 5], 
+            value=[num_offers, num_rejected, num_request_for_availability, num_interview_scheduled, num_no_response],
+            color=["rgba(50, 160, 44, 0.4)", "rgba(214, 39, 40, 0.4)", "rgba(255, 127, 14, 0.4)", 
+                   "rgba(148, 103, 189, 0.4)", "rgba(140, 86, 75, 0.4)"]
+        )
+    ))
+    
+    # Add proper layout configuration
+    fig.update_layout(
+        title={
+            'text': f"Job Application Flow Analysis<br><sub>Total Applications: {num_applications}</sub>",
+            'x': 0.5,
+            'xanchor': 'center',
+            'font': {'size': 22, 'color': '#2E86AB'}
+        },
+        font=dict(size=18, family="Arial, sans-serif"),
+        width=1200,
+        height=700,
+        paper_bgcolor="white",
+        plot_bgcolor="white",
+        margin=dict(l=50, r=50, t=100, b=50)
+    )
 
 
     # Define the user's file path and ensure the directory exists
@@ -148,19 +190,81 @@ async def process_sankey(request: Request, db_session: database.DBSession, user_
     os.makedirs(directory, exist_ok=True)
 
     try:
-        # Save the Sankey diagram as PNG
-        fig.write_image(filepath)  # Requires Kaleido for image export
-        logger.info("user_id:%s Sankey diagram saved to %s", user_id, filepath)
+        # Save the Sankey diagram as PNG with enhanced settings
+        fig.write_image(
+            filepath, 
+            width=1200, 
+            height=700, 
+            scale=2,  # High resolution
+            format="png",
+            engine="kaleido"
+        )
+        
+        # Verify the file was created and has content
+        if not os.path.exists(filepath):
+            raise Exception("Sankey diagram file was not created")
+        
+        file_size = os.path.getsize(filepath)
+        if file_size == 0:
+            raise Exception("Sankey diagram file is empty")
+        
+        logger.info("user_id:%s Sankey diagram saved to %s (size: %d bytes)", user_id, filepath, file_size)
 
         # Return the file with correct headers and explicit filename
         return FileResponse(
             filepath,
             media_type="image/png",  # Correct media type for PNG
             filename=filename, 
-            headers={"Content-Disposition": f"attachment; filename={filename}"}  # Ensure correct filename in header
+            headers={
+                "Content-Disposition": f"attachment; filename={filename}",
+                "Cache-Control": "no-cache, no-store, must-revalidate",
+                "Pragma": "no-cache",
+                "Expires": "0"
+            }
         )
     except Exception as e:
         logger.error("Error generating Sankey diagram for user_id:%s - %s", user_id, str(e))
-        raise HTTPException(status_code=500, detail="Error generating Sankey diagram")
+        
+        # Clean up any partially created file
+        if os.path.exists(filepath):
+            try:
+                os.remove(filepath)
+                logger.info("Cleaned up partially created file: %s", filepath)
+            except Exception as cleanup_error:
+                logger.warning("Failed to clean up file %s: %s", filepath, str(cleanup_error))
+        
+        # Try to create a simple text-based fallback image
+        try:
+            import matplotlib.pyplot as plt
+            
+            fig_fallback, ax = plt.subplots(figsize=(12, 8))
+            ax.text(0.5, 0.7, f"Sankey Diagram Generation Failed", 
+                   ha='center', va='center', fontsize=20, color='red')
+            ax.text(0.5, 0.5, f"Total Applications: {num_applications}", 
+                   ha='center', va='center', fontsize=16)
+            ax.text(0.5, 0.4, f"Offers: {num_offers} | Rejected: {num_rejected}", 
+                   ha='center', va='center', fontsize=14)
+            ax.text(0.5, 0.3, f"Interviews: {num_interview_scheduled} | Availability Requests: {num_request_for_availability}", 
+                   ha='center', va='center', fontsize=14)
+            ax.text(0.5, 0.1, "Please contact support if this issue persists", 
+                   ha='center', va='center', fontsize=12, color='gray')
+            ax.set_xlim(0, 1)
+            ax.set_ylim(0, 1)
+            ax.axis('off')
+            
+            fallback_filename = "sankey_fallback.png"
+            fallback_filepath = os.path.join(directory, fallback_filename)
+            plt.savefig(fallback_filepath, dpi=150, bbox_inches='tight')
+            plt.close()
+            
+            return FileResponse(
+                fallback_filepath,
+                media_type="image/png",
+                filename=fallback_filename,
+                headers={"Content-Disposition": f"attachment; filename={fallback_filename}"}
+            )
+        except Exception as fallback_error:
+            logger.error("Fallback diagram creation also failed: %s", str(fallback_error))
+            raise HTTPException(status_code=500, detail=f"Error generating Sankey diagram: {str(e)}")
 
    
