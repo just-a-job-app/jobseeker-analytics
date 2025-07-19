@@ -1,3 +1,4 @@
+import os  
 import logging
 from datetime import datetime
 from fastapi import FastAPI, HTTPException, Request, Depends
@@ -41,8 +42,18 @@ app.include_router(file_routes.router)
 app.include_router(users_routes.router)
 app.include_router(start_date_routes.router)
 
-limiter = Limiter(key_func=get_remote_address)
-app.state.limiter = limiter  # Ensure limiter is assigned
+def get_limiter():
+    """Returns appropriate limiter based on environment"""
+    if os.getenv("DISABLE_RATE_LIMITS") == "True":
+        # Create a no-op limiter for development
+        noop_limiter = Limiter(key_func=get_remote_address)
+        noop_limiter.limit = lambda *args, **kwargs: lambda f: f
+        return noop_limiter
+    return Limiter(key_func=get_remote_address)
+
+# Replace the existing limiter assignment with:
+limiter = get_limiter()
+app.state.limiter = limiter
 
 # Configure CORS
 if settings.is_publicly_deployed:
