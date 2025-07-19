@@ -4,11 +4,11 @@ from db.user_emails import UserEmails
 from sqlmodel import Session, select, func
 from db.users import Users 
 from datetime import datetime, timedelta, timezone 
+from database import engine
 
 logger = logging.getLogger(__name__)
 
 def get_last_email_date(user_id: str) -> Optional[datetime]:
-    from database import engine
     """
     Checks date of user's most recent email 
 
@@ -21,7 +21,6 @@ def get_last_email_date(user_id: str) -> Optional[datetime]:
     return row
 
 def user_exists(user) -> Tuple[bool, Optional[datetime]]:
-    from database import engine
     """
     Checks if user is already in the database
 
@@ -39,7 +38,6 @@ def add_user(user, request, start_date=None) -> Users:
     Writes user data to the users model and session storage
 
     """
-    from database import engine
     with Session(engine) as session:
         # Check if the user already exists in the database
         existing_user = session.exec(select(Users).where(Users.user_id == user.user_id)).first()
@@ -73,3 +71,23 @@ def add_user(user, request, start_date=None) -> Users:
         else:
             logger.info(f"User {user.user_id} already exists in the database.")
             return existing_user
+        
+def update_user_start_date(user_id: str, new_start_date: str) -> bool:
+    """
+    Updates the user's start date in the database.
+
+    :param user_id: The ID of the user whose start date is to be updated.
+    :param new_start_date: The new start date to set for the user.
+    :return: True if the update was successful, False otherwise.
+    """
+    with Session(engine) as session:
+        user = session.exec(select(Users).where(Users.user_id == user_id)).first()
+        if not user:
+            logger.error(f"User {user_id} not found in the database.")
+            return False
+        
+        user.start_date = new_start_date
+        session.add(user)
+        session.commit()
+        logger.info(f"Updated start date for user {user_id} to {new_start_date}.")
+        return True

@@ -1,7 +1,7 @@
 import logging
 from fastapi import APIRouter, Request, Form, Depends
 from fastapi.responses import JSONResponse, HTMLResponse
-from db.utils.user_utils import add_user
+from db.utils.user_utils import add_user, update_user_start_date
 import json
 from utils.auth_utils import AuthenticatedUser
 from google.oauth2.credentials import Credentials
@@ -86,3 +86,34 @@ async def get_session_data(request: Request, user_id: str = Depends(validate_ses
     logger.info(f"Session data being returned: {session_data}")
 
     return JSONResponse(content=session_data)
+
+@router.put("/change-start-date")
+@limiter.limit("1/minute")
+async def change_start_date(request: Request, new_start_date: str = Form(...), user_id: str = Depends(validate_session)):
+    """Changes the user's job search start date in the database."""
+    user_id = request.session.get("user_id")
+
+    if not user_id:
+        return HTMLResponse(content="Invalid request. Please log in again.", status_code=400)
+
+    # Retrieve stored credentials
+    creds_json = request.session.get("creds")
+    if not creds_json:
+        logger.error(f"user_id:{user_id} missing credentials /change-start-date")
+        return HTMLResponse(content="User not authenticated. Please log in again.", status_code=401)
+
+    try:
+        # Convert JSON string back to Credentials object
+        creds_dict = json.loads(creds_json)
+        creds = Credentials.from_authorized_user_info(creds_dict)  # Convert dict to Credentials
+        user = AuthenticatedUser(creds, new_start_date)  # Corrected: Now passing Credentials object
+
+        # Save new start date in DB
+        update_user_start_date(user.user_id, new_start_date)
+
+        logger.info(f"user_id:{user_id} changed start date to {new_start_date}")
+
+        return JSONResponse(content={"message": "Start date changed successfully"}, status_code=200)
+    except Exception as e:
+        logger.error(f"Error reconstructing credentials: {e}")
+        return HTMLResponse(content="Failed to change start date. Try again.", status_code=500)
