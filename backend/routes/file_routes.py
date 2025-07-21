@@ -100,6 +100,25 @@ async def process_sankey(request: Request, db_session: database.DBSession, user_
     if not user_id:
         return RedirectResponse("/logout", status_code=303)
     
+    # Color constants for consistent styling across Sankey and fallback
+    STATUS_COLORS = {
+        "applications": "#4A90E2",
+        "offer_made": "#7ED321",  
+        "rejection": "#D0021B",
+        "interview_invitation": "#05b7d3",
+        "assessment_sent": "#8d5cf3",
+        "availability_request": "#FF6900",
+        "application_confirmation": "#50E3C2",
+        "information_request": "#B8E986",
+        "inbound_request": "#16b682",
+        "action_required": "#F5DD23",
+        "hiring_freeze": "#8B572A",
+        "withdrew_application": "#E91E63",
+        "false_positive": "#FF69B4",
+        "other_unknown": "#9E9E9E",
+        "link_color": "rgba(234, 237, 242, 0.8)"
+    }
+    
     num_applications = 0
     num_no_response = 0
     
@@ -196,21 +215,21 @@ async def process_sankey(request: Request, db_session: database.DBSession, user_
                 # Other (only if there are unknown statuses)
                 f"Other/Unknown ({num_no_response})" if num_no_response > 0 else None
             ],
-            # Vibrant color scheme for nodes
+            # Vibrant color scheme for nodes using constants
             color=[
-                "#4A90E2",  # Applications - bright blue
-                "#7ED321",  # Offer Made - bright green
-                "#D0021B",  # Rejection - bright red
-                "#BD10E0",  # Interview Invitation - bright purple
-                "#9013FE",  # Assessment Sent - bright violet
-                "#FF6900",  # Availability Request - bright orange
-                "#50E3C2",  # Application Confirmation - bright teal
-                "#B8E986",  # Information Request - light green
-                "#417505",  # Inbound Request - dark green
-                "#F5A623",  # Action Required - bright yellow
-                "#8B572A",  # Hiring Freeze - brown
-                "#E91E63",  # Withdrew Application - pink
-                "#9E9E9E",  # Other/Unknown - gray
+                STATUS_COLORS["applications"],
+                STATUS_COLORS["offer_made"],
+                STATUS_COLORS["rejection"],
+                STATUS_COLORS["interview_invitation"],
+                STATUS_COLORS["assessment_sent"],
+                STATUS_COLORS["availability_request"],
+                STATUS_COLORS["application_confirmation"],
+                STATUS_COLORS["information_request"],
+                STATUS_COLORS["inbound_request"],
+                STATUS_COLORS["action_required"],
+                STATUS_COLORS["hiring_freeze"],
+                STATUS_COLORS["withdrew_application"],
+                STATUS_COLORS["other_unknown"],
             ]
         ),
         link=dict(
@@ -229,8 +248,8 @@ async def process_sankey(request: Request, db_session: database.DBSession, user_
                 num_hiring_freeze,
                 num_withdrew_application,
             ] + ([num_no_response] if num_no_response > 0 else []),
-            # All links in neutral grey with transparency
-            color=["rgba(234, 237, 242, 0.8)"] * (12 if num_no_response > 0 else 11)  # Uniform grey links
+            # All links in neutral grey with transparency using constant
+            color=[STATUS_COLORS["link_color"]] * (12 if num_no_response > 0 else 11)
         )
     ))
     
@@ -334,22 +353,22 @@ async def process_sankey(request: Request, db_session: database.DBSession, user_
             ax.text(0.5, 0.85, "Individual LLM Status Categories", 
                    ha='center', va='center', fontsize=18, fontweight='bold', color='#333333')
             
-            # All LLM statuses with unique colors (using text symbols instead of emojis)
+            # All LLM statuses with unique colors using the same constants as Sankey
             # Include False Positives and Unknown Status in fallback for debugging
             detailed_statuses = [
-                ("● Offer Made", num_offer_made, "#2ca02c"),
-                ("● Rejection", num_rejection, "#d62728"),
-                ("● Interview Invitation", num_interview_invitation, "#9467bd"),
-                ("● Assessment Sent", num_assessment_sent, "#8e4ec6"),
-                ("● Availability Request", num_availability_request, "#ff7f0e"),
-                ("● Application Confirmation", num_application_confirmation, "#17a2b8"),
-                ("● Information Request", num_information_request, "#6c757d"),
-                ("● Inbound Request", num_inbound_request, "#28a745"),
-                ("● Action Required", num_action_required, "#ffc107"),
-                ("● Hiring Freeze", num_hiring_freeze, "#6f42c1"),
-                ("● Withdrew Application", num_withdrew_application, "#dc3545"),
-                ("● Other/Unknown Status", num_no_response, "#8c564b"),
-                ("● False Positive (Internal- Dont Count)", num_false_positive, "#e83e8c")
+                ("● Offer Made", num_offer_made, STATUS_COLORS["offer_made"]),
+                ("● Rejection", num_rejection, STATUS_COLORS["rejection"]),
+                ("● Interview Invitation", num_interview_invitation, STATUS_COLORS["interview_invitation"]),
+                ("● Assessment Sent", num_assessment_sent, STATUS_COLORS["assessment_sent"]),
+                ("● Availability Request", num_availability_request, STATUS_COLORS["availability_request"]),
+                ("● Application Confirmation", num_application_confirmation, STATUS_COLORS["application_confirmation"]),
+                ("● Information Request", num_information_request, STATUS_COLORS["information_request"]),
+                ("● Inbound Request", num_inbound_request, STATUS_COLORS["inbound_request"]),
+                ("● Action Required", num_action_required, STATUS_COLORS["action_required"]),
+                ("● Hiring Freeze", num_hiring_freeze, STATUS_COLORS["hiring_freeze"]),
+                ("● Withdrew Application", num_withdrew_application, STATUS_COLORS["withdrew_application"]),
+                ("● Other/Unknown Status", num_no_response, STATUS_COLORS["other_unknown"]),
+                ("● False Positive (Internal- Dont Count)", num_false_positive, STATUS_COLORS["false_positive"])
             ]
             
             # Draw detailed status boxes (centered)
