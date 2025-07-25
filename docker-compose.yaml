@@ -8,6 +8,7 @@ services:
     env_file: "./backend/.env"  # Use the .env file inside backend
     environment:
       - IS_DOCKER_CONTAINER=1
+      - ENV=dev  # Development environment - access logs disabled
     depends_on:
       - db  # Ensure the database service is started before the backend
     restart: always  # Restart container if it crashes

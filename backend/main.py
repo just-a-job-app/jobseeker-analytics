@@ -71,8 +71,19 @@ app.add_middleware(
 # Set up Jinja2 templates
 templates = Jinja2Templates(directory="templates")
 
+# Configure custom logging to prevent IP address logging in development
+from logging_config import get_logging_config
+import logging.config
+
+logging.config.dictConfig(get_logging_config())
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.DEBUG, format="%(levelname)s - %(message)s")
+
+# Additional safety: Explicitly disable uvicorn.access logger in development
+if settings.ENV == "dev":
+    logging.getLogger("uvicorn.access").setLevel(logging.CRITICAL)
+    logger.info("🔧 Development mode: Access logs disabled for privacy")
+else:
+    logger.info("🚀 Production mode: Standard logging enabled")
 
 
 # Rate limit exception handler

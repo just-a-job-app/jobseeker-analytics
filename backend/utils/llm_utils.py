@@ -13,13 +13,7 @@ settings = get_settings()
 genai.configure(api_key=settings.GOOGLE_API_KEY)
 model = genai.GenerativeModel("gemini-2.0-flash-lite")
 logger = logging.getLogger(__name__)
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-)
-
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-)
+# Removed logging.basicConfig calls to prevent overriding custom logging configuration
 
 def process_email(email_text: str, user_id: str):
     prompt = f"""
