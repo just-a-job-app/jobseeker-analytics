@@ -19,6 +19,7 @@ import NextLink from "next/link";
 import { siteConfig } from "@/config/site";
 import { ThemeSwitch } from "@/components/theme-switch";
 import { GithubIcon, HeartFilledIcon, GoogleIcon, LogOutIcon, InfoIcon } from "@/components/icons";
+import DemoModeToggle from "@/components/DemoModeToggle";
 
 export const Navbar = () => {
 	const pathname = usePathname();
@@ -26,7 +27,39 @@ export const Navbar = () => {
 
 	const apiUrl = process.env.NEXT_PUBLIC_API_URL!;
 
-	const handleGoogleLogin = () => {
+	const handleGoogleLogin = async () => {
+		// Check if developer mode is enabled
+		try {
+			const response = await fetch(`${apiUrl}/test-emails`, {
+				method: "GET",
+				credentials: "include"
+			});
+			if (response.ok) {
+				const data = await response.json();
+				const hasDemoEmails = data.some((email: any) => email.is_demo_email);
+				
+				if (hasDemoEmails) {
+					// Developer mode is enabled - bypass Google login and set up demo session
+					try {
+						const demoResponse = await fetch(`${apiUrl}/setup-demo-session`, {
+							method: "POST",
+							credentials: "include"
+						});
+						if (demoResponse.ok) {
+							// Demo session created successfully, go to dashboard
+							router.push("/dashboard");
+							return;
+						}
+					} catch (error) {
+						console.log("Could not set up demo session:", error);
+					}
+				}
+			}
+		} catch (error) {
+			console.log("Could not check demo mode status:", error);
+		}
+		
+		// Normal Google login flow
 		router.push(`${apiUrl}/login`);
 	};
 
@@ -70,6 +103,14 @@ export const Navbar = () => {
 					</Link>
 					<ThemeSwitch />
 				</NavbarItem>
+				{!pathname.startsWith("/preview") && (
+					<NavbarItem>
+						<div className="flex items-center gap-2">
+							<span className="text-xs text-default-500">Dev:</span>
+							<DemoModeToggle apiUrl={apiUrl} />
+						</div>
+					</NavbarItem>
+				)}
 				<NavbarItem>
 					<Button
 						isExternal

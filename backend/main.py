@@ -19,7 +19,7 @@ from database import create_db_and_tables
 from db.utils.dev_utils import clear_local_database  # noqa: F401
 
 # Import routes
-from routes import email_routes, auth_routes, file_routes, users_routes, start_date_routes
+from routes import email_routes, auth_routes, file_routes, users_routes, start_date_routes, test_email_routes
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -40,6 +40,7 @@ app.include_router(email_routes.router)
 app.include_router(file_routes.router)
 app.include_router(users_routes.router)
 app.include_router(start_date_routes.router)
+app.include_router(test_email_routes.router)
 
 limiter = Limiter(key_func=get_remote_address)
 app.state.limiter = limiter  # Ensure limiter is assigned

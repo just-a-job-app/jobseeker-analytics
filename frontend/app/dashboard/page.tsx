@@ -8,6 +8,7 @@ import { Sankey, ResponsiveContainer, Tooltip } from "recharts";
 import JobApplicationsDashboard, { Application } from "@/components/JobApplicationsDashboard";
 import ResponseRateCard from "@/components/response_rate_card";
 import UniqueOpenRateChart from "@/components/response_rate_chart";
+import TestEmailManager from "@/components/TestEmailManager";
 import { checkAuth } from "@/utils/auth";
 
 interface SankeyData {
@@ -402,21 +403,26 @@ export default function Dashboard() {
 		) : null;
 
 	return (
-		<JobApplicationsDashboard
-			currentPage={currentPage}
-			data={filteredData}
-			downloading={downloading}
-			loading={loading}
-			responseRate={responseRateContent}
-			sankeyChart={sankeyChartContent}
-			searchTerm={searchTerm}
-			totalPages={totalPages}
-			onDownloadCsv={downloadCsv}
-			onDownloadSankey={downloadSankey}
-			onNextPage={nextPage}
-			onPrevPage={prevPage}
-			onRemoveItem={handleRemoveItem}
-			onSearchChange={setSearchTerm}
-		/>
+		<div>
+			<div className="mb-4 flex justify-end">
+				<TestEmailManager apiUrl={apiUrl} />
+			</div>
+			<JobApplicationsDashboard
+				currentPage={currentPage}
+				data={filteredData}
+				downloading={downloading}
+				loading={loading}
+				responseRate={responseRateContent}
+				sankeyChart={sankeyChartContent}
+				searchTerm={searchTerm}
+				totalPages={totalPages}
+				onDownloadCsv={downloadCsv}
+				onDownloadSankey={downloadSankey}
+				onNextPage={nextPage}
+				onPrevPage={prevPage}
+				onRemoveItem={handleRemoveItem}
+				onSearchChange={setSearchTerm}
+			/>
+		</div>
 	);
 }

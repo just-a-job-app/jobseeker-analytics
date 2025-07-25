@@ -85,15 +85,29 @@ def get_email_content(email_data: Dict[str, Any]) -> str:
     return text_content
 
 
-def get_email(message_id: str, gmail_instance=None, user_email: str = None):
+def get_email(message_id: str, gmail_instance=None, user_email: str = None, user_id: str = None):
     if gmail_instance:
         try:
-            message = (
-                gmail_instance.users()
-                .messages()
-                .get(userId="me", id=message_id, format="raw")
-                .execute()
-            )
+            # Check if we're in demo mode
+            if settings.is_demo_mode:
+                # Use mock service in demo mode
+                from utils.mock_gmail_service import create_mock_gmail_service
+                mock_service = create_mock_gmail_service(user_id)
+                message = (
+                    mock_service.users()
+                    .messages()
+                    .get(userId="me", id=message_id, format="raw")
+                    .execute()
+                )
+            else:
+                # Use real Gmail API
+                message = (
+                    gmail_instance.users()
+                    .messages()
+                    .get(userId="me", id=message_id, format="raw")
+                    .execute()
+                )
+            
             msg_str = base64.urlsafe_b64decode(message["raw"].encode("ASCII")).decode(
                 "utf-8"
             )
@@ -163,13 +177,40 @@ def get_email(message_id: str, gmail_instance=None, user_email: str = None):
     return {}
 
 
-def get_email_ids(query: tuple = None, gmail_instance=None):
+def get_email_ids(query: tuple = None, gmail_instance=None, user_id: str = None):
     email_ids = []
     page_token = None
 
-    while True:
+    # Check if we're in demo mode
+    if settings.is_demo_mode:
+        # Use mock service in demo mode
+        from utils.mock_gmail_service import create_mock_gmail_service
+        mock_service = create_mock_gmail_service(user_id)
         
-        response = (
+        while True:
+            response = (
+                mock_service.users()
+                .messages()
+                .list(
+                    userId="me",
+                    q=query,
+                    includeSpamTrash=True,
+                    pageToken=page_token,
+                    maxResults=settings.batch_size_by_env,
+                )
+                .execute()
+            )
+
+            if "messages" in response:
+                email_ids.extend(response["messages"])
+
+            page_token = response.get("nextPageToken")
+            if not page_token:
+                break
+    else:
+        # Use real Gmail API
+        while True:
+            response = (
                 gmail_instance.users()
                 .messages()
                 .list(
@@ -182,12 +223,12 @@ def get_email_ids(query: tuple = None, gmail_instance=None):
                 .execute()
             )
 
-        if "messages" in response:
-            email_ids.extend(response["messages"])
+            if "messages" in response:
+                email_ids.extend(response["messages"])
 
-        page_token = response.get("nextPageToken")
-        if not page_token:
-            break
+            page_token = response.get("nextPageToken")
+            if not page_token:
+                break
 
     return email_ids
 

@@ -27,6 +27,12 @@ class Settings(BaseSettings):
         "postgresql://postgres:postgres@db:5432/jobseeker_analytics"
     )
     BATCH_SIZE: int = 40
+    DEMO_MODE: bool = False  # Enable demo mode for live presentations
+    
+    @property
+    def is_demo_mode(self) -> bool:
+        """Demo mode can be enabled via environment variable or runtime toggle."""
+        return self.DEMO_MODE
 
     @field_validator("GOOGLE_SCOPES", mode="before")
     @classmethod

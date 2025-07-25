@@ -74,9 +74,34 @@ def query_emails(request: Request, db_session: database.DBSession, user_id: str 
     try:
         logger.info(f"Fetching emails for user_id: {user_id}")
 
-        # Query emails sorted by date (newest first)
-        statement = select(UserEmails).where(UserEmails.user_id == user_id).order_by(desc(UserEmails.received_at))
-        user_emails = db_session.exec(statement).all()
+        # Check if demo mode is enabled
+        demo_mode = request.session.get("demo_mode", False)
+        
+        if demo_mode:
+            # In demo mode, return test emails instead of real emails
+            from db.test_emails import TestEmails
+            from db.utils.test_email_utils import get_user_test_emails
+            
+            test_emails = get_user_test_emails(user_id, include_demo=True)
+            
+            # Convert TestEmails to UserEmails format for compatibility
+            user_emails = []
+            for test_email in test_emails:
+                user_email = UserEmails(
+                    id=test_email.id,
+                    user_id=test_email.user_id,
+                    company_name=test_email.company_name,
+                    application_status=test_email.application_status,
+                    received_at=test_email.received_at,
+                    subject=test_email.subject,
+                    job_title=test_email.job_title,
+                    email_from=test_email.email_from
+                )
+                user_emails.append(user_email)
+        else:
+            # Query real emails sorted by date (newest first)
+            statement = select(UserEmails).where(UserEmails.user_id == user_id).order_by(desc(UserEmails.received_at))
+            user_emails = db_session.exec(statement).all()
 
         # Filter out records with "unknown" application status
         filtered_emails = [
@@ -209,10 +234,15 @@ def fetch_emails_to_db(user: AuthenticatedUser, request: Request, last_updated: 
                 f"user_id:{user_id} Fetching all emails (no last_date maybe with start date)"
             )
 
-        service = build("gmail", "v1", credentials=user.creds)
+        # Check if we're in demo mode
+        if settings.is_demo_mode:
+            from utils.mock_gmail_service import create_mock_gmail_service
+            service = create_mock_gmail_service(user_id)
+        else:
+            service = build("gmail", "v1", credentials=user.creds)
 
         messages = get_email_ids(
-            query=query, gmail_instance=service
+            query=query, gmail_instance=service, user_id=user_id
         )
         # Update session to remove "new user" status
         request.session["is_new_user"] = False
@@ -240,7 +270,7 @@ def fetch_emails_to_db(user: AuthenticatedUser, request: Request, last_updated: 
             process_task_run.processed_emails = idx + 1
             db_session.commit()
 
-            msg = get_email(message_id=msg_id, gmail_instance=service, user_email=user.user_email)
+            msg = get_email(message_id=msg_id, gmail_instance=service, user_email=user.user_email, user_id=user_id)
 
             if msg:
                 try:

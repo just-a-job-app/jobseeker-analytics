@@ -55,6 +55,22 @@ Want to join the hall of fame? [Volunteer](https://app.formbricks.com/s/tq4y6lav
 - **Database:** PostgreSQL
 - **Integrations:** Gmail API, Posthog
 
+## 🛠 **Developer Mode**
+
+The app includes a built-in developer mode that allows you to:
+- **Toggle between real and mock Gmail API** using the UI
+- **Test with realistic demo emails** without hitting real APIs
+- **Add custom test emails** for development and testing
+- **Full application flow** - everything works exactly like the real app
+
+Perfect for:
+- 🎥 **Live demos** - no real email data exposed
+- 🧪 **Testing** - consistent test data
+- 🔧 **Development** - no need for real Gmail credentials
+- 📚 **Learning** - see how the app works with sample data
+
+See [DEMO_MODE_README.md](DEMO_MODE_README.md) for detailed documentation.
+
 ## 🔒 **Privacy & Security**
 
 - In closed beta (limit 100 users)
