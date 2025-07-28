@@ -89,7 +89,7 @@ spacy-lookups-data==1.0.5
 SQLAlchemy==2.0.38
 sqlmodel==0.0.23
 srsly==2.5.0
-starlette==0.41.3
+starlette==0.47.2
 testcontainers==4.10.0
 thinc==8.2.5
 tqdm==4.66.6
