@@ -1,0 +1,205 @@
+name: Deploy to AWS Lightsail
+description: Deploy application to a specific environment
+
+inputs:
+  aws-access-key-id:
+    description: AWS Access Key ID
+    required: true
+  aws-region:
+    description: AWS Region
+    required: true
+  aws-secret-access-key:
+    description: AWS Access Key Secret
+    required: true
+  google-client-id:
+    description: Google Client ID
+    required: true
+  google-client-secret:
+    description: Google Client Secret
+    required: true
+  google-client-redirect-uri:
+    description: Google Client Redirect URIs
+    required: true
+  ls-database-name:
+    description: Lightsail Database Name
+    required: true
+  redirect-uri:
+    description: Login redirect URI associated with the Google App
+    required: true
+  cookie-secret:
+    description: Cookie secret
+    required: true
+  google-api-key:
+    description: Google API Key
+    required: true
+  origin:
+    description: Origin
+    required: true
+
+runs:
+  using: composite
+  steps:
+  - name: Mask sensitive inputs
+    shell: bash
+    run: |
+      echo "::add-mask::${{ inputs.aws-access-key-id }}"
+      echo "::add-mask::${{ inputs.aws-secret-access-key }}"
+      echo "::add-mask::${{ inputs.google-credentials-file-content }}"
+      echo "::add-mask::${{ inputs.cookie-secret }}"
+      echo "::add-mask::${{ inputs.google-api-key }}"
+      echo "::add-mask::${{ inputs.google-client-id }}"
+      echo "::add-mask::${{ inputs.google-client-secret }}"
+      echo "::add-mask::${{ inputs.google-client-redirect-uris }}"
+      echo "::add-mask::${{ inputs.redirect-uri }}"
+      echo "::add-mask::${{ inputs.ls-database-name }}"
+      echo "::add-mask::${{ inputs.origin }}"
+
+  - name: Set up AWS CLI
+    uses: aws-actions/configure-aws-credentials@v1
+    with:
+      aws-access-key-id: ${{ inputs.aws-access-key-id }}
+      aws-secret-access-key: ${{ inputs.aws-secret-access-key }}
+      aws-region: ${{ inputs.aws-region }}
+
+  - name: Install Lightsail plugin
+    shell: bash
+    run: |
+      curl "https://s3.us-west-2.amazonaws.com/lightsailctl/latest/linux-amd64/lightsailctl" -o "/usr/local/bin/lightsailctl"
+      chmod +x /usr/local/bin/lightsailctl
+
+  - name: Query database connection info from Lightsail
+    id: get_db_info
+    env:
+      LS_DATABASE_NAME: ${{ inputs.ls-database-name }}
+    shell: bash
+    run: |
+      # Query the master password from Lightsail database
+      MASTER_PASSWORD=$(aws lightsail get-relational-database-master-user-password \
+        --relational-database-name ${LS_DATABASE_NAME} \
+        --password-version CURRENT \
+        --query 'masterUserPassword' \
+        --output text)
+
+      # Query database details for connection info
+      DB_INFO=$(aws lightsail get-relational-database \
+        --relational-database-name ${LS_DATABASE_NAME})
+
+      # Extract connection details
+      MASTER_USERNAME=$(echo $DB_INFO | jq -r '.relationalDatabase.masterUsername')
+      MASTER_DATABASE_NAME=$(echo $DB_INFO | jq -r '.relationalDatabase.masterDatabaseName')
+      ENDPOINT_ADDRESS=$(echo $DB_INFO | jq -r '.relationalDatabase.masterEndpoint.address')
+      ENDPOINT_PORT=$(echo $DB_INFO | jq -r '.relationalDatabase.masterEndpoint.port')
+
+      # Mask sensitive DB info
+      echo "::add-mask::${MASTER_USERNAME}"
+      echo "::add-mask::${MASTER_PASSWORD}"
+      echo "::add-mask::${MASTER_DATABASE_NAME}"
+      echo "::add-mask::${ENDPOINT_ADDRESS}"
+      echo "::add-mask::${ENDPOINT_PORT}"
+      # Also mask the full connection string parts for better coverage
+      echo "::add-mask::postgresql://${MASTER_USERNAME}:${MASTER_PASSWORD}@${ENDPOINT_ADDRESS}:${ENDPOINT_PORT}/${MASTER_DATABASE_NAME}"
+      echo "::add-mask::postgresql://${MASTER_USERNAME}:***@${ENDPOINT_ADDRESS}:${ENDPOINT_PORT}/${MASTER_DATABASE_NAME}"
+      echo "::add-mask::${MASTER_USERNAME}:${MASTER_PASSWORD}"
+      
+
+      # Set as outputs for use in subsequent steps
+      echo "database_url=postgresql://${MASTER_USERNAME}:${MASTER_PASSWORD}@${ENDPOINT_ADDRESS}:${ENDPOINT_PORT}/${MASTER_DATABASE_NAME}" >> $GITHUB_OUTPUT
+
+      # Clean up shell variables immediately after use
+      unset MASTER_PASSWORD MASTER_USERNAME MASTER_DATABASE_NAME ENDPOINT_ADDRESS ENDPOINT_PORT DB_INFO
+
+  - name: Mask database URL
+    shell: bash
+    run: echo "::add-mask::${{ steps.get_db_info.outputs.database_url }}"
+
+  - name: Stage Google credentials.json
+    shell: bash
+    run: |
+      echo "${{ inputs.google-credentials-file-content }}" | base64 --decode > backend/credentials.json
+
+  - name: Build and push Docker image
+    env:
+      LIGHTSAIL_SERVICE_NAME: jaja-backend
+      CONTAINER_NAME: backend
+    shell: bash
+    run: |
+      # Build Docker image
+      docker build -t ${LIGHTSAIL_SERVICE_NAME}-${CONTAINER_NAME}:${{ github.sha }} --platform=linux/amd64 ./backend
+
+      # Push to Lightsail
+      aws lightsail push-container-image \
+        --service-name ${LIGHTSAIL_SERVICE_NAME} \
+        --label ${CONTAINER_NAME} \
+        --image ${LIGHTSAIL_SERVICE_NAME}-${CONTAINER_NAME}:${{ github.sha }}
+
+  - name: Deploy to Lightsail
+    env:
+      LIGHTSAIL_SERVICE_NAME: jaja-backend
+      CONTAINER_NAME: backend
+      CONTAINER_PORT: 8000
+      PUBLIC_PORT: 80
+      DATABASE_URL: ${{ steps.get_db_info.outputs.database_url }}
+      REDIRECT_URI: ${{ inputs.redirect-uri }}
+      COOKIE_SECRET: ${{ inputs.cookie-secret }}
+      GOOGLE_API_KEY: ${{ inputs.google-api-key }}
+      GOOGLE_CLIENT_ID: ${{ inputs.google-client-id }}
+      GOOGLE_CLIENT_SECRET: ${{ inputs.google-client-secret }}
+      GOOGLE_CLIENT_REDIRECT_URI: ${{ inputs.google-client-redirect-uri }}
+      APP_URL: ${{ inputs.app-url }}
+      API_URL: ${{ inputs.api-url }}
+      ORIGIN: ${{ inputs.origin }}
+    shell: bash
+    run: |
+      # Mask env vars before use
+      echo "::add-mask::${COOKIE_SECRET}"
+      echo "::add-mask::${GOOGLE_API_KEY}"
+      echo "::add-mask::${GOOGLE_CLIENT_ID}"
+      echo "::add-mask::${GOOGLE_CLIENT_SECRET}"
+      echo "::add-mask::${GOOGLE_CLIENT_REDIRECT_URI}"
+      echo "::add-mask::${DATABASE_URL}"
+      echo "::add-mask::${REDIRECT_URI}"
+      echo "::add-mask::${APP_URL}"
+      echo "::add-mask::${API_URL}"
+
+      # Escape environment variables for JSON
+      ESCAPED_GOOGLE_CLIENT_REDIRECT_URI=$(printf '%s' "${GOOGLE_CLIENT_REDIRECT_URI}" | sed 's/\\/\\\\/g; s/"/\\"/g; s/\t/\\t/g' | tr -d '\n\r')
+      echo "::add-mask::${ESCAPED_GOOGLE_CLIENT_REDIRECT_URI}"
+
+      # Deploy to Lightsail using inline JSON
+      aws lightsail create-container-service-deployment \
+        --region ${{ inputs.aws-region }} \
+        --service-name ${LIGHTSAIL_SERVICE_NAME} \
+        --output yaml \
+        --containers "{
+          \"${CONTAINER_NAME}\": {
+            \"image\": \":${LIGHTSAIL_SERVICE_NAME}.${CONTAINER_NAME}.latest\",
+            \"environment\": {
+              \"REDIRECT_URI\": \"${REDIRECT_URI}\",
+              \"GOOGLE_API_KEY\": \"${GOOGLE_API_KEY}\",
+              \"GOOGLE_CLIENT_ID\": \"${GOOGLE_CLIENT_ID}\",
+              \"GOOGLE_CLIENT_SECRET\": \"${GOOGLE_CLIENT_SECRET}\",
+              \"GOOGLE_CLIENT_REDIRECT_URI\": \"${ESCAPED_GOOGLE_CLIENT_REDIRECT_URI}\",
+              \"COOKIE_SECRET\": \"${COOKIE_SECRET}\",
+              \"APP_URL\": \"${APP_URL}\",
+              \"API_URL\": \"${API_URL}\",
+              \"ENV\": \"prod\",
+              \"DATABASE_URL\": \"${DATABASE_URL}\",
+              \"ORIGIN\": \"${ORIGIN}\"
+            },
+            \"ports\": {
+              \"${CONTAINER_PORT}\": \"HTTP\"
+            }
+          }
+        }" \
+        --public-endpoint "{
+          \"containerName\": \"${CONTAINER_NAME}\",
+          \"containerPort\": ${CONTAINER_PORT},
+          \"healthCheck\": {
+            \"path\": \"/\",
+            \"intervalSeconds\": 10,
+            \"healthyThreshold\": 2,
+            \"unhealthyThreshold\": 2,
+            \"timeoutSeconds\": 5,
+            \"successCodes\": \"200-499\"
+          }
+        }"

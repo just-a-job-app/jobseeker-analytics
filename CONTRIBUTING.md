@@ -71,12 +71,27 @@ git clone https://github.com/your-username/jobseeker-analytics.git
 cd jobseeker-analytics
 ```
 
+---
+
+### Set Up Environment Variables
+_Estimated time: 3-5 minutes_
+1. Copy `backend\.env.example` to `backend\.env`:
+   ```sh
+   cp backend/.env.example backend/.env
+   ```
+   **🔒 Never share your `.env` file or commit it to Git!**  
+2. Copy `frontend\.env.sample` to `frontend\.env`:
+   ```sh
+   cp frontend/.env.sample frontend/.env
+   ```
+---
+
 ### Get a Google AI API key
 _Estimated time: 2-3 minutes_
 1. Go to [https://aistudio.google.com/app/apikey](https://aistudio.google.com/app/apikey)
 2. Click **Create and API Key**
-3. Copy your API key and save it for later
-
+3. Copy the API key value
+4. Open `backend/.env` and replace value for `GOOGLE_API_KEY`
 ---
 
 ### Create a Google OAuth App
@@ -88,11 +103,13 @@ _Estimated time: 10-20 minutes_
 5. Set the application type to **Web Application**.  
 6. Under "Authorized redirect URIs," add the following and save to update:  
    - http://localhost:8000/login
-7. Copy the **Client ID** for later.  
-8. Next to Client Secret is a download button. Click it and save it to the `backend` folder with filename ```credentials.json```
-9. On the OAuth Consent Screen page, scroll to "Test Users" and add your gmail address.
-10. Click **Data Access** and then **Add or remove scopes**. 
-11. At the top of the list, check 
+7. Copy the **Client ID** under Additional information header
+8. In `backend/.env`, paste value for `GOOGLE_CLIENT_ID`
+9. Copy the **Client secret** under Client secrets header
+10. In `backend/.env`, paste value for `GOOGLE_CLIENT_SECRET`
+11. On the OAuth Consent Screen page, scroll to "Test Users" and add your gmail address.
+12. Click **Data Access** and then **Add or remove scopes**. 
+13. At the top of the list, check 
    - .../auth/userinfo.email  
    - openid
 
@@ -107,26 +124,6 @@ Don't forget to press **Save**. Twice.
 15. Check the box next to Gmail API | .../auth/gmail.readonly
 16. Click **Update**
 17. Click **Save**
-
----
-
-### Set Up Environment Variables
-_Estimated time: 3-5 minutes_
-1. Copy `backend\.env.example` to `backend\.env`:
-   ```sh
-   cp backend/.env.example backend/.env
-   ```
-2. Edit `backend/.env` to put in your own credentials, particularly 
-   - Google OAuth Client ID goes in `GOOGLE_CLIENT_ID`
-   - Google AI API key goes in `GOOGLE_API_KEY`
-   - Type a random string in `COOKIE_SECRET`
-
-   **🔒 Never share your `.env` file or commit it to Git!**  
-3. Copy `frontend\.env.sample` to `frontend\.env`:
-   ```sh
-   cp frontend/.env.sample frontend/.env
-   ```
----
 
 
 ### Run the App: Two options

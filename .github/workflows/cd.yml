@@ -1,0 +1,57 @@
+name: Deploy to AWS Lightsail
+
+on:
+  push:
+    branches:
+    - main
+
+jobs:
+  deploy-backend:
+    name: Deploy Backend
+    permissions:
+      contents: read
+    runs-on: ubuntu-24.04
+    environment: prod
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - id: deploy
+      uses: ./.github/actions/deploy-to-lightsail
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-region: ${{ secrets.AWS_REGION }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        google-credentials-file-content: ${{ secrets.GOOGLE_CREDENTIALS_FILE_CONTENT }}
+        ls-database-name: ${{ secrets.LS_DATABASE_NAME }}
+        redirect-uri: ${{ secrets.REDIRECT_URI }}
+        cookie-secret: ${{ secrets.COOKIE_SECRET }}
+        google-api-key: ${{ secrets.GOOGLE_API_KEY }}
+        app-url: ${{ secrets.APP_URL }}
+        api-url: ${{ secrets.API_URL }}
+        google-client-id: ${{ secrets.GOOGLE_CLIENT_ID }}
+        google-client-secret: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+        google-client-redirect-uri: ${{ secrets.GOOGLE_CLIENT_REDIRECT_URI }}
+        origin: ${{ secrets.ORIGIN }}
+
+  deploy-frontend:
+    name: Deploy Frontend
+    permissions:
+      contents: read
+    runs-on: ubuntu-24.04
+    environment: prod
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Deploy Frontend to Lightsail
+      uses: ./.github/actions/deploy-frontend-to-lightsail
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.AWS_REGION }}
+        app-url: ${{ secrets.APP_URL }}
+        api-url: ${{ secrets.API_URL }}
+        gh-app-id: ${{ secrets.GH_APP_ID }}
+        gh-private-key: ${{ secrets.GH_PRIVATE_KEY }}
+        gh-installation-id: ${{ secrets.GH_INSTALLATION_ID }}

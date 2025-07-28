@@ -236,7 +236,6 @@ export default function Dashboard() {
 				color: "success"
 			});
 		} catch (error) {
-			console.error("Error deleting item:", error);
 			addToast({
 				title: "Failed to remove item",
 				description: "Please try again or contact support.",
@@ -344,7 +343,6 @@ export default function Dashboard() {
 						>
 							<Tooltip
 								content={({ active, payload }) => {
-									console.log("test ", payload);
 									if (active && payload && payload.length) {
 										const { sourceNode, targetNode, value } = payload[0].payload;
 										return (

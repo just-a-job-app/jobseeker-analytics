@@ -47,7 +47,6 @@ export async function POST(req: NextRequest) {
 		const formId = formType === "setup" ? process.env.CONVERTKIT_SETUP_FORM_ID : process.env.CONVERTKIT_FORM_ID;
 
 		if (!apiKey || !formId) {
-			console.error(`ConvertKit API key or ${formType} Form ID is missing`);
 			return NextResponse.json({ success: false, message: "Server configuration error" }, { status: 500 });
 		}
 
@@ -56,7 +55,6 @@ export async function POST(req: NextRequest) {
 
 		if (!createResponse.ok) {
 			const error = await createResponse.json();
-			console.error("Failed to create subscriber:", error);
 			return NextResponse.json({ success: false, message: "Failed to add to list" }, { status: 500 });
 		}
 
@@ -64,8 +62,6 @@ export async function POST(req: NextRequest) {
 		const formResponse = await addSubscriberToForm(email, apiKey, formId);
 
 		if (!formResponse.ok) {
-			const error = await formResponse.json();
-			console.error(`Failed to add subscriber to ${formType} form:`, error);
 			return NextResponse.json(
 				{ success: false, message: "Added to list but confirmation may fail" },
 				{ status: 500 }
@@ -80,7 +76,6 @@ export async function POST(req: NextRequest) {
 			message: successMessage
 		});
 	} catch (error) {
-		console.error("Error adding subscriber:", error);
 		return NextResponse.json({ success: false, message: "Server error" }, { status: 500 });
 	}
 }

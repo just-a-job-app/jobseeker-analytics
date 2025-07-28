@@ -48,7 +48,6 @@ const DeveloperInfo = () => {
 				});
 			}
 		} catch (error) {
-			console.error("Error requesting setup session:", error);
 			addToast({
 				title: "Connection error",
 				description: "Please check your network and try again.",

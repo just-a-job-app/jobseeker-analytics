@@ -10,15 +10,17 @@ logger = logging.getLogger(__name__)
 
 
 class Settings(BaseSettings):
-    GOOGLE_SCOPES: Annotated[List[str], NoDecode]
-    REDIRECT_URI: str
-    GOOGLE_CLIENT_ID: str
+    GOOGLE_CLIENT_ID: str = "default-for-local"
+    GOOGLE_CLIENT_SECRET: str = "default-for-local"
+    REDIRECT_URI: str = "http://localhost:3000/login"
     GOOGLE_API_KEY: str
     COOKIE_SECRET: str
-    CLIENT_SECRETS_FILE: str = "credentials.json"
     ENV: str = "dev"
-    APP_URL: str
-    ORIGIN: str = ".jobba.help"
+    APP_URL: str = "http://localhost:3000"  # Frontend URL - default for local dev
+    API_URL: str = "http://localhost:8000"  # Backend API URL - default for local dev
+    GOOGLE_CLIENT_REDIRECT_URI: List[str] = ["http://localhost:8000/login"]
+    GOOGLE_SCOPES: Annotated[List[str], NoDecode] = '["https://www.googleapis.com/auth/gmail.readonly", "openid", "https://www.googleapis.com/auth/userinfo.email"]'
+    ORIGIN: str = "localhost"  # Default for local dev
     DATABASE_URL: str = "default-for-local"
     DATABASE_URL_LOCAL_VIRTUAL_ENV: str = (
         "postgresql://postgres:postgres@localhost:5433/jobseeker_analytics"

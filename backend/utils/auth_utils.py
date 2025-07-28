@@ -51,7 +51,7 @@ class AuthenticatedUser:
                 raise ValueError("No ID token available after refresh.")
     
             decoded_token = id_token.verify_oauth2_token(
-                self.creds.id_token, Request(), audience=settings.GOOGLE_CLIENT_ID
+                self.creds.id_token, Request(), audience=self.creds.client_id
             )
             user_id = decoded_token["sub"]  # 'sub' is the unique user ID
             user_email = decoded_token.get("email")  # 'email' is the user's email address

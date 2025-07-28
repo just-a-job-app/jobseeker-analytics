@@ -49,7 +49,6 @@ const WaitlistForm = () => {
 				});
 			}
 		} catch (error) {
-			console.error("Error adding to waitlist:", error);
 			addToast({
 				title: "Connection error",
 				description: "Please check your network and try again.",

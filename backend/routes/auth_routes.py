@@ -1,5 +1,6 @@
 import datetime
 import logging
+import json
 from fastapi import APIRouter, Depends, HTTPException, Request, BackgroundTasks
 from fastapi.responses import RedirectResponse, HTMLResponse
 from google_auth_oauthlib.flow import Flow
@@ -12,6 +13,7 @@ from utils.cookie_utils import set_conditional_cookie
 from routes.email_routes import fetch_emails_to_db
 from slowapi import Limiter
 from slowapi.util import get_remote_address
+import os
 
 limiter = Limiter(key_func=get_remote_address)
 
@@ -31,8 +33,18 @@ APP_URL = settings.APP_URL
 async def login(request: Request, background_tasks: BackgroundTasks):
     """Handles Google OAuth2 login and authorization code exchange."""
     code = request.query_params.get("code")
-    flow = Flow.from_client_secrets_file(
-        settings.CLIENT_SECRETS_FILE,
+    client_config = {
+        "web": {
+            "client_id": os.getenv("GOOGLE_CLIENT_ID"),
+            "client_secret": os.getenv("GOOGLE_CLIENT_SECRET"),
+            "redirect_uris": json.loads(os.getenv("GOOGLE_CLIENT_REDIRECT_URI")),
+            "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+            "token_uri": "https://oauth2.googleapis.com/token"
+        }
+    }
+
+    flow = Flow.from_client_config(
+        client_config,
         settings.GOOGLE_SCOPES,
         redirect_uri=settings.REDIRECT_URI,
     )

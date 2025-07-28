@@ -22,9 +22,9 @@ jobs:
       - name: Create .env file
         uses: SpicyPizza/create-envfile@v2.0.3
         with:
-          envkey_GITHUB_APP_ID: 1234
-          envkey_GITHUB_PRIVATE_KEY: "shh..."
-          envkey_GITHUB_INSTALLATION_ID: 1234
+          envkey_GH_APP_ID: 1234
+          envkey_GH_PRIVATE_KEY: "shh..."
+          envkey_GH_INSTALLATION_ID: 1234
           directory: frontend
 
       - name: Setup Node.js 20

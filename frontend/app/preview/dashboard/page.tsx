@@ -139,7 +139,6 @@ export default function PreviewDashboard() {
 				color: "success"
 			});
 		} catch (error) {
-			console.error("Error deleting item:", error);
 			addToast({
 				title: "Failed to remove item",
 				description: "Please try again or contact support.",
