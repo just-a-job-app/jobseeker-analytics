@@ -4,6 +4,7 @@ import email.utils
 import logging
 from database import engine
 from sqlmodel import Session, select
+import string
 
 logger = logging.getLogger(__name__)
 
@@ -53,3 +54,23 @@ def create_user_email(user, message_data: dict) -> UserEmails:
     except Exception as e:
         logger.error(f"Error creating UserEmail record: {e}")
         return None
+
+def clean_email_prefix(email: str) -> str:
+    prefix = email.split('@')[0]
+    # Remove punctuation and whitespace, convert to lowercase
+    return ''.join(c for c in prefix if c not in string.punctuation).replace(" ", "").lower()
+
+def email_is_similar(user_email: str, logged_in_user_email: str) -> bool:
+    """
+    Checks if the email "from" field contains similarities to the user's email address before the domain name and skips processing if so.
+    Remove spaces and convert to lowercase for comparison.
+    Remove punctuation from the email prefix for comparison.
+    """
+    try:
+        user_email_prefix = clean_email_prefix(user_email)
+        logged_in_user_email_prefix = clean_email_prefix(logged_in_user_email)
+        import pdb; pdb.set_trace()
+        return user_email_prefix == logged_in_user_email_prefix
+    except Exception as e:
+        logger.error(f"Error comparing email prefixes: {e}")
+        return False
