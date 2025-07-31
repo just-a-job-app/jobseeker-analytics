@@ -3,6 +3,8 @@ import time
 import json
 from google.ai.generativelanguage_v1beta2 import GenerateTextResponse
 import logging
+import asyncio
+from concurrent.futures import ThreadPoolExecutor, TimeoutError as FuturesTimeoutError
 
 from utils.config_utils import get_settings
 from utils.task_utils import processed_emails_exceeds_rate_limit
@@ -21,7 +23,14 @@ logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
 )
 
+def _generate_content_sync(prompt):
+    """Synchronous wrapper for LLM call to be used with ThreadPoolExecutor"""
+    return model.generate_content(prompt)
+
 def process_email(email_text: str, user_id: str, db_session):
+    # Import here to avoid circular imports
+    from routes.email_routes import user_cancellation_flags, cancellation_flags_lock
+    
     prompt = f"""
         First, extract the job application status from the following email using the labels below. 
         If the status is 'False positive', only return the status as 'False positive' and do not extract company name or job title. 
@@ -103,30 +112,47 @@ def process_email(email_text: str, user_id: str, db_session):
     retries = 3  # Max retries
     delay = 60  # Initial delay
     for attempt in range(retries):
+        # Check for cancellation before each retry
+        with cancellation_flags_lock:
+            if user_cancellation_flags.get(user_id, False):
+                logger.info(f"Email processing cancelled for user_id {user_id}")
+                return None
+        
         try:
             logger.info("Calling generate_content")
-            response: GenerateTextResponse = model.generate_content(prompt)
-            response.resolve()
-            response_json: str = response.text
-            logger.info("Received response from model: %s", response_json)
-            if response_json:
-                cleaned_response_json = (
-                    response_json.replace("json", "")
-                    .replace("`", "")
-                    .replace("'", '"')
-                    .strip()
-                )
-                cleaned_response_json = (
-                    response_json.replace("json", "")
-                    .replace("`", "")
-                    .replace("'", '"')
-                    .strip()
-                )
-                logger.info("Cleaned response: %s", cleaned_response_json)
-                return json.loads(cleaned_response_json)
-            else:
-                logger.error("Empty response received from the model.")
-                return None
+            
+            # Use ThreadPoolExecutor with timeout for LLM call
+            with ThreadPoolExecutor() as executor:
+                future = executor.submit(_generate_content_sync, prompt)
+                try:
+                    response: GenerateTextResponse = future.result(timeout=30)  # 30 second timeout
+                    response.resolve()
+                    response_json: str = response.text
+                    logger.info("Received response from model: %s", response_json)
+                    
+                    if response_json:
+                        cleaned_response_json = (
+                            response_json.replace("json", "")
+                            .replace("`", "")
+                            .replace("'", '"')
+                            .strip()
+                        )
+                        logger.info("Cleaned response: %s", cleaned_response_json)
+                        return json.loads(cleaned_response_json)
+                    else:
+                        logger.error("Empty response received from the model.")
+                        return None
+                        
+                except FuturesTimeoutError:
+                    logger.warning(f"LLM call timed out for user_id {user_id} (attempt {attempt + 1})")
+                    future.cancel()
+                    # Check for cancellation after timeout
+                    with cancellation_flags_lock:
+                        if user_cancellation_flags.get(user_id, False):
+                            logger.info(f"Email processing cancelled for user_id {user_id} after timeout")
+                            return None
+                    continue  # Retry
+                    
         except Exception as e:
             daily_batch_exceeded = processed_emails_exceeds_rate_limit(user_id, db_session)
             if "429" in str(e) and not daily_batch_exceeded:

@@ -3,8 +3,10 @@ from datetime import datetime, timezone
 import sqlalchemy as sa
 from db.users import Users
 
-FINISHED = "finished"
 STARTED = "started"
+FINISHED = "finished"
+CANCELLED = "cancelled"
+STOPPED = "stopped"
 
 
 class TaskRuns(SQLModel, table=True):
