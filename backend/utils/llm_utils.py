@@ -149,4 +149,3 @@ def process_email(email_text: str, user_id: str, db_session):
                 return None
     logger.error(f"Failed to process email after {retries} attempts.")
     return None
-

@@ -1,6 +1,6 @@
 [![Run python unit tests](https://github.com/macro1/jobseeker-analytics/actions/workflows/pytest.yml/badge.svg)](https://github.com/macro1/jobseeker-analytics/actions/workflows/pytest.yml)
 
-## **About Just A Job App (JAJA)**
+## **About Just A Job App**
 
 **JAJA tracks job applications automatically by syncing with your inbox.** 
 
