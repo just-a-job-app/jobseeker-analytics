@@ -43,15 +43,15 @@ const Index = () => {
 							</div>
 							<div className="flex items-start gap-4 p-4 bg-secondary/30 rounded-lg">
 								<CheckCircle2Icon className="text-green-500 mt-1 flex-shrink-0" size={24} />
-								<p className="text-lg">"My biggest success was probably just a fluke."</p>
+								<p className="text-lg">"It was just luck."</p>
 							</div>
 							<div className="flex items-start gap-4 p-4 bg-secondary/30 rounded-lg">
 								<CheckCircle2Icon className="text-green-500 mt-1 flex-shrink-0" size={24} />
-								<p className="text-lg">"I'm terrified they'll ask me a question I can't answer and expose me."</p>
+								<p className="text-lg">"I've worked for years and have nothing to show for it."</p>
 							</div>
 							<div className="flex items-start gap-4 p-4 bg-secondary/30 rounded-lg">
 								<CheckCircle2Icon className="text-green-500 mt-1 flex-shrink-0" size={24} />
-								<p className="text-lg">"I'll just keep my head down and hope my hard work gets noticed."</p>
+								<p className="text-lg">"I don't want to embarrass myself."</p>
 							</div>
 						</div>
 						<p className="text-center text-xl text-default-600 mt-8 italic">
@@ -168,10 +168,18 @@ const Index = () => {
 						<div className="space-y-8">
 							<Card className="p-8 bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200">
 								<p className="text-lg italic mb-4">
-									"Before JAJA, I'd freeze up when asked about my successes. I felt like a fraud. Now, I have a library of stories with real data to back them up. The confidence I felt in my last interview was a complete game-changer."
+									"I'm very nervous... I feel like I’ve run out of STAR stories to tell and [a friend] told me they ding you for reusing stories across interviews"
 								</p>
 								<p className="font-semibold text-purple-600">
-									— Alex R., Senior Product Manager, formerly at [Company]
+									— Shannon Lin, Web Development Manager at Meta (previously Web Developer at TEKSystems)
+								</p>
+							</Card>
+							<Card className="p-8 bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200">
+								<p className="text-lg italic mb-4">
+									"It is so hard to quantify things, especially if you’re involved in long term projects or work at a startup. I worked for years on projects that got the startup pivot or were still being worked on and developed when I left. Learning from that was a huge step in changing the trajectory of my search."
+								</p>
+								<p className="font-semibold text-purple-600">
+									— Catherine McMillan, Head of Data at Tinyfish (previously Senior Technical Program Manager at Deepgram)
 								</p>
 							</Card>
 						</div>
