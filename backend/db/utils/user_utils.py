@@ -7,19 +7,23 @@ from datetime import datetime, timedelta, timezone
 
 logger = logging.getLogger(__name__)
 
-def get_last_email_date(user_id: str, db_session) -> Optional[datetime]:
+def get_min_max_email_date(user_id: str, db_session) -> Tuple[Optional[datetime], Optional[datetime]]:
     """
-    Checks date of user's most recent email 
+    Returns the earliest and latest received_at dates for the user's emails.
 
     """
     db_session.expire_all()  # Ensure we get fresh data
     db_session.commit()  # Commit any pending changes to ensure the database is in the latest
-    row = db_session.exec(
+    max_date = db_session.exec(
         select(func.max(UserEmails.received_at))
         .where(UserEmails.user_id == user_id)
     ).one() # aggregates in SQL to a single row
-    logger.info("user_id: %s get_last_email_date: %s", user_id, row)
-    return row
+    min_date = db_session.exec(
+        select(func.min(UserEmails.received_at))
+        .where(UserEmails.user_id == user_id)
+    ).one() # aggregates in SQL to a single row
+    logger.info("user_id: %s get_min_max_email_date: %s - %s", user_id, min_date, max_date)
+    return min_date, max_date
 
 def user_exists(user, db_session) -> Tuple[bool, Optional[datetime]]:
     """
@@ -40,8 +44,8 @@ def user_exists(user, db_session) -> Tuple[bool, Optional[datetime]]:
         return False, None
     else:
         logger.info("user_exists: user exists in the database with user_id: %s", existing_user.user_id)
-        last_fetched_date = get_last_email_date(user.user_id, db_session)
-        return True, last_fetched_date
+        first_fetched_date, last_fetched_date = get_min_max_email_date(user.user_id, db_session)
+        return True, first_fetched_date, last_fetched_date
 
 def add_user(user, request, db_session, start_date=None) -> Users:
     """

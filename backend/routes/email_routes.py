@@ -6,7 +6,7 @@ from sqlmodel import select, desc
 from db.user_emails import UserEmails
 from db import processing_tasks as task_models
 from db.utils.user_email_utils import create_user_email
-from db.utils.user_utils import get_last_email_date
+from db.utils.user_utils import get_min_max_email_date
 from utils.auth_utils import AuthenticatedUser
 from utils.email_utils import get_email_ids, get_email, decode_subject_line
 from utils.llm_utils import process_email
@@ -150,6 +150,37 @@ async def delete_email(request: Request, db_session: database.DBSession, email_i
         )
         
 
+def get_unique_company_names(db_session, user_id):
+    statement = select(UserEmails.company_name).where(UserEmails.user_id == user_id)
+    results = db_session.exec(statement).all()
+    # Remove duplicates and filter out empty values
+    blocklist = {
+        "team", "info", "noreply", "support", "admin", "service", "mail", "contact", "hello", "jobs", "career", "careers",
+        "hr", "recruitment", "recruiter", "applicant", "application", "no-reply", "do-not-reply", "donotreply", "newsletter"
+    }
+    unique_companies = set()
+    for word in blocklist:
+        for name in results:
+            if name and name.strip().lower() != word and len(name) > 2:
+                unique_companies.add(name)
+            else:
+                print(f"oops! bad company {word}")
+    return list(unique_companies)
+
+
+def build_gmail_or_query(company_names):
+    """
+    Returns a Gmail search query string that matches emails from any of the given company names.
+    Example: 'from:company1 OR from:company2 OR from:company3'
+    """
+    # Filter out empty or None values
+    company_names = [name.strip() for name in company_names if name and name.strip()]
+    if not company_names:
+        return ""
+    query_parts = [f'from:{name}' for name in company_names]
+    return " OR ".join(query_parts)
+
+
 @router.post("/fetch-emails")
 @limiter.limit("5/minute")
 async def start_fetch_emails(
@@ -175,7 +206,7 @@ async def start_fetch_emails(
         logger.info(f"Starting email fetching process for user_id: {user_id}")
 
         # Get the last email date for incremental fetching
-        last_updated = get_last_email_date(user_id, db_session)
+        _,last_updated = get_min_max_email_date(user_id, db_session)
 
         # Start email fetching in the background
         background_tasks.add_task(fetch_emails_to_db, user, request, last_updated, user_id=user_id, db_session=db_session)

@@ -94,7 +94,7 @@ async def login(request: Request, background_tasks: BackgroundTasks, db_session:
         request.session["access_token"] = creds.token
 
         # NOTE: change redirection once dashboard is completed
-        exists, last_fetched_date = user_exists(user, db_session)
+        exists, first_fetched_date, last_fetched_date = user_exists(user, db_session)
         logger.info("User exists: %s, Last fetched date: %s", exists, last_fetched_date)
         if exists:
             logger.info("User already exists in the database.")
@@ -104,7 +104,7 @@ async def login(request: Request, background_tasks: BackgroundTasks, db_session:
             logger.info("Settings.is_publicly_deployed: %s", settings.is_publicly_deployed)
             logger.info("IS_DOCKER_CONTAINER: %s", os.environ.get("IS_DOCKER_CONTAINER"))
             
-            background_tasks.add_task(fetch_emails_to_db, user, request, last_fetched_date, user_id=user.user_id, db_session=db_session)
+            background_tasks.add_task(fetch_emails_to_db, user, request, first_fetched_date, last_fetched_date, user_id=user.user_id, db_session=db_session)
             logger.info("Background task started for user_id: %s", user.user_id)
         else:
             request.session["is_new_user"] = True
