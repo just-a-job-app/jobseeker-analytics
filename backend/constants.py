@@ -8,6 +8,31 @@ from utils.filter_utils import (
     parse_base_filter_config,
 )  # , parse_override_filter_config
 
+# The list of all possible statuses that the function can return.
+ALL_STATUSES = [
+    "No Response",
+    "Applied",
+    "Interview Scheduled",
+    "Request for Availability",
+    "On Hold",
+    "Rejection",
+    "Offer Extended"
+]
+
+# A dict that maps simple keywords to a status to predict the email's classification.
+STATUS_KEYWORDS = {
+    "interview": "Interview Scheduled",
+    "confirmed": "Interview Scheduled",
+    "schedule": "Request for Availability",
+    "availability": "Request for Availability",
+    "not moving forward": "Rejection",
+    "not the right fit": "Rejection",
+    "congratulations": "Offer Extended",
+    "offer of employment": "Offer Extended",
+    "on hold": "On Hold",
+    "applied": "Applied",
+    "application received": "Applied"
+}
 
 GENERIC_ATS_DOMAINS = [
     "us.greenhouse-mail.io",
