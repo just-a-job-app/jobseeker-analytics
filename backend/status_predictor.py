@@ -1,5 +1,5 @@
-import re
-from constants import STATUS_KEYWORDS
+
+from constants import ALL_STATUS_KEYWORDS
 
 def predict_interview_status(email_data: dict) -> str:
     """
@@ -11,17 +11,10 @@ def predict_interview_status(email_data: dict) -> str:
     # Combine the subject and body together.
     full_text = f"{subject} {body}".lower()
 
-    # Break the text into a list of individual words.
-    words = re.split(r'\W+', full_text)
-
-    # Create a list of all the unique words for a faster search.
-    words_set = set(words)
-
-    # Go through each keyword we're looking for to find a match.
-    for keyword, status in STATUS_KEYWORDS.items():
-        # Check if the keyword exists in the email's words.
-        if keyword in words_set:
+    # Iterate through a single, prioritized dictionary.
+    for keyword, status in ALL_STATUS_KEYWORDS.items():
+        if keyword in full_text:
             return status
 
-    # If no keywords were found, assume there is no status.
+    # If no keywords were found, return the default status.
     return "No Response"

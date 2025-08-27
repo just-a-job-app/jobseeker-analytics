@@ -19,19 +19,58 @@ ALL_STATUSES = [
     "Offer Extended"
 ]
 
-# A dict that maps simple keywords to a status to predict the email's classification.
-STATUS_KEYWORDS = {
-    "interview": "Interview Scheduled",
-    "confirmed": "Interview Scheduled",
-    "schedule": "Request for Availability",
-    "availability": "Request for Availability",
+# A unified dictionary of all keywords and variations, sorted by length
+# from longest to shortest.
+# This ensures the most specific phrases are checked first.
+ALL_STATUS_KEYWORDS = {
+    # Rejection
     "not moving forward": "Rejection",
+    "decided to move forward with": "Rejection",
+    "pursue other candidates": "Rejection",
+    "have decided not to": "Rejection",
     "not the right fit": "Rejection",
-    "congratulations": "Offer Extended",
+    "not a good match": "Rejection",
+    "unfortunately": "Rejection",
+
+    # Offer Extended
     "offer of employment": "Offer Extended",
-    "on hold": "On Hold",
+    "we'd like to extend": "Offer Extended",
+    "your official offer": "Offer Extended",
+    "congratulations": "Offer Extended",
+    "job offer": "Offer Extended",
+    "congrats": "Offer Extended",
+    "offered": "Offer Extended",
+
+    # Interview Scheduled
+    "interview scheduled": "Interview Scheduled",
+    "interview date": "Interview Scheduled",
+    "phone screen": "Interview Scheduled",
+    "video call": "Interview Scheduled",
+    "confirmed": "Interview Scheduled",
+    "interview": "Interview Scheduled",
+
+    # Request for Availability
+    "your availability": "Request for Availability",
+    "when are you available": "Request for Availability",
+    "your schedule": "Request for Availability",
+    "discuss next steps": "Request for Availability",
+    "let us know what day works": "Request for Availability",
+    "schedule": "Request for Availability",
+
+    # Applied
+    "application received": "Applied",
+    "thank you for your interest": "Applied",
+    "application submitted": "Applied",
+    "received": "Applied",
     "applied": "Applied",
-    "application received": "Applied"
+
+    # On Hold
+    "on hold": "On Hold",
+    "under review": "On Hold",
+    "future position": "On Hold",
+    "we will be in touch": "On Hold",
+    "patience": "On Hold",
+    "holding": "On Hold"
 }
 
 GENERIC_ATS_DOMAINS = [
