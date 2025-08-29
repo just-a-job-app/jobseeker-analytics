@@ -24,6 +24,7 @@ logging.basicConfig(
 def process_email(email_text: str, user_id: str, db_session):
     logger.info(f"user_id:{user_id} Starting LLM processing of email content (length: {len(email_text)} chars)")
     
+    
     prompt = f"""
         First, extract the job application status from the following email using the labels below. 
         If the status is 'False positive', only return the status as 'False positive' and do not extract company name or job title. 
@@ -154,4 +155,3 @@ def process_email(email_text: str, user_id: str, db_session):
                 return None
     logger.error(f"Failed to process email after {retries} attempts.")
     return None
-
