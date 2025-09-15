@@ -221,7 +221,28 @@ export default function JobApplicationsDashboard({
 			setIsNewUser(!!data.is_new_user); // Set the new user flag
 			setShowModal(!!data.is_new_user); // Show modal if new user
 		}
+
+		async function checkCancelledTask() {
+			try {
+				const response = await fetch(`${apiUrl}/processing`, {
+					method: "GET",
+					credentials: "include"
+				});
+				if (response.ok) {
+					const result = await response.json();
+					if (result.message === "Processing cancelled") {
+						// If processing was cancelled, show the start date modal again
+						setIsNewUser(true);
+						setShowModal(true);
+					}
+				}
+			} catch (error) {
+				// Ignore errors - user might not have any processing task
+			}
+		}
+
 		fetchSessionData();
+		checkCancelledTask();
 	}, []);
 
 	// Sort data based on selected key
