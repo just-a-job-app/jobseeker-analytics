@@ -2,34 +2,20 @@
 
 import { Navbar as HeroUINavbar, NavbarContent, NavbarBrand, NavbarItem, Button } from "@heroui/react";
 import NextLink from "next/link";
-import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { checkAuth, hasLoggedInBefore } from "@/utils/auth";
 import { GoogleIcon } from "@/components/icons";
 
-export const Navbar = () => {
-	const [showLogin, setShowLogin] = useState(false);
+interface NavbarProps {
+	showLogin: boolean;
+}
+
+export const Navbar = ({ showLogin }: NavbarProps) => {
 	const router = useRouter();
 	const apiUrl = process.env.NEXT_PUBLIC_API_URL!;
 
 	const handleGoogleLogin = () => {
 		router.push(`${apiUrl}/login`);
 	};
-
-	useEffect(() => {
-		let cancelled = false;
-
-		(async () => {
-			await checkAuth(apiUrl);
-			if (!cancelled) {
-				setShowLogin(hasLoggedInBefore());
-			}
-		})();
-
-		return () => {
-			cancelled = true;
-		};
-	}, []);
 
 	return (
 		<HeroUINavbar
