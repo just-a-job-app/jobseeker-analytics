@@ -2,7 +2,6 @@
 
 import { useRouter } from "next/navigation";
 import { Button } from "@heroui/react";
-import { useEffect } from "react";
 
 import { ExternalLinkIcon, GoogleIcon } from "@/components/icons";
 

@@ -2,19 +2,27 @@
 
 import { Navbar as HeroUINavbar, NavbarContent, NavbarBrand, NavbarItem, Button } from "@heroui/react";
 import NextLink from "next/link";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+
 import { GoogleIcon } from "@/components/icons";
 
 interface NavbarProps {
-	showLogin: boolean;
+	isAuthenticated: boolean;
+	hasPrevAuth: boolean;
+	isFirstVisit: boolean;
 }
 
-export const Navbar = ({ showLogin }: NavbarProps) => {
+export const Navbar = ({ isAuthenticated, hasPrevAuth, isFirstVisit }: NavbarProps) => {
 	const router = useRouter();
 	const apiUrl = process.env.NEXT_PUBLIC_API_URL!;
 
 	const handleGoogleLogin = () => {
 		router.push(`${apiUrl}/login`);
+	};
+
+	const handleLogout = () => {
+		router.push("/logout");
 	};
 
 	return (
@@ -43,7 +51,41 @@ export const Navbar = ({ showLogin }: NavbarProps) => {
 
 			{/* Desktop/right side */}
 			<NavbarContent className="hidden md:flex basis-1/5 sm:basis-full" justify="end">
-				{showLogin ? (
+				{isAuthenticated ? (
+					<NavbarItem>
+						<Button
+							className="bg-amber-600 text-white hover:bg-amber-700"
+							variant="solid"
+							onPress={handleLogout}
+						>
+							Logout
+						</Button>
+					</NavbarItem>
+				) : isFirstVisit ? (
+					<NavbarItem>
+						<Button
+							as="a"
+							className="bg-amber-600 text-white hover:bg-amber-700"
+							href="#waitlist"
+							variant="solid"
+							onPress={() => {
+								const waitlistSection = document.getElementById("waitlist");
+								if (waitlistSection) {
+									import("@/components/Footer").then((module) => {
+										const { createFireworkEffect } = module;
+										waitlistSection.classList.add("golden-sparkle-border");
+										createFireworkEffect(waitlistSection);
+										setTimeout(() => {
+											waitlistSection.classList.remove("golden-sparkle-border");
+										}, 2000);
+									});
+								}
+							}}
+						>
+							Request Early Access
+						</Button>
+					</NavbarItem>
+				) : hasPrevAuth ? (
 					<NavbarItem>
 						<Button
 							className="bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
@@ -62,10 +104,8 @@ export const Navbar = ({ showLogin }: NavbarProps) => {
 							href="#waitlist"
 							variant="solid"
 							onPress={() => {
-								// Add fireworks animation to waitlist section
 								const waitlistSection = document.getElementById("waitlist");
 								if (waitlistSection) {
-									// Import the function dynamically to avoid circular dependencies
 									import("@/components/Footer").then((module) => {
 										const { createFireworkEffect } = module;
 										waitlistSection.classList.add("golden-sparkle-border");
@@ -85,7 +125,39 @@ export const Navbar = ({ showLogin }: NavbarProps) => {
 
 			{/* Smaller screens */}
 			<NavbarContent className="md:hidden" justify="end">
-				{showLogin ? (
+				{isAuthenticated ? (
+					<Button
+						className="bg-amber-600 text-white hover:bg-amber-700"
+						size="sm"
+						variant="solid"
+						onPress={handleLogout}
+					>
+						Logout
+					</Button>
+				) : isFirstVisit ? (
+					<Button
+						as="a"
+						className="bg-amber-600 text-white hover:bg-amber-700"
+						href="#waitlist"
+						size="sm"
+						variant="solid"
+						onPress={() => {
+							const waitlistSection = document.getElementById("waitlist");
+							if (waitlistSection) {
+								import("@/components/Footer").then((module) => {
+									const { createFireworkEffect } = module;
+									waitlistSection.classList.add("golden-sparkle-border");
+									createFireworkEffect(waitlistSection);
+									setTimeout(() => {
+										waitlistSection.classList.remove("golden-sparkle-border");
+									}, 2000);
+								});
+							}
+						}}
+					>
+						Request Early Access
+					</Button>
+				) : hasPrevAuth ? (
 					<Button
 						className="bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
 						size="sm"
@@ -103,10 +175,8 @@ export const Navbar = ({ showLogin }: NavbarProps) => {
 						size="sm"
 						variant="solid"
 						onPress={() => {
-							// Add fireworks animation to waitlist section
 							const waitlistSection = document.getElementById("waitlist");
 							if (waitlistSection) {
-								// Import the function dynamically to avoid circular dependencies
 								import("@/components/Footer").then((module) => {
 									const { createFireworkEffect } = module;
 									waitlistSection.classList.add("golden-sparkle-border");

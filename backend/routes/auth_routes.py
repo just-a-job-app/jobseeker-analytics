@@ -124,12 +124,41 @@ async def login(request: Request, background_tasks: BackgroundTasks, db_session:
 
 
 @router.get("/logout")
-async def logout(request: Request, response: RedirectResponse):
+async def logout(request: Request):
     logger.info("Logging out")
+    
+    # Check if user had an Authorization cookie (indicates they've ever authenticated)
+    has_ever_authenticated = False
+    if settings.is_publicly_deployed:
+        auth_cookie = request.cookies.get("__Secure-Authorization")
+    else:
+        auth_cookie = request.cookies.get("Authorization")
+    
+    logger.info(f"[Logout] Auth cookie value: {auth_cookie}")
+    has_ever_authenticated = bool(auth_cookie)
+    logger.info(f"[Logout] Has ever authenticated: {has_ever_authenticated}")
+    
+    # Clear the session
     request.session.clear()
-    response.delete_cookie(key="__Secure-Authorization")
-    response.delete_cookie(key="Authorization")
-    return RedirectResponse(f"{APP_URL}", status_code=303)
+    logger.info("[Logout] Session cleared")
+    
+    # Keep Authorization cookie for returning users, remove it for first-time users
+    if has_ever_authenticated:
+        # Set a persistent Authorization cookie with a placeholder value
+        persistent_auth_value = "logged_out"
+        logger.info(f"[Logout] Setting cookie to: {persistent_auth_value}")
+        response = RedirectResponse(f"{APP_URL}", status_code=303)
+        response = set_conditional_cookie(
+            key="Authorization", value=persistent_auth_value, response=response
+        )
+        logger.info("[Logout] Cookie set, returning response")
+        return response
+    else:
+        logger.info("[Logout] No auth cookie found, deleting cookies")
+        response = RedirectResponse(f"{APP_URL}", status_code=303)
+        response.delete_cookie(key="__Secure-Authorization")
+        response.delete_cookie(key="Authorization")
+        return response
 
 
 @router.get("/me")
