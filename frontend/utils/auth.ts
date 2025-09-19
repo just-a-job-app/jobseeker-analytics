@@ -5,11 +5,15 @@ export async function checkAuth(apiUrl: string): Promise<boolean> {
 			credentials: "include"
 		});
 
+		if (response.ok) {
+			return true;
+		}
+
 		if (response.status === 401) {
 			return false;
 		}
 
-		return true;
+		return false;
 	} catch {
 		return false;
 	}
