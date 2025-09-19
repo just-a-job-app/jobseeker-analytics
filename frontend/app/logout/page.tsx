@@ -7,10 +7,10 @@ export default function LogoutPage() {
 	const apiUrl = process.env.NEXT_PUBLIC_API_URL!;
 
 	useEffect(() => {
-		// Show the UI for a brief moment, then navigate for server-side logout
+		// Shows logout UI 
 		const timer = setTimeout(() => {
 			window.location.href = `${apiUrl}/logout`;
-		}, 600);
+		}, 600); //adjust this for shorter or longer logout time
 		return () => clearTimeout(timer);
 	}, [apiUrl]);
 

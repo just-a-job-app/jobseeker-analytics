@@ -33,26 +33,20 @@ export const viewport: Viewport = {
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
 	const cookieStore = await cookies();
-	
+
 	// Get Authorization cookie directly
 	const authCookie = cookieStore.get("Authorization") || cookieStore.get("__Secure-Authorization");
 	let isAuthenticated = false;
 	let hasVisited = false;
 	let hasPrevAuth = false;
 
-	// Debug logging
-	console.log("[Layout] Auth cookie:", authCookie?.value);
-
 	if (authCookie?.value) {
 		hasVisited = true; // Has Authorization cookie = has visited
 		hasPrevAuth = true; // Has Authorization cookie = has ever authenticated
-		
+
 		// Check if user is currently authenticated (not logged out)
 		isAuthenticated = authCookie.value !== "logged_out";
 	}
-
-	// Debug logging
-	console.log("[Layout] Auth state:", { isAuthenticated, hasPrevAuth, hasVisited });
 
 	return (
 		<html suppressHydrationWarning lang="en">

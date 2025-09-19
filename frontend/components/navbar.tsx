@@ -2,7 +2,6 @@
 
 import { Navbar as HeroUINavbar, NavbarContent, NavbarBrand, NavbarItem, Button } from "@heroui/react";
 import NextLink from "next/link";
-import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { GoogleIcon } from "@/components/icons";
