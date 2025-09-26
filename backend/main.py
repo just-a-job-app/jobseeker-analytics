@@ -1,6 +1,6 @@
 import logging
 from datetime import datetime
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Request, BackgroundTasks
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware
@@ -95,6 +95,19 @@ async def heartbeat(request: Request):
     return {"status": "alive", "timestamp": datetime.now().isoformat()}
 
 
+def get_resume():
+    import subprocess
+    resume = subprocess.run(
+        ["pdfly", "extract-text", "/Users/lnovitz/Downloads/testfile.pdf"], 
+        capture_output=True
+    )
+    print(resume.stdout)
+    return resume.stdout
+
+@app.post("/upload-resume")
+async def upload_resume(background_tasks: BackgroundTasks):
+    background_tasks.add_task(get_resume, message="some notification")
+    return {"message": "Notification sent in the background"}
 
 # Run the app using Uvicorn
 if __name__ == "__main__":
