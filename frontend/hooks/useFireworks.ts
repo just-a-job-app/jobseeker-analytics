@@ -89,10 +89,10 @@ export const useFireworks = () => {
 		if (targetElement) {
 			// Add golden sparkle border animation
 			targetElement.classList.add("golden-sparkle-border");
-			
+
 			// Create firework particle effect
 			createFireworkEffect(targetElement);
-			
+
 			// Remove the animation class after 2 seconds
 			setTimeout(() => {
 				targetElement.classList.remove("golden-sparkle-border");

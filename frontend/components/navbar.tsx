@@ -5,6 +5,7 @@ import NextLink from "next/link";
 import { useRouter } from "next/navigation";
 
 import { GoogleIcon } from "@/components/icons";
+import { useFireworks } from "@/hooks/useFireworks";
 
 interface NavbarProps {
 	isAuthenticated: boolean;
@@ -15,6 +16,7 @@ interface NavbarProps {
 export const Navbar = ({ isAuthenticated, hasPrevAuth, isFirstVisit }: NavbarProps) => {
 	const router = useRouter();
 	const apiUrl = process.env.NEXT_PUBLIC_API_URL!;
+	const { triggerFireworks } = useFireworks();
 
 	const handleGoogleLogin = () => {
 		router.push(`${apiUrl}/login`);
@@ -67,19 +69,7 @@ export const Navbar = ({ isAuthenticated, hasPrevAuth, isFirstVisit }: NavbarPro
 							className="bg-amber-600 text-white hover:bg-amber-700"
 							href="#waitlist"
 							variant="solid"
-							onPress={() => {
-								const waitlistSection = document.getElementById("waitlist");
-								if (waitlistSection) {
-									import("@/components/Footer").then((module) => {
-										const { createFireworkEffect } = module;
-										waitlistSection.classList.add("golden-sparkle-border");
-										createFireworkEffect(waitlistSection);
-										setTimeout(() => {
-											waitlistSection.classList.remove("golden-sparkle-border");
-										}, 2000);
-									});
-								}
-							}}
+							onPress={() => triggerFireworks("waitlist")}
 						>
 							Request Early Access
 						</Button>
@@ -102,19 +92,7 @@ export const Navbar = ({ isAuthenticated, hasPrevAuth, isFirstVisit }: NavbarPro
 							className="bg-amber-600 text-white hover:bg-amber-700"
 							href="#waitlist"
 							variant="solid"
-							onPress={() => {
-								const waitlistSection = document.getElementById("waitlist");
-								if (waitlistSection) {
-									import("@/components/Footer").then((module) => {
-										const { createFireworkEffect } = module;
-										waitlistSection.classList.add("golden-sparkle-border");
-										createFireworkEffect(waitlistSection);
-										setTimeout(() => {
-											waitlistSection.classList.remove("golden-sparkle-border");
-										}, 2000);
-									});
-								}
-							}}
+							onPress={() => triggerFireworks("waitlist")}
 						>
 							Request Early Access
 						</Button>
@@ -140,19 +118,7 @@ export const Navbar = ({ isAuthenticated, hasPrevAuth, isFirstVisit }: NavbarPro
 						href="#waitlist"
 						size="sm"
 						variant="solid"
-						onPress={() => {
-							const waitlistSection = document.getElementById("waitlist");
-							if (waitlistSection) {
-								import("@/components/Footer").then((module) => {
-									const { createFireworkEffect } = module;
-									waitlistSection.classList.add("golden-sparkle-border");
-									createFireworkEffect(waitlistSection);
-									setTimeout(() => {
-										waitlistSection.classList.remove("golden-sparkle-border");
-									}, 2000);
-								});
-							}
-						}}
+						onPress={() => triggerFireworks("waitlist")}
 					>
 						Request Early Access
 					</Button>
@@ -173,19 +139,7 @@ export const Navbar = ({ isAuthenticated, hasPrevAuth, isFirstVisit }: NavbarPro
 						href="#waitlist"
 						size="sm"
 						variant="solid"
-						onPress={() => {
-							const waitlistSection = document.getElementById("waitlist");
-							if (waitlistSection) {
-								import("@/components/Footer").then((module) => {
-									const { createFireworkEffect } = module;
-									waitlistSection.classList.add("golden-sparkle-border");
-									createFireworkEffect(waitlistSection);
-									setTimeout(() => {
-										waitlistSection.classList.remove("golden-sparkle-border");
-									}, 2000);
-								});
-							}
-						}}
+						onPress={() => triggerFireworks("waitlist")}
 					>
 						Request Early Access
 					</Button>
