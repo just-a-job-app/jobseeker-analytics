@@ -24,6 +24,7 @@ services:
     env_file: "./frontend/.env"
     environment:
       - NODE_ENV=development
+      - NEXT_PUBLIC_IS_PUBLICLY_DEPLOYED=false
     command: npm run dev  # Start the Next.js dev server with hot-reloading
     restart: always
 

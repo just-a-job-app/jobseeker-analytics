@@ -60,6 +60,7 @@ frontend/.vercel
 frontend/next-env.d.ts
 frontend/*.tsbuildinfo
 frontend/playwright-report/
+frontend/test-results/
 
 # Dependencies
 node_modules/

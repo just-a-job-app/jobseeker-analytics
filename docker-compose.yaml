@@ -19,6 +19,7 @@ services:
     env_file: "./frontend/.env"
     environment:
       - NODE_ENV=production
+      - NEXT_PUBLIC_IS_PUBLICLY_DEPLOYED=true
     restart: always
 
   db:
