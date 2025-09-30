@@ -34,8 +34,10 @@ export const viewport: Viewport = {
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
 	const cookieStore = await cookies();
 
-	// Get Authorization cookie directly
-	const authCookie = cookieStore.get("Authorization") || cookieStore.get("__Secure-Authorization");
+	// Get Authorization cookie using centralized logic
+	const isPubliclyDeployed = process.env.NEXT_PUBLIC_IS_PUBLICLY_DEPLOYED === "true";
+	const cookieName = isPubliclyDeployed ? "__Secure-Authorization" : "Authorization";
+	const authCookie = cookieStore.get(cookieName);
 	let isAuthenticated = false;
 	let hasVisited = false;
 	let hasPrevAuth = false;
