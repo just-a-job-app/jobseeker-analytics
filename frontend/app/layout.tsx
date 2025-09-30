@@ -58,8 +58,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 					<Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
 						<div className="relative flex h-screen flex-col">
 							<Navbar
-								isAuthenticated={isAuthenticated}
 								hasPrevAuth={hasPrevAuth}
+								isAuthenticated={isAuthenticated}
 								isFirstVisit={!hasVisited}
 							/>
 							<main className="container mx-auto flex-grow max-w-7xl px-6 pt-16">{children}</main>
