@@ -4,10 +4,12 @@ import { useState } from "react";
 import { Button } from "@heroui/react";
 
 import Footer from "@/components/Footer";
+import { useFireworks } from "@/hooks/useFireworks";
 
 export default function Page() {
 	const [showImagePopup, setShowImagePopup] = useState(false);
 	const [popupImageSrc, setPopupImageSrc] = useState("");
+	const { triggerFireworks } = useFireworks();
 
 	return (
 		<div className="flex flex-col min-h-screen">
@@ -32,21 +34,7 @@ export default function Page() {
 								href="#waitlist"
 								size="lg"
 								variant="solid"
-								onPress={() => {
-									// Add fireworks animation to waitlist section
-									const waitlistSection = document.getElementById("waitlist");
-									if (waitlistSection) {
-										// Import the function dynamically to avoid circular dependencies
-										import("@/components/Footer").then((module) => {
-											const { createFireworkEffect } = module;
-											waitlistSection.classList.add("golden-sparkle-border");
-											createFireworkEffect(waitlistSection);
-											setTimeout(() => {
-												waitlistSection.classList.remove("golden-sparkle-border");
-											}, 2000);
-										});
-									}
-								}}
+								onPress={() => triggerFireworks("waitlist")}
 							>
 								Request Early Access
 							</Button>
@@ -486,21 +474,7 @@ export default function Page() {
 							className="bg-amber-600 text-white hover:bg-amber-700"
 							href="#waitlist"
 							size="lg"
-							onPress={() => {
-								// Add fireworks animation to waitlist section
-								const waitlistSection = document.getElementById("waitlist");
-								if (waitlistSection) {
-									// Import the function dynamically to avoid circular dependencies
-									import("@/components/Footer").then((module) => {
-										const { createFireworkEffect } = module;
-										waitlistSection.classList.add("golden-sparkle-border");
-										createFireworkEffect(waitlistSection);
-										setTimeout(() => {
-											waitlistSection.classList.remove("golden-sparkle-border");
-										}, 2000);
-									});
-								}
-							}}
+							onPress={() => triggerFireworks("waitlist")}
 						>
 							Request Early Access
 						</Button>
