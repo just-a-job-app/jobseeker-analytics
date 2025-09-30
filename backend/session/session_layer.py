@@ -57,7 +57,7 @@ def validate_session(request: Request, db_session: database.DBSession) -> str:
         logger.info("Access_token is expired, redirecting to login")
         return ""
 
-    if user_id and db_session:
+    if user_id:
         # check that user actually exists in database first
         logger.info("validate_session found user_id: %s", user_id)
         db_session.expire_all()  # Clear any cached data
