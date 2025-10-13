@@ -2,12 +2,14 @@ import "@/styles/globals.css";
 import { Metadata, Viewport } from "next";
 import clsx from "clsx";
 import { Inter } from "next/font/google";
+import { cookies } from "next/headers";
 
 import { Providers, PostHogProvider } from "./providers";
 
 import { siteConfig } from "@/config/site";
 import { fontSans } from "@/config/fonts";
 import FeedbackButton from "@/components/FeedbackButton";
+import { Navbar } from "@/components/navbar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -29,7 +31,25 @@ export const viewport: Viewport = {
 	]
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+	const cookieStore = await cookies();
+
+	// Get Authorization cookie using centralized logic
+	const isPubliclyDeployed = process.env.NEXT_PUBLIC_IS_PUBLICLY_DEPLOYED === "true";
+	const cookieName = isPubliclyDeployed ? "__Secure-Authorization" : "Authorization";
+	const authCookie = cookieStore.get(cookieName);
+	let isAuthenticated = false;
+	let hasVisited = false;
+	let hasPrevAuth = false;
+
+	if (authCookie?.value) {
+		hasVisited = true; // Has Authorization cookie = has visited
+		hasPrevAuth = true; // Has Authorization cookie = has ever authenticated
+
+		// Check if user is currently authenticated (not logged out)
+		isAuthenticated = authCookie.value !== "logged_out";
+	}
+
 	return (
 		<html suppressHydrationWarning lang="en">
 			<head />
@@ -39,6 +59,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 				<PostHogProvider>
 					<Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
 						<div className="relative flex h-screen flex-col">
+							<Navbar
+								hasPrevAuth={hasPrevAuth}
+								isAuthenticated={isAuthenticated}
+								isFirstVisit={!hasVisited}
+							/>
 							<main className="container mx-auto flex-grow max-w-7xl px-6 pt-16">{children}</main>
 							<FeedbackButton />
 						</div>

@@ -3,17 +3,17 @@
 import { useState } from "react";
 import { Button } from "@heroui/react";
 
-import { Navbar } from "@/components/navbar";
 import Footer from "@/components/Footer";
+import { useFireworks } from "@/hooks/useFireworks";
 
-const Index = () => {
+export default function Page() {
 	const [showImagePopup, setShowImagePopup] = useState(false);
 	const [popupImageSrc, setPopupImageSrc] = useState("");
+	const { triggerFireworks } = useFireworks();
 
 	return (
 		<div className="flex flex-col min-h-screen">
 			<main className="flex-grow bg-gradient-to-b from-background to-background/95">
-				<Navbar />
 				<div className="container mx-auto px-4 py-6">
 					<div className="text-center">
 						<h1 className="text-2xl font-bold tracking-tight sm:text-3xl bg-clip-text text-transparent bg-gradient-to-r pb-6 from-amber-600 to-emerald-600">
@@ -34,21 +34,7 @@ const Index = () => {
 								href="#waitlist"
 								size="lg"
 								variant="solid"
-								onPress={() => {
-									// Add fireworks animation to waitlist section
-									const waitlistSection = document.getElementById("waitlist");
-									if (waitlistSection) {
-										// Import the function dynamically to avoid circular dependencies
-										import("@/components/Footer").then((module) => {
-											const { createFireworkEffect } = module;
-											waitlistSection.classList.add("golden-sparkle-border");
-											createFireworkEffect(waitlistSection);
-											setTimeout(() => {
-												waitlistSection.classList.remove("golden-sparkle-border");
-											}, 2000);
-										});
-									}
-								}}
+								onPress={() => triggerFireworks("waitlist")}
 							>
 								Request Early Access
 							</Button>
@@ -124,6 +110,8 @@ const Index = () => {
 					</div>
 				</div>
 			</div>
+
+			{/* The rest of the landing content remains unchanged below */}
 
 			{/* Problem/Agitation Section */}
 			<div className="container mx-auto px-4 py-24 sm:py-32">
@@ -486,21 +474,7 @@ const Index = () => {
 							className="bg-amber-600 text-white hover:bg-amber-700"
 							href="#waitlist"
 							size="lg"
-							onPress={() => {
-								// Add fireworks animation to waitlist section
-								const waitlistSection = document.getElementById("waitlist");
-								if (waitlistSection) {
-									// Import the function dynamically to avoid circular dependencies
-									import("@/components/Footer").then((module) => {
-										const { createFireworkEffect } = module;
-										waitlistSection.classList.add("golden-sparkle-border");
-										createFireworkEffect(waitlistSection);
-										setTimeout(() => {
-											waitlistSection.classList.remove("golden-sparkle-border");
-										}, 2000);
-									});
-								}
-							}}
+							onPress={() => triggerFireworks("waitlist")}
 						>
 							Request Early Access
 						</Button>
@@ -508,7 +482,7 @@ const Index = () => {
 				</div>
 			</div>
 
-			<section id="waitlist" className="max-w-4xl mx-auto py-16">
+			<section className="max-w-4xl mx-auto py-16" id="waitlist">
 				<div className="bg-gradient-to-r from-amber-50 to-emerald-50 dark:from-amber-950/30 dark:to-emerald-950/30 rounded-xl p-8 border border-amber-200 dark:border-amber-800/50 text-center transition-all">
 					<h2 className="text-3xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-amber-600 to-emerald-600 dark:from-amber-500 dark:to-emerald-400">
 						Get the Unfair Advantage in Your Job Search
@@ -518,14 +492,12 @@ const Index = () => {
 						that turn your hidden achievements into your next big opportunity. Your search is 100%
 						confidential.
 					</p>
-
 					<div className="flex justify-center mb-8">
-						{/* Embedded Formbricks Survey */}
 						<div className="dark:opacity-70" style={{ position: "relative", overflow: "auto" }}>
 							<iframe
+								className="rounded-md dark:border dark:border-gray-700"
 								src="https://app.formbricks.com/s/cmf667qha4ahcyg01nu13lsgo?embed=true&source=JustAJobAppLandingPageEmbed"
 								style={{ width: "400px", height: "270px", border: 0 }}
-								className="rounded-md dark:border dark:border-gray-700"
 							/>
 						</div>
 					</div>
@@ -576,6 +548,4 @@ const Index = () => {
 			)}
 		</div>
 	);
-};
-
-export default Index;
+}

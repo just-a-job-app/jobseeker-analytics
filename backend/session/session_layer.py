@@ -44,7 +44,12 @@ def validate_session(request: Request, db_session: database.DBSession) -> str:
         )
         return ""
 
-    if session_authorization != session_id:
+    # Check Authorization cookie value
+    if session_authorization == "logged_out":
+        # User has logged out but Authorization cookie preserved for returning user status
+        logger.info("User has logged out, no active session")
+        return ""
+    elif session_authorization != session_id:
         logger.info("Authorization does not match Session Id, redirecting to login")
         return ""
 

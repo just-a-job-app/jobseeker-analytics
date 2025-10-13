@@ -2,8 +2,30 @@
 
 import { Navbar as HeroUINavbar, NavbarContent, NavbarBrand, NavbarItem, Button } from "@heroui/react";
 import NextLink from "next/link";
+import { useRouter } from "next/navigation";
 
-export const Navbar = () => {
+import { GoogleIcon } from "@/components/icons";
+import { useFireworks } from "@/hooks/useFireworks";
+
+interface NavbarProps {
+	isAuthenticated: boolean;
+	hasPrevAuth: boolean;
+	isFirstVisit: boolean;
+}
+
+export const Navbar = ({ isAuthenticated, hasPrevAuth, isFirstVisit }: NavbarProps) => {
+	const router = useRouter();
+	const apiUrl = process.env.NEXT_PUBLIC_API_URL!;
+	const { triggerFireworks } = useFireworks();
+
+	const handleGoogleLogin = () => {
+		router.push(`${apiUrl}/login`);
+	};
+
+	const handleLogout = () => {
+		router.push("/logout");
+	};
+
 	return (
 		<HeroUINavbar
 			isBordered
@@ -28,60 +50,100 @@ export const Navbar = () => {
 				</NavbarBrand>
 			</NavbarContent>
 
+			{/* Desktop/right side */}
 			<NavbarContent className="hidden md:flex basis-1/5 sm:basis-full" justify="end">
-				<NavbarItem>
-					<Button
-						as="a"
-						className="bg-amber-600 text-white hover:bg-amber-700"
-						href="#waitlist"
-						variant="solid"
-						onPress={() => {
-							// Add fireworks animation to waitlist section
-							const waitlistSection = document.getElementById("waitlist");
-							if (waitlistSection) {
-								// Import the function dynamically to avoid circular dependencies
-								import("@/components/Footer").then((module) => {
-									const { createFireworkEffect } = module;
-									waitlistSection.classList.add("golden-sparkle-border");
-									createFireworkEffect(waitlistSection);
-									setTimeout(() => {
-										waitlistSection.classList.remove("golden-sparkle-border");
-									}, 2000);
-								});
-							}
-						}}
-					>
-						Request Early Access
-					</Button>
-				</NavbarItem>
+				{isAuthenticated ? (
+					<NavbarItem>
+						<Button
+							className="bg-amber-600 text-white hover:bg-amber-700"
+							variant="solid"
+							onPress={handleLogout}
+						>
+							Logout
+						</Button>
+					</NavbarItem>
+				) : isFirstVisit ? (
+					<NavbarItem>
+						<Button
+							as="a"
+							className="bg-amber-600 text-white hover:bg-amber-700"
+							href="#waitlist"
+							variant="solid"
+							onPress={() => triggerFireworks("waitlist")}
+						>
+							Request Early Access
+						</Button>
+					</NavbarItem>
+				) : hasPrevAuth ? (
+					<NavbarItem>
+						<Button
+							className="bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
+							startContent={<GoogleIcon size={16} />}
+							variant="bordered"
+							onPress={handleGoogleLogin}
+						>
+							Login with Google
+						</Button>
+					</NavbarItem>
+				) : (
+					<NavbarItem>
+						<Button
+							as="a"
+							className="bg-amber-600 text-white hover:bg-amber-700"
+							href="#waitlist"
+							variant="solid"
+							onPress={() => triggerFireworks("waitlist")}
+						>
+							Request Early Access
+						</Button>
+					</NavbarItem>
+				)}
 			</NavbarContent>
 
 			{/* Smaller screens */}
 			<NavbarContent className="md:hidden" justify="end">
-				<Button
-					as="a"
-					className="bg-amber-600 text-white hover:bg-amber-700"
-					href="#waitlist"
-					size="sm"
-					variant="solid"
-					onPress={() => {
-						// Add fireworks animation to waitlist section
-						const waitlistSection = document.getElementById("waitlist");
-						if (waitlistSection) {
-							// Import the function dynamically to avoid circular dependencies
-							import("@/components/Footer").then((module) => {
-								const { createFireworkEffect } = module;
-								waitlistSection.classList.add("golden-sparkle-border");
-								createFireworkEffect(waitlistSection);
-								setTimeout(() => {
-									waitlistSection.classList.remove("golden-sparkle-border");
-								}, 2000);
-							});
-						}
-					}}
-				>
-					Request Early Access
-				</Button>
+				{isAuthenticated ? (
+					<Button
+						className="bg-amber-600 text-white hover:bg-amber-700"
+						size="sm"
+						variant="solid"
+						onPress={handleLogout}
+					>
+						Logout
+					</Button>
+				) : isFirstVisit ? (
+					<Button
+						as="a"
+						className="bg-amber-600 text-white hover:bg-amber-700"
+						href="#waitlist"
+						size="sm"
+						variant="solid"
+						onPress={() => triggerFireworks("waitlist")}
+					>
+						Request Early Access
+					</Button>
+				) : hasPrevAuth ? (
+					<Button
+						className="bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
+						size="sm"
+						startContent={<GoogleIcon size={16} />}
+						variant="bordered"
+						onPress={handleGoogleLogin}
+					>
+						Login with Google
+					</Button>
+				) : (
+					<Button
+						as="a"
+						className="bg-amber-600 text-white hover:bg-amber-700"
+						href="#waitlist"
+						size="sm"
+						variant="solid"
+						onPress={() => triggerFireworks("waitlist")}
+					>
+						Request Early Access
+					</Button>
+				)}
 			</NavbarContent>
 		</HeroUINavbar>
 	);
