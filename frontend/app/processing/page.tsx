@@ -11,6 +11,9 @@ const ProcessingPage = () => {
 	const router = useRouter();
 	const apiUrl = process.env.NEXT_PUBLIC_API_URL!;
 	const [progress, setProgress] = useState(0);
+	const [showCancelMessage, setShowCancelMessage] = useState(false);
+	const [isCancelling, setIsCancelling] = useState(false);
+	const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
 
 	useEffect(() => {
 		const process = async () => {
@@ -25,6 +28,14 @@ const ProcessingPage = () => {
 				return;
 			}
 
+			// Set up timer to show cancel message after 10 minutes
+			const cancelTimer = setTimeout(
+				() => {
+					setShowCancelMessage(true);
+				},
+				10 * 60 * 1000
+			); // 10 minutes in milliseconds
+
 			const interval = setInterval(async () => {
 				try {
 					const res = await fetch(`${apiUrl}/processing`, {
@@ -35,6 +46,8 @@ const ProcessingPage = () => {
 					const result = await res.json();
 					const total = Number(result.total_emails);
 					const processed = Number(result.processed_emails);
+					console.log(`Progress update: ${processed}/${total} - ${result.message}`);
+
 					if (!total || isNaN(total)) {
 						setProgress(100);
 					} else {
@@ -42,18 +55,69 @@ const ProcessingPage = () => {
 					}
 					if (result.message === "Processing complete") {
 						clearInterval(interval);
-						router.push("/dashboard");
+						clearTimeout(cancelTimer);
+						// Force a full page refresh to ensure new user status is checked
+						window.location.href = "/dashboard";
+					} else if (result.message === "Processing cancelled") {
+						clearInterval(interval);
+						clearTimeout(cancelTimer);
+						addToast({
+							title: "Processing was cancelled",
+							color: "warning"
+						});
+						// Force a full page refresh to ensure new user status is checked
+						window.location.href = "/dashboard";
 					}
 				} catch {
+					clearTimeout(cancelTimer);
 					router.push("/logout");
 				}
 			}, 3000);
 
-			return () => clearInterval(interval);
+			setIntervalId(interval);
+			return () => {
+				clearInterval(interval);
+				clearTimeout(cancelTimer);
+			};
 		};
 
 		process();
 	}, [router]);
+
+	const handleCancel = async () => {
+		setIsCancelling(true);
+		try {
+			const response = await fetch(`${apiUrl}/cancel-fetch-emails`, {
+				method: "POST",
+				credentials: "include"
+			});
+
+			if (response.ok) {
+				if (intervalId) {
+					clearInterval(intervalId);
+				}
+				addToast({
+					title: "Processing cancelled successfully",
+					color: "success"
+				});
+				// Force a full page refresh to ensure new user status is checked
+				window.location.href = "/dashboard";
+			} else {
+				const result = await response.json();
+				addToast({
+					title: result.detail || "Failed to cancel processing",
+					color: "danger"
+				});
+			}
+		} catch (error) {
+			addToast({
+				title: "Error cancelling processing",
+				color: "danger"
+			});
+		} finally {
+			setIsCancelling(false);
+		}
+	};
 
 	return (
 		<div className="flex flex-col items-center justify-center h-full">
@@ -72,6 +136,18 @@ const ProcessingPage = () => {
 				<p className="text-lg mt-4">
 					Eating rejections for dinner. You will be redirected to your dashboard soon.
 				</p>
+				{showCancelMessage && (
+					<p className="text-sm text-gray-500 mt-2">
+						Taking too long?{" "}
+						<button
+							className="underline hover:text-gray-700 disabled:opacity-50"
+							disabled={isCancelling}
+							onClick={handleCancel}
+						>
+							{isCancelling ? "Cancelling..." : "Cancel the process"}
+						</button>
+					</p>
+				)}
 			</div>
 		</div>
 	);
