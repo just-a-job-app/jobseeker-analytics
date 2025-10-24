@@ -6,7 +6,7 @@ from fastapi.responses import RedirectResponse, HTMLResponse
 from google_auth_oauthlib.flow import Flow
 
 from db.utils.user_utils import user_exists
-from utils.auth_utils import AuthenticatedUser
+from utils.auth_utils import AuthenticatedUser, get_google_authorization_url
 from session.session_layer import create_random_session_string, validate_session
 from utils.config_utils import get_settings
 from utils.cookie_utils import set_conditional_cookie
@@ -52,7 +52,16 @@ async def login(request: Request, background_tasks: BackgroundTasks, db_session:
 
     try:
         if not code:
-            authorization_url, state = flow.authorization_url(prompt="consent")
+            # Check if we have a refresh token in session
+            has_refresh_token = False
+            if creds_json := request.session.get("creds"):
+                try:
+                    creds_dict = json.loads(creds_json)
+                    has_refresh_token = bool(creds_dict.get("refresh_token"))
+                except:
+                    pass
+            
+            authorization_url, state = get_google_authorization_url(flow, has_refresh_token)
             return RedirectResponse(url=authorization_url)
         logger.info("Authorization code received, exchanging for token...")
         try:
@@ -65,6 +74,7 @@ async def login(request: Request, background_tasks: BackgroundTasks, db_session:
             )   
         try:
             creds = flow.credentials
+            logger.info("Credentials received - has refresh_token: %s", bool(creds.refresh_token))
         except Exception as e:
             logger.error("Failed to fetch credentials: %s", e)
             return RedirectResponse(
@@ -73,11 +83,18 @@ async def login(request: Request, background_tasks: BackgroundTasks, db_session:
             )  
 
         if not creds.valid:
-            creds.refresh(Request())
-            return RedirectResponse("/login", status_code=303)
+            try:
+                creds.refresh(Request())
+            except Exception as e:
+                logger.error("Failed to refresh credentials: %s", e)
+                # Clear expired credentials from session
+                request.session.pop("creds", None)
+                return RedirectResponse("/login", status_code=303)
 
         user = AuthenticatedUser(creds)
-        session_id = request.session["session_id"] = create_random_session_string()
+        # Preserve existing session_id or create new one if none exists
+        session_id = request.session.get("session_id") or create_random_session_string()
+        request.session["session_id"] = session_id
 
         # Set session details
         try:
@@ -90,8 +107,21 @@ async def login(request: Request, background_tasks: BackgroundTasks, db_session:
 
         request.session["token_expiry"] = token_expiry
         request.session["user_id"] = user.user_id
-        request.session["creds"] = creds.to_json() 
         request.session["access_token"] = creds.token
+        
+        # Preserve old refresh token if new credentials don't have one
+        new_creds_json = creds.to_json()
+        if not creds.refresh_token and (old_creds := request.session.get("creds")):
+            try:
+                old_dict = json.loads(old_creds)
+                if old_dict.get("refresh_token"):
+                    new_dict = json.loads(new_creds_json)
+                    new_dict["refresh_token"] = old_dict["refresh_token"]
+                    new_creds_json = json.dumps(new_dict)
+            except:
+                pass
+        
+        request.session["creds"] = new_creds_json
 
         # NOTE: change redirection once dashboard is completed
         exists, last_fetched_date = user_exists(user, db_session)
