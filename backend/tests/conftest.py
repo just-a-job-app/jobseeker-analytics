@@ -1,8 +1,8 @@
 import sys
 import os
 import pytest
-from testcontainers.postgres import PostgresContainer
 import sqlalchemy as sa
+from sqlalchemy.pool import StaticPool
 from sqlmodel import Session, SQLModel
 from fastapi.testclient import TestClient
 from fastapi import Request
@@ -19,26 +19,18 @@ from session.session_layer import validate_session  # noqa: E402
 from db.processing_tasks import STARTED, FINISHED, TaskRuns  # noqa: E402
 from db.users import Users # noqa: E402
 
-# Use SQLite for GitHub CI pipeline
+# Use SQLite for GitHub CI pipeline and Docker environments
 os.environ["DATABASE_URL"] = "sqlite:///:memory:"
-
-@pytest.fixture(scope="session")
-def postgres_container():
-    with PostgresContainer("postgres:13") as postgres:
-        yield postgres
 
 
 @pytest.fixture
-def engine(postgres_container: PostgresContainer, monkeypatch):
+def engine(monkeypatch):
+    # Use SQLite for testing with threading support for FastAPI TestClient
+    # StaticPool ensures all connections share the same in-memory database
     test_engine = sa.create_engine(
-        sa.URL.create(
-            "postgresql",
-            username=postgres_container.username,
-            password=postgres_container.password,
-            host=postgres_container.get_container_host_ip(),
-            port=postgres_container.get_exposed_port(postgres_container.port),
-            database=postgres_container.dbname,
-        )
+        "sqlite:///:memory:",
+        connect_args={"check_same_thread": False},
+        poolclass=StaticPool
     )
 
     monkeypatch.setattr(database, "engine", test_engine)
@@ -47,11 +39,9 @@ def engine(postgres_container: PostgresContainer, monkeypatch):
 
     yield test_engine
 
-    with test_engine.begin() as transaction:
-        transaction.execute(
-            sa.text("SET session_replication_role = :role"), {"role": "replica"}
-        )
-        for table in SQLModel.metadata.tables.values():
+    # Cleanup for SQLite
+    for table in reversed(SQLModel.metadata.sorted_tables):
+        with test_engine.begin() as transaction:
             transaction.execute(table.delete())
 
 
@@ -111,8 +101,9 @@ def task_with_300_processed_emails(task_factory):
 def client_factory(db_session):
     def _make_client(user=None):
         main.app.dependency_overrides[database.request_session] = lambda: db_session
-        if user and user.user_id:
-            main.app.dependency_overrides[validate_session] = lambda: user.user_id
+        if user:
+            user_id = user.user_id
+            main.app.dependency_overrides[validate_session] = lambda: user_id
         else:
             # Simulate not logged in: validate_session returns empty string
             main.app.dependency_overrides[validate_session] = lambda: ""

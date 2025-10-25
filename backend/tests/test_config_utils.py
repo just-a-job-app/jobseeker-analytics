@@ -26,8 +26,8 @@ def test_get_settings_only_called_once_with_lru(mock_settings_call):
 
 
 def test_import_settings_does_not_raise_error():
-    import backend.utils.llm_utils  # noqa: F401
-    import backend.utils.auth_utils  # noqa: F401
+    import utils.llm_utils  # noqa: F401
+    import utils.auth_utils  # noqa: F401
 
 
 def test_decode_scopes_valid_json():
