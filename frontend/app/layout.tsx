@@ -48,6 +48,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 						</div>
 					</Providers>
 				</PostHogProvider>
+				<script src="https://app.termly.io/resource-blocker/6adf3d96-4f08-4972-b58b-0e62e4e81785?autoBlock=on" />
 			</body>
 		</html>
 	);

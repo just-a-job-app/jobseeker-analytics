@@ -17,7 +17,7 @@ jobs:
     - uses: actions/checkout@v3
 
     - id: deploy
-      uses: ./.github/actions/deploy-to-lightsail
+      uses: ./.github/actions/deploy-backend-to-lightsail
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-region: ${{ secrets.AWS_REGION }}

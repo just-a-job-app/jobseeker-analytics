@@ -1,4 +1,4 @@
-name: Deploy to AWS Lightsail
+name: Deploy Backend to AWS Lightsail
 description: Deploy application to a specific environment
 
 inputs:
@@ -116,6 +116,39 @@ runs:
     shell: bash
     run: |
       echo "${{ inputs.google-credentials-file-content }}" | base64 --decode > backend/credentials.json
+
+  - name: Clean up Lightsail images
+    env:
+      LIGHTSAIL_SERVICE_NAME: jaja-backend
+    shell: bash
+    run: |
+      # Source - https://stackoverflow.com/a/79334875
+      # Posted by Christopher Wrogg
+      # Retrieved 2025-11-07, License - CC BY-SA 4.0
+
+      ACTIVE_IMAGES=$(aws lightsail get-container-services \
+        --service-name ${LIGHTSAIL_SERVICE_NAME} \
+        --query "containerServices[0].currentDeployment.containers.*.image" \
+        --output text)
+
+      EXISTING_IMAGES=$(aws lightsail get-container-images \
+        --service-name ${LIGHTSAIL_SERVICE_NAME} \
+        --query "containerImages[*].image" \
+        --output text)
+
+      size=$(echo "${EXISTING_IMAGES}" | wc -w)
+      if [[ $size == 1 ]]; then
+        echo 'skip cleanup'
+      else
+        for IMAGE in ${EXISTING_IMAGES}; do
+          if [[ ! "${ACTIVE_IMAGES}" =~ "${IMAGE}" ]]; then
+            echo "Deleting unused image: ${IMAGE}"
+            aws lightsail delete-container-image \
+              --service-name ${LIGHTSAIL_SERVICE_NAME} \
+              --image "${IMAGE}"
+          fi
+        done
+      fi
 
   - name: Build and push Docker image
     env:
