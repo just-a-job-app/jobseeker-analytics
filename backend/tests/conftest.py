@@ -18,7 +18,7 @@ import database  # noqa: E402 DONT MOVE THIS
 import main  # noqa: E402
 from session.session_layer import validate_session  # noqa: E402
 from db.processing_tasks import STARTED, FINISHED, TaskRuns  # noqa: E402
-from db.users import Users  # noqa: E402
+from db.users import Users, CoachClientLink  # noqa: E402
 
 # Use SQLite for GitHub CI pipeline and Docker environments
 os.environ["DATABASE_URL"] = "sqlite:///:memory:"
@@ -123,9 +123,9 @@ def task_factory(db_session, logged_in_user):
 @pytest.fixture
 def user_factory(db_session):
     def _create_user(
-        user_id="123", user_email="user@example.com", start_date=datetime(2000, 1, 1)
+        user_id="123", user_email="user@example.com", start_date=datetime(2000, 1, 1), role="jobseeker"
     ):
-        user = Users(user_id=user_id, user_email=user_email, start_date=start_date)
+        user = Users(user_id=user_id, user_email=user_email, start_date=start_date, role=role)
         db_session.add(user)
         db_session.commit()
         return user
@@ -136,6 +136,25 @@ def user_factory(db_session):
 @pytest.fixture
 def logged_in_user(user_factory):
     return user_factory()
+
+@pytest.fixture
+def coach_user(user_factory):
+    return user_factory(user_id="coach123", user_email="coach@example.com", role="coach")
+
+@pytest.fixture
+def client_user(user_factory):
+    return user_factory(user_id="client123", user_email="client@example.com", role="jobseeker")
+
+@pytest.fixture
+def coach_client_link(coach_user, client_user, db_session):
+    link = CoachClientLink(coach_id=coach_user.user_id, client_id=client_user.user_id)
+    db_session.add(link)
+    db_session.commit()
+    return link
+
+@pytest.fixture
+def logged_in_coach_client(client_factory, coach_user):
+    return client_factory(user=coach_user)
 
 
 @pytest.fixture

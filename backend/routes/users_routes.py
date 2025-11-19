@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, Request, HTTPException
 from sqlmodel import select
 from db.user_emails import UserEmails
 from utils.config_utils import get_settings
-from session.session_layer import validate_session
+from utils.admin_utils import get_context_user_id
 from routes.email_routes import query_emails
 import database
 from slowapi import Limiter
@@ -25,7 +25,7 @@ limiter = Limiter(key_func=get_remote_address)
 
 @router.get("/get-response-rate")   
 @limiter.limit("2/minute")    
-def response_rate_by_job_title(request: Request, db_session: database.DBSession, user_id: str = Depends(validate_session)):
+def response_rate_by_job_title(request: Request, db_session: database.DBSession, user_id: str = Depends(get_context_user_id)):
     
     try:
         logger.info(f"Starting response rate calculation for user_id: {user_id}")
@@ -130,7 +130,7 @@ def response_rate_by_job_title(request: Request, db_session: database.DBSession,
 
 @router.get("/user-response-rate")
 def calculate_response_rate(
-    request: Request, db_session: database.DBSession, user_id: str = Depends(validate_session)
+    request: Request, db_session: database.DBSession, user_id: str = Depends(get_context_user_id)
 ) -> dict:
     db_session.expire_all()  # Clear any cached data
     db_session.commit()  # Commit pending changes to ensure the database is in latest state

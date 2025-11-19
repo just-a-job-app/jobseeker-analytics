@@ -2,6 +2,7 @@ import datetime
 import logging
 import json
 from fastapi import APIRouter, Depends, HTTPException, Request, BackgroundTasks
+from sqlmodel import select
 from fastapi.responses import RedirectResponse, HTMLResponse
 from google_auth_oauthlib.flow import Flow
 
@@ -115,6 +116,8 @@ async def login(
 
         request.session["token_expiry"] = token_expiry
         request.session["user_id"] = user.user_id
+        if user.user_email:
+            request.session["user_email"] = user.user_email
         request.session["access_token"] = creds.token
 
         # Preserve old refresh token if new credentials don't have one
@@ -184,7 +187,11 @@ async def logout(request: Request, response: RedirectResponse):
 
 
 @router.get("/me")
-async def getUser(request: Request, user_id: str = Depends(validate_session)):
+async def getUser(request: Request, db_session: database.DBSession, user_id: str = Depends(validate_session)):
     if not user_id:
         raise HTTPException(status_code=401, detail="No user id found in session")
-    return {"user_id": user_id}
+    # Fetch role for user
+    from db.users import Users
+    user = db_session.exec(select(Users).where(Users.user_id == user_id)).first()
+    role = user.role if user else "jobseeker"
+    return {"user_id": user_id, "role": role}

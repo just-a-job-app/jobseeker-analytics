@@ -12,4 +12,4 @@ COPY . .
 EXPOSE 8000
 
 # Use Uvicorn to run the app.  The host needs to be 0.0.0.0 for Docker
-CMD ["uvicorn", "main:app", "--reload", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["sh", "-c", "alembic upgrade head && uvicorn main:app --host 0.0.0.0 --port 8000"]

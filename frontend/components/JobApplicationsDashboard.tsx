@@ -63,6 +63,7 @@ interface JobApplicationsDashboardProps {
 	currentPage: number;
 	totalPages: number;
 	onRefreshData?: () => void;
+	readOnly?: boolean;
 }
 
 // Load sort key from localStorage or use default
@@ -127,6 +128,7 @@ export default function JobApplicationsDashboard({
 	hideApplicationConfirmations = true,
 	onHideApplicationConfirmationsChange,
 	onRefreshData,
+	readOnly = false,
 	...props
 }: JobApplicationsDashboardProps) {
 	const [sortedData, setSortedData] = useState<Application[]>([]);
@@ -635,14 +637,16 @@ export default function JobApplicationsDashboard({
 						Download CSV
 					</Button>
 
-					<Button
-						className="w-full sm:w-auto"
-						color="primary"
-						startContent={<PlusIcon />}
-						onPress={handleAddApplication}
-					>
-						Add Application
-					</Button>
+					{!readOnly && (
+						<Button
+							className="w-full sm:w-auto"
+							color="primary"
+							startContent={<PlusIcon />}
+							onPress={handleAddApplication}
+						>
+							Add Application
+						</Button>
+					)}
 				</div>
 			</div>
 
@@ -694,33 +698,37 @@ export default function JobApplicationsDashboard({
 									</TableCell>
 									<TableCell className="text-center">
 										<div className="flex justify-center gap-2">
-											<Tooltip content="Edit">
-												<Button
-													isIconOnly
-													size="sm"
-													variant="light"
-													onPress={() => {
-														setSelectedApplication(item);
-														setModalMode("edit");
-														setShowApplicationModal(true);
-													}}
-												>
-													<EditIcon className="text-gray-800 dark:text-gray-300" />
-												</Button>
-											</Tooltip>
-											<Tooltip content="Remove">
-												<Button
-													isIconOnly
-													size="sm"
-													variant="light"
-													onPress={() => {
-														setItemToRemove(item.id || null);
-														setShowDelete(true);
-													}}
-												>
-													<TrashIcon className="text-gray-800 dark:text-gray-300" />
-												</Button>
-											</Tooltip>
+											{!readOnly && (
+												<>
+													<Tooltip content="Edit">
+														<Button
+															isIconOnly
+															size="sm"
+															variant="light"
+															onPress={() => {
+																setSelectedApplication(item);
+																setModalMode("edit");
+																setShowApplicationModal(true);
+															}}
+														>
+															<EditIcon className="text-gray-800 dark:text-gray-300" />
+														</Button>
+													</Tooltip>
+													<Tooltip content="Remove">
+														<Button
+															isIconOnly
+															size="sm"
+															variant="light"
+															onPress={() => {
+																setItemToRemove(item.id || null);
+																setShowDelete(true);
+															}}
+														>
+															<TrashIcon className="text-gray-800 dark:text-gray-300" />
+														</Button>
+													</Tooltip>
+												</>
+											)}
 										</div>
 									</TableCell>
 								</TableRow>

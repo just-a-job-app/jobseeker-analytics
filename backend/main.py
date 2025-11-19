@@ -11,15 +11,13 @@ from slowapi.errors import RateLimitExceeded
 from slowapi.middleware import SlowAPIMiddleware
 from utils.config_utils import get_settings
 from contextlib import asynccontextmanager
-from database import create_db_and_tables
 from db.utils.dev_utils import clear_local_database  # noqa: F401
 
 # Import routes
-from routes import email_routes, auth_routes, file_routes, users_routes, start_date_routes, job_applications_routes
+from routes import email_routes, auth_routes, file_routes, users_routes, start_date_routes, job_applications_routes, coach_routes
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    create_db_and_tables()
     # Clear database in local development
     # clear_local_database()  # uncomment to clear database in local development
     yield
@@ -50,6 +48,7 @@ app.include_router(file_routes.router)
 app.include_router(users_routes.router)
 app.include_router(start_date_routes.router)
 app.include_router(job_applications_routes.router)
+app.include_router(coach_routes.router)
 
 limiter = Limiter(key_func=get_remote_address)
 app.state.limiter = limiter  # Ensure limiter is assigned

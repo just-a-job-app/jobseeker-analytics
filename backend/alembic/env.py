@@ -11,6 +11,7 @@ import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 from sqlmodel import SQLModel
+from db import users, user_emails, companies, processing_tasks # noqa: F401
 
 # This is the Alembic Config object
 config = context.config
@@ -44,8 +45,17 @@ def run_migrations_offline() -> None:
 
 def run_migrations_online() -> None:
     """Run migrations in 'online' mode."""
+    # 1. Load the config object
+    configuration = config.get_section(config.config_ini_section)
+    
+    # 2. Check for DATABASE_URL environment variable
+    # If running locally on Mac, we can export this variable to override 'db' with 'localhost'
+    db_url = os.environ.get("DATABASE_URL")
+    if db_url:
+        configuration["sqlalchemy.url"] = db_url
+
     connectable = engine_from_config(
-        config.get_section(config.config_ini_section),
+        configuration,
         prefix="sqlalchemy.",
         poolclass=pool.NullPool,
     )

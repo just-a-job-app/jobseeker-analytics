@@ -8,9 +8,11 @@ services:
     env_file: "./backend/.env"  # Use the .env file inside backend
     environment:
       - IS_DOCKER_CONTAINER=1
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/jobseeker_analytics
     depends_on:
       - db  # Ensure the database service is started before the backend
     restart: always  # Restart container if it crashes
+    command: sh -c "alembic upgrade head && uvicorn main:app --reload --host 0.0.0.0 --port 8000"
 
   frontend:
     build: 
