@@ -7,8 +7,6 @@ import { Sankey, ResponsiveContainer, Tooltip } from "recharts";
 import posthog from "posthog-js";
 
 import JobApplicationsDashboard, { Application } from "@/components/JobApplicationsDashboard";
-import ResponseRateCard from "@/components/response_rate_card";
-import UniqueOpenRateChart from "@/components/response_rate_chart";
 import { checkAuth } from "@/utils/auth";
 
 interface SankeyData {
@@ -306,19 +304,6 @@ export default function Dashboard() {
 		}
 	};
 
-	const responseRateContent = (
-		<>
-			<div className="flex flex-col gap-4 mt-4 mb-6 md:flex-row">
-				<div className="w-full md:w-[30%]">
-					<ResponseRateCard />
-				</div>
-				<div className="md:w-[70%]">
-					<UniqueOpenRateChart />
-				</div>
-			</div>
-		</>
-	);
-
 	const sankeyChartContent =
 		sankeyData && sankeyData.nodes && sankeyData.nodes.length > 0 ? (
 			<div className="bg-gray-100 dark:bg-gray-800 p-6 shadow-md rounded-lg">
@@ -471,7 +456,6 @@ export default function Dashboard() {
 			hideRejections={hideRejections}
 			loading={loading}
 			normalizedJobTitleFilter={normalizedJobTitleFilter}
-			responseRate={responseRateContent}
 			sankeyChart={sankeyChartContent}
 			searchTerm={searchTerm}
 			statusFilter={statusFilter}

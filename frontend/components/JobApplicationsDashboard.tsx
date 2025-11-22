@@ -44,7 +44,6 @@ interface JobApplicationsDashboardProps {
 	onDownloadSankey: () => void;
 	onRemoveItem: (id: string) => void;
 	initialSortKey?: string;
-	responseRate?: React.ReactNode;
 	sankeyChart?: React.ReactNode;
 	searchTerm?: string;
 	onSearchChange?: (term: string) => void;
@@ -112,7 +111,6 @@ export default function JobApplicationsDashboard({
 	onDownloadSankey,
 	onRemoveItem,
 	initialSortKey = "Date (Newest)",
-	responseRate,
 	sankeyChart,
 	searchTerm = "",
 	onSearchChange,
@@ -390,7 +388,6 @@ export default function JobApplicationsDashboard({
 				</ModalContent>
 			</Modal>
 			<h1 className="text-2xl font-bold mt-0">{title}</h1>
-			{responseRate}
 			{sankeyChart && <div className="mb-6">{sankeyChart}</div>}
 			<div className="flex flex-wrap items-center justify-between gap-4 mb-4">
 				{/* Search and Filter Controls */}
