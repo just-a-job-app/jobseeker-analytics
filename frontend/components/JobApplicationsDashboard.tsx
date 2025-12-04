@@ -388,7 +388,7 @@ export default function JobApplicationsDashboard({
 				{/* Search and Filter Controls */}
 				<div className="flex flex-wrap items-center gap-4 flex-1">
 					{/* Search Input */}
-					<div className="flex-1 max-w-md">
+					<div className="max-w-md">
 						<input
 							className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white"
 							placeholder="Company"
