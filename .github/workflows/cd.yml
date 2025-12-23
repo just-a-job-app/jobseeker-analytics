@@ -27,6 +27,7 @@ jobs:
         redirect-uri: ${{ secrets.REDIRECT_URI }}
         cookie-secret: ${{ secrets.COOKIE_SECRET }}
         google-api-key: ${{ secrets.GOOGLE_API_KEY }}
+        ipinfo-token: ${{ secrets.IPINFO_TOKEN }}
         app-url: ${{ secrets.APP_URL }}
         api-url: ${{ secrets.API_URL }}
         google-client-id: ${{ secrets.GOOGLE_CLIENT_ID }}
