@@ -4,7 +4,7 @@ By the end of this mini-quest, you will be able to:
 
 1. ✅ Track your job search automatically
 2. ✅ Add Git, GitHub, and Docker to your resume Skills section
-3. ✅ Showcase yourself at https://www.justajob.app/contributors
+3. ✅ Showcase yourself at https://www.app.justajobapp.com/contributors
 
 <p align="left">
     <img width="400" alt="Wall of Fame" src="https://github.com/user-attachments/assets/b6f99068-fb59-4466-a93a-47b3580ad9e9" />

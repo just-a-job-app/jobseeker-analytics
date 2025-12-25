@@ -14,13 +14,22 @@ import posthog from "posthog-js";
 import { PostHogProvider as PHProvider } from "posthog-js/react";
 
 export function PostHogProvider({ children }: { children: React.ReactNode }) {
+	const posthogKey = process.env.NEXT_PUBLIC_POSTHOG_KEY;
+
 	useEffect(() => {
-		posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY as string, {
-			api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || "https://us.i.posthog.com",
-			person_profiles: "identified_only", // or 'always' to create profiles for anonymous users as well
-			capture_pageview: false // Disable automatic pageview capture, as we capture manually
-		});
-	}, []);
+		if (posthogKey) {
+			posthog.init(posthogKey, {
+				api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || "https://us.i.posthog.com",
+				person_profiles: "identified_only", // or 'always' to create profiles for anonymous users as well
+				capture_pageview: false // Disable automatic pageview capture, as we capture manually
+			});
+		}
+	}, [posthogKey]);
+
+	// If no PostHog key is configured, just return children without PostHog
+	if (!posthogKey) {
+		return <>{children}</>;
+	}
 
 	return (
 		<PHProvider client={posthog}>

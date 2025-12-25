@@ -195,9 +195,6 @@ def preprocess_title(title):
     # Remove all text after the first dash (regular hyphen, em dash, en dash)
     # But be smart about it - if what comes after the dash ends with a job role, keep that instead
     title = get_side_with_job_role(title, "dash")
-    logger.info("side with dash %s", title)
-    title = get_side_with_job_role(title, "slash")
-    logger.info("side with slash %s", title)
     # Remove text after comma only if it looks like location info (keep first part)
     # Only split on comma if what comes after doesn't end with a job role
     if ',' in title:

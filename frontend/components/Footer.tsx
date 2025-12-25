@@ -102,6 +102,13 @@ const Footer = () => {
 					<div>
 						<h3 className="text-lg font-semibold mb-4 text-emerald-700">JustAJobApp</h3>
 						<p className="text-default-500 mb-4">Automate the "Second Job" of Job Searching.</p>
+						<a
+							className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-700 transition-colors duration-200"
+							href="/contributors"
+						>
+							<span className="mr-2">👋</span>
+							Join the Community
+						</a>
 					</div>
 
 					<div>

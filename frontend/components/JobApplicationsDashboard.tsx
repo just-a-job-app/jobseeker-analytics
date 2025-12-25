@@ -30,6 +30,7 @@ export interface Application {
 	application_status: string;
 	received_at: string;
 	job_title: string;
+	normalized_job_title?: string;
 	subject: string;
 	email_from: string;
 }
@@ -40,17 +41,16 @@ interface JobApplicationsDashboardProps {
 	loading: boolean;
 	downloading: boolean;
 	onDownloadCsv: () => void;
-	onDownloadSankey: () => void;
 	onRemoveItem: (id: string) => void;
 	initialSortKey?: string;
-	responseRate?: React.ReactNode;
-	sankeyChart?: React.ReactNode;
 	searchTerm?: string;
 	onSearchChange?: (term: string) => void;
 	statusFilter?: string;
 	onStatusFilterChange?: (status: string) => void;
 	companyFilter?: string;
 	onCompanyFilterChange?: (company: string) => void;
+	normalizedJobTitleFilter?: string;
+	onNormalizedJobTitleFilterChange?: (title: string) => void;
 	hideRejections?: boolean;
 	onHideRejectionsChange?: (hide: boolean) => void;
 	hideApplicationConfirmations?: boolean;
@@ -106,17 +106,16 @@ export default function JobApplicationsDashboard({
 	loading,
 	downloading,
 	onDownloadCsv,
-	onDownloadSankey,
 	onRemoveItem,
 	initialSortKey = "Date (Newest)",
-	responseRate,
-	sankeyChart,
 	searchTerm = "",
 	onSearchChange,
 	statusFilter = "",
 	onStatusFilterChange,
 	companyFilter = "",
 	onCompanyFilterChange,
+	normalizedJobTitleFilter = "",
+	onNormalizedJobTitleFilterChange,
 	hideRejections = true,
 	onHideRejectionsChange,
 	hideApplicationConfirmations = true,
@@ -152,6 +151,13 @@ export default function JobApplicationsDashboard({
 	const uniqueCompanies = React.useMemo(() => {
 		const companies = new Set(data.map((item) => item.company_name).filter(Boolean));
 		return Array.from(companies).sort();
+	}, [data]);
+
+	const uniqueNormalizedJobTitles = React.useMemo(() => {
+		const titles = new Set(
+			data.map((item) => item.normalized_job_title).filter((title) => title && title.trim() !== "")
+		);
+		return Array.from(titles).sort();
 	}, [data]);
 
 	const selectedValue = React.useMemo(() => Array.from(selectedKeys).join(", ").replace(/_/g, ""), [selectedKeys]);
@@ -230,6 +236,13 @@ export default function JobApplicationsDashboard({
 					break;
 				case "Job Title":
 					sorted.sort((a, b) => a.job_title.localeCompare(b.job_title));
+					break;
+				case "Normalized Job Title":
+					sorted.sort((a, b) => {
+						const titleA = a.normalized_job_title?.toLowerCase() || "";
+						const titleB = b.normalized_job_title?.toLowerCase() || "";
+						return titleA.localeCompare(titleB);
+					});
 					break;
 				case "Status":
 					sorted.sort((a, b) => a.application_status.localeCompare(b.application_status));
@@ -371,13 +384,11 @@ export default function JobApplicationsDashboard({
 				</ModalContent>
 			</Modal>
 			<h1 className="text-2xl font-bold mt-0">{title}</h1>
-			{responseRate}
-			{sankeyChart && <div className="mb-6">{sankeyChart}</div>}
 			<div className="flex flex-wrap items-center justify-between gap-4 mb-4">
 				{/* Search and Filter Controls */}
 				<div className="flex flex-wrap items-center gap-4 flex-1">
 					{/* Search Input */}
-					<div className="flex-1 max-w-md">
+					<div className="max-w-md">
 						<input
 							className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white"
 							placeholder="Company"
@@ -485,6 +496,57 @@ export default function JobApplicationsDashboard({
 						</DropdownMenu>
 					</Dropdown>
 
+					{/* Normalized Job Title Filter */}
+					<Dropdown>
+						<DropdownTrigger>
+							<Button
+								className="pl-3"
+								color={normalizedJobTitleFilter ? "success" : "primary"}
+								isDisabled={!data || data.length === 0}
+								startContent={
+									<svg
+										fill="none"
+										height="16"
+										stroke="currentColor"
+										strokeWidth="2"
+										viewBox="0 0 24 24"
+										width="16"
+									>
+										<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+										<polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+										<line x1="12" x2="12" y1="22.08" y2="12" />
+									</svg>
+								}
+								variant="bordered"
+							>
+								{normalizedJobTitleFilter || "All Job Titles"}
+								{normalizedJobTitleFilter && (
+									<span className="ml-2 inline-flex items-center justify-center w-5 h-5 text-xs font-medium bg-success text-white rounded-full">
+										+
+									</span>
+								)}
+							</Button>
+						</DropdownTrigger>
+						<DropdownMenu
+							disallowEmptySelection
+							aria-label="Normalized job title filter"
+							selectedKeys={normalizedJobTitleFilter ? new Set([normalizedJobTitleFilter]) : new Set()}
+							selectionMode="single"
+							variant="flat"
+							onSelectionChange={(keys) => {
+								const selectedTitle = Array.from(keys)[0] as string;
+								onNormalizedJobTitleFilterChange?.(selectedTitle || "");
+							}}
+						>
+							<>
+								<DropdownItem key="">All Job Titles</DropdownItem>
+								{uniqueNormalizedJobTitles.map((title: string | undefined) =>
+									title ? <DropdownItem key={title}>{title}</DropdownItem> : null
+								)}
+							</>
+						</DropdownMenu>
+					</Dropdown>
+
 					{/* Hide Rejections Checkbox */}
 					<div className="flex items-center gap-2">
 						<input
@@ -547,6 +609,7 @@ export default function JobApplicationsDashboard({
 								<DropdownItem key="Date (Newest)">Date Received (Newest First)</DropdownItem>
 								<DropdownItem key="Date (Oldest)">Date Received (Oldest First)</DropdownItem>
 								<DropdownItem key="Company">Company (A-Z)</DropdownItem>
+								<DropdownItem key="Normalized Job Title">Normalized Job Title (A-Z)</DropdownItem>
 								<DropdownItem key="Job Title">Job Title (A-Z)</DropdownItem>
 								<DropdownItem key="Status">Application Status</DropdownItem>
 							</DropdownSection>
@@ -585,6 +648,7 @@ export default function JobApplicationsDashboard({
 							<TableColumn className="text-center">Status</TableColumn>
 							<TableColumn className="text-center">Received</TableColumn>
 							<TableColumn className="text-center">Job Title</TableColumn>
+							<TableColumn className="text-center">Normalized Job Title</TableColumn>
 							<TableColumn className="text-center">Subject</TableColumn>
 							<TableColumn className="text-center">Sender</TableColumn>
 							<TableColumn className="text-center">Actions</TableColumn>
@@ -610,6 +674,9 @@ export default function JobApplicationsDashboard({
 									</TableCell>
 									<TableCell className="max-w-[136px] break-words whitespace-normal text-center">
 										{item.job_title || "--"}
+									</TableCell>
+									<TableCell className="max-w-[136px] break-words whitespace-normal text-center">
+										{item.normalized_job_title || "--"}
 									</TableCell>
 									<TableCell className="max-w-[200px] break-words text-center">
 										{item.subject || "--"}
