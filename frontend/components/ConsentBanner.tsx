@@ -21,7 +21,7 @@ export const ConsentBanner: React.FC<ConsentBannerProps> = ({ onAccept }) => {
 		setIsVisible(!hasConsent);
 	}, []);
 
-	const setCookieValue = (name: string, value: string, days: number = 365) => {
+	const setCookieValue = (name: string, value: string, days = 365) => {
 		const expires = new Date();
 		expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
 		const expiresString = `expires=${expires.toUTCString()}`;
@@ -72,11 +72,12 @@ export const ConsentBanner: React.FC<ConsentBannerProps> = ({ onAccept }) => {
 							<div className="flex-1">
 								<h3 className="text-lg font-semibold text-white mb-2">Privacy & Analytics Consent</h3>
 								<p className="text-sm text-gray-300 leading-relaxed">
-									We use analytics (PostHog) to understand how you use our app and improve your experience.
-									We respect your privacy and do not share your data with third parties for advertising.{" "}
+									We use analytics (PostHog) to understand how you use our app and improve your
+									experience. We respect your privacy and do not share your data with third parties
+									for advertising.{" "}
 									<a
-										href="/privacy"
 										className="text-blue-400 hover:text-blue-300 underline transition-colors"
+										href="/privacy"
 									>
 										Learn more
 									</a>

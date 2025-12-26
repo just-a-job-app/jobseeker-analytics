@@ -28,7 +28,9 @@ export default function DSARPage() {
 
 			<Card className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-900 border border-blue-200 dark:border-gray-700">
 				<div className="p-8">
-					<h2 className="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">Submit a Privacy Request</h2>
+					<h2 className="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">
+						Submit a Privacy Request
+					</h2>
 
 					<p className="text-gray-700 dark:text-gray-300 mb-6">
 						To submit a Data Subject Access Request, deletion request, correction request, or any other
@@ -76,7 +78,10 @@ export default function DSARPage() {
 				<p className="text-sm text-gray-700 dark:text-gray-300 mb-2">
 					If you wish to designate an authorized agent to submit a request on your behalf, you may do so by
 					contacting us at{" "}
-					<a className="text-blue-600 dark:text-blue-400 hover:underline" href="mailto:privacy@justajobapp.com">
+					<a
+						className="text-blue-600 dark:text-blue-400 hover:underline"
+						href="mailto:privacy@justajobapp.com"
+					>
 						privacy@justajobapp.com
 					</a>
 					. We may require written proof of the agent's permission and verification of your identity.
