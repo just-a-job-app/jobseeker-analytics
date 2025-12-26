@@ -1,6 +1,6 @@
 module.exports = {
 	plugins: {
-		tailwindcss: {},
+		"@tailwindcss/postcss": {}, // Ensure this matches the error message
 		autoprefixer: {}
 	}
 };
