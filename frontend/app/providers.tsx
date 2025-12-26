@@ -15,6 +15,20 @@ import { PostHogProvider as PHProvider } from "posthog-js/react";
 
 export function PostHogProvider({ children }: { children: React.ReactNode }) {
 	const posthogKey = process.env.NEXT_PUBLIC_POSTHOG_KEY;
+	const [isInitialized, setIsInitialized] = React.useState(false);
+
+	const getCookie = (name: string): string | null => {
+		if (typeof document === "undefined") return null;
+		const nameEQ = `${name}=`;
+		const cookies = document.cookie.split(";");
+		for (let cookie of cookies) {
+			cookie = cookie.trim();
+			if (cookie.startsWith(nameEQ)) {
+				return decodeURIComponent(cookie.substring(nameEQ.length));
+			}
+		}
+		return null;
+	};
 
 	useEffect(() => {
 		if (posthogKey) {
@@ -27,18 +41,29 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
 				return false;
 			};
 
-			posthog.init(posthogKey, {
-				api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || "https://us.i.posthog.com",
-				person_profiles: "identified_only", // or 'always' to create profiles for anonymous users as well
-				capture_pageview: false, // Disable automatic pageview capture, as we capture manually
-				opt_out_capturing_by_default: hasGPCSignal(), // Respect GPC signals
-				respect_dnt: true // Also respect Do Not Track signals
-			});
+			// Check if user has given consent via the jaja-consent cookie
+			const consentCookie = getCookie("jaja-consent");
+			const hasConsent = consentCookie === "true";
+
+			// Only initialize PostHog if user has given consent and GPC is not enabled
+			if (hasConsent && !hasGPCSignal()) {
+				posthog.init(posthogKey, {
+					api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || "https://us.i.posthog.com",
+					person_profiles: "identified_only",
+					capture_pageview: false, // Disable automatic pageview capture, as we capture manually
+					opt_out_capturing_by_default: false,
+					respect_dnt: true // Also respect Do Not Track signals
+				});
+				setIsInitialized(true);
+			} else if (hasGPCSignal() || consentCookie === "false") {
+				// Opt out if GPC signal is present or user has explicitly declined
+				posthog.opt_out_capturing();
+			}
 		}
 	}, [posthogKey]);
 
-	// If no PostHog key is configured, just return children without PostHog
-	if (!posthogKey) {
+	// If no PostHog key is configured or not initialized, return children without PHProvider
+	if (!posthogKey || !isInitialized) {
 		return <>{children}</>;
 	}
 

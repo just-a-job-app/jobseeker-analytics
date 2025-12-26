@@ -2,13 +2,13 @@ import "@/styles/globals.css";
 import { Metadata, Viewport } from "next";
 import clsx from "clsx";
 import { Inter } from "next/font/google";
-import Script from "next/script";
 
 import { Providers, PostHogProvider } from "./providers";
 
 import { siteConfig } from "@/config/site";
 import { fontSans } from "@/config/fonts";
 import ConditionalFeedbackButton from "@/components/ConditionalFeedbackButton";
+import ConsentBanner from "@/components/ConsentBanner";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -46,12 +46,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 							<main className="container mx-auto flex-grow max-w-7xl px-6 pt-16">{children}</main>
 							<ConditionalFeedbackButton />
 						</div>
+						<ConsentBanner />
 					</Providers>
 				</PostHogProvider>
-				<Script
-					src="https://app.termly.io/resource-blocker/6adf3d96-4f08-4972-b58b-0e62e4e81785?autoBlock=on"
-					strategy="afterInteractive"
-				/>
 			</body>
 		</html>
 	);

@@ -233,7 +233,7 @@ const PrivacyPolicyPage = () => {
 							<strong>Auth:</strong> Google OAuth 2.0
 						</li>
 						<li>
-							<strong>Analytics:</strong> PostHog
+							<strong>Analytics:</strong> PostHog (with consent gating)
 						</li>
 					</ul>
 				</div>
@@ -247,15 +247,40 @@ const PrivacyPolicyPage = () => {
 							<strong>AI Processing:</strong> Google Cloud AI, Google Gemini API
 						</li>
 						<li>
-							<strong>Compliance:</strong> Termly.io
+							<strong>Consent Management:</strong> Lightweight cookie-based system
 						</li>
 					</ul>
 				</div>
 			</div>
 
+			{/* 3. CONSENT MANAGEMENT */}
+			<h2 className="text-3xl font-semibold mb-4 mt-8 border-b pb-2">3. Consent Management</h2>
+			<p className="text-sm mb-4">
+				JustAJobApp uses a lightweight, privacy-first consent management system to respect your preferences:
+			</p>
+			<ul className="list-disc list-inside space-y-3 ml-4 text-sm">
+				<li>
+					<strong>Cookie-Based Consent:</strong> We store your consent preference in a cookie named{" "}
+					<code className="bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded">jaja-consent</code>. This cookie
+					expires after 365 days.
+				</li>
+				<li>
+					<strong>Analytics Gating:</strong> PostHog analytics is only initialized when you accept the consent
+					banner. If you decline or have not yet responded, analytics will not track your activity.
+				</li>
+				<li>
+					<strong>GPC & Do Not Track Respect:</strong> We honor Global Privacy Control (GPC) and Do Not Track
+					(DNT) signals from your browser, automatically opting you out of analytics if detected.
+				</li>
+				<li>
+					<strong>No Third-Party Sharing:</strong> We do not share your data with third parties for targeted
+					advertising regardless of your consent choice.
+				</li>
+			</ul>
+
 			{/* 3. EMAIL SYNCHRONIZATION & REFRESH TOKENS */}
 			<h2 className="text-3xl font-semibold mb-4 mt-8 border-b pb-2">
-				3. Specialized Data Processing: Gmail Synchronization
+				4. Specialized Data Processing: Gmail Synchronization
 			</h2>
 			<p className="mt-2 text-sm">
 				JustAJobApp serves as a specialized data processor using the <strong>Google OAuth2 framework</strong>{" "}
@@ -277,7 +302,7 @@ const PrivacyPolicyPage = () => {
 			</ul>
 
 			{/* 4. FILTERING & ANALYSIS */}
-			<h2 className="text-3xl font-semibold mb-4 mt-8 border-b pb-2">4. Targeted Data Filtering</h2>
+			<h2 className="text-3xl font-semibold mb-4 mt-8 border-b pb-2">5. Targeted Data Filtering</h2>
 			<p className="mt-2 text-sm">The Gmail API is filtered through three distinct layers to ensure privacy:</p>
 			<ul className="list-disc list-inside space-y-3 mt-3 ml-4 text-sm">
 				<li>
@@ -309,7 +334,7 @@ const PrivacyPolicyPage = () => {
 
 			{/* 5. UNITED STATES DATA PROCESSING */}
 			<h2 className="text-3xl font-semibold mb-4 mt-8 border-b pb-2">
-				5. International Users: United States Processing
+				6. International Users: United States Processing
 			</h2>
 			<p className="text-sm">
 				JustAJobApp LLC is based in the United States and the Websites are hosted in the United States. If you
@@ -325,7 +350,7 @@ const PrivacyPolicyPage = () => {
 
 			{/* 6. GOOGLE LIMITED USE COMPLIANCE */}
 			<h2 className="text-3xl font-semibold mb-4 mt-8 border-b pb-2">
-				6. Compliance to the Google API Services User Data Policy
+				7. Compliance to the Google API Services User Data Policy
 			</h2>
 			<p className="text-sm">
 				JustAJobApp's use and transfer of data to any other app of information received from Google’s Accounts
@@ -347,10 +372,9 @@ const PrivacyPolicyPage = () => {
 					the personal information of consumers under 16 years of age.
 				</li>
 			</ul>
-
-			{/* 7. CALIFORNIA STATUTORY RIGHTS */}
+			{/* 8. CALIFORNIA STATUTORY RIGHTS */}
 			<h2 className="text-3xl font-semibold mb-4 mt-8 border-t border-b pt-4 pb-2">
-				7. Your California Privacy Rights (CPRA)
+				8. Your California Privacy Rights (CPRA)
 			</h2>
 			<ul className="list-disc list-inside space-y-2 ml-4 text-sm">
 				<li>
@@ -398,15 +422,15 @@ const PrivacyPolicyPage = () => {
 				to designate an authorized agent.
 			</p>
 
-			{/* 8. ADMINISTRATIVE ACCESS */}
-			<h2 className="text-3xl font-semibold mb-4 mt-8 border-t border-b pt-4 pb-2">8. Administrative Access</h2>
+			{/* 9. ADMINISTRATIVE ACCESS */}
+			<h2 className="text-3xl font-semibold mb-4 mt-8 border-t border-b pt-4 pb-2">9. Administrative Access</h2>
 			<p className="mb-6 text-sm">
 				Engineers may locate individual emails related to a Job Application only in response to a bug report,
 				authorized support request, or security investigation. All production data access must be specifically
 				authorized by JustAJobApp LLC.
 			</p>
-			{/* 9. CHANGES AND UPDATES */}
-			<h2 className="text-3xl font-semibold mb-4 mt-8">9. Changes and Updates to this Privacy Policy</h2>
+			{/* 10. CHANGES AND UPDATES */}
+			<h2 className="text-3xl font-semibold mb-4 mt-8">10. Changes and Updates to this Privacy Policy</h2>
 			<p className="text-base">
 				We may occasionally update this Privacy Policy. When we do, we will also revise the Effective Date at
 				the top of this page. We encourage you to periodically review this Privacy Policy to stay informed about
@@ -414,9 +438,9 @@ const PrivacyPolicyPage = () => {
 				constitutes your agreement to this Privacy Policy and any updates.
 			</p>
 
-			{/* 10. US RESIDENTS PRIVACY RIGHTS */}
+			{/* 11. US RESIDENTS PRIVACY RIGHTS */}
 			<h2 className="text-3xl font-semibold mb-4 mt-8 border-t border-b pt-4 pb-2">
-				10. Do United States Residents Have Specific Privacy Rights?
+				11. Do United States Residents Have Specific Privacy Rights?
 			</h2>
 			<p className="text-base mb-4">
 				<strong>In Short:</strong> If you are a resident of California, Colorado, Connecticut, Delaware,
@@ -429,7 +453,7 @@ const PrivacyPolicyPage = () => {
 			</p>
 
 			{/* 11. ACCESSIBILITY STATEMENT */}
-			<h2 className="text-3xl font-semibold mb-4 mt-8">11. Accessibility Statement</h2>
+			<h2 className="text-3xl font-semibold mb-4 mt-8">12. Accessibility Statement</h2>
 			<p className="text-sm mb-4">
 				The CCPA requires that privacy policies be accessible to consumers with disabilities. If you have a
 				disability and need to access this notice in an alternative format, please contact us at{" "}
@@ -439,8 +463,8 @@ const PrivacyPolicyPage = () => {
 				.
 			</p>
 
-			{/* 12. CONTACT INFORMATION */}
-			<h2 className="text-3xl font-semibold mb-4 mt-8 border-t pt-4">12. Contact Information</h2>
+			{/* 13. CONTACT INFORMATION */}
+			<h2 className="text-3xl font-semibold mb-4 mt-8 border-t pt-4">13. Contact Information</h2>
 			<div className="bg-gray-100 dark:bg-gray-800 p-6 rounded-lg">
 				<p className="font-bold">JustAJobApp LLC</p>
 				<p>2108 N St, STE N</p>
