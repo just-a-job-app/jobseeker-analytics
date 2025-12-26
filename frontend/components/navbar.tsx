@@ -13,7 +13,7 @@ export const Navbar = () => {
 			>
 				{/* Desktop Layout */}
 				<div className="hidden md:flex w-full justify-between items-center">
-					<NavbarContent className="basis-1/5 sm:basis-full" justify="start">
+					<NavbarContent justify="start">
 						<NavbarBrand as="li" className="gap-3 max-w-fit">
 							<NextLink className="flex justify-start items-center gap-1" href="/">
 								<div className="flex items-center gap-3">
@@ -35,7 +35,7 @@ export const Navbar = () => {
 						</NavbarBrand>
 					</NavbarContent>
 
-					<NavbarContent className="basis-1/5 sm:basis-full" justify="end">
+					<NavbarContent justify="end">
 						<NavbarItem>
 							<a
 								className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-black bg-yellow-400 hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition-colors duration-200"
@@ -58,10 +58,10 @@ export const Navbar = () => {
 								<img alt="Shining Nuggets Logo" className="h-10 w-10 object-contain" src="/logo.png" />
 								<div className="flex flex-col">
 									<span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-amber-600 to-emerald-600">
-										Just A Job App
+										JustAJobApp
 									</span>
 									<span className="text-xs text-default-500 -mt-1">
-										Get the System Behind a 3x Interview Rate.
+										Automate the "Second Job" of Job Searching.
 									</span>
 								</div>
 							</div>
