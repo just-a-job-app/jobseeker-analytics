@@ -22,7 +22,9 @@ export default tseslint.config(
       "**/build/**",
       "**/.vercel/**",
       "**/.vscode/**",
-      "**/coverage/**"
+      "**/coverage/**",
+      "next-env.d.ts"
+      
     ]
   },
   
