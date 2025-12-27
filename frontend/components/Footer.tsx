@@ -167,30 +167,6 @@ const Footer = () => {
 								Data Requests
 							</a>
 						</div>
-						<div className="flex flex-wrap justify-center gap-4 text-xs">
-							<a
-								className="text-default-400 hover:text-default-600 dark:hover:text-default-200 transition-colors"
-								href="https://app.termly.io/notify/a8dc31e4-d96a-461e-afe0-abdec759bc97"
-								rel="noopener noreferrer"
-								target="_blank"
-							>
-								Do Not Sell or Share My Personal Information
-							</a>
-							<a
-								className="text-default-400 hover:text-default-600 dark:hover:text-default-200 transition-colors"
-								href="https://app.termly.io/notify/a8dc31e4-d96a-461e-afe0-abdec759bc97"
-								rel="noopener noreferrer"
-								target="_blank"
-							>
-								Limit the Use Of My Sensitive Personal Information
-							</a>
-							<a
-								className="text-default-400 hover:text-default-600 dark:hover:text-default-200 transition-colors"
-								href="#"
-							>
-								Change My Consent Preferences
-							</a>
-						</div>
 					</div>
 					<p className="mt-2 text-amber-600 font-medium">© {new Date().getFullYear()} JustAJobApp LLC</p>
 				</div>

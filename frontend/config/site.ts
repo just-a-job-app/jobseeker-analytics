@@ -1,8 +1,8 @@
 export type SiteConfig = typeof siteConfig;
 
 export const siteConfig = {
-	name: "Just A Job App",
-	description: "Get the Unfair Advantage in Your Job Search.",
+	name: "JustAJobApp",
+	description: "Automate the 'Second Job' of Job Searching.",
 	navItems: [
 		{
 			label: "Home",
