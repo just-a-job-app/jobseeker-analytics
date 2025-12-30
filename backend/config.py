@@ -14,6 +14,7 @@ class Settings(BaseSettings):
     GOOGLE_CLIENT_SECRET: str = "default-for-local"
     REDIRECT_URI: str = "http://localhost:8000/login"
     GOOGLE_API_KEY: str
+    IPINFO_TOKEN: str = "default-for-local"
     COOKIE_SECRET: str
     ENV: str = "dev"
     APP_URL: str = "http://localhost:3000"  # Frontend URL - default for local dev

@@ -8,6 +8,7 @@ from slowapi import Limiter
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 from slowapi.middleware import SlowAPIMiddleware
+from guard import SecurityMiddleware, SecurityConfig, GeoIPHandler
 from utils.config_utils import get_settings
 from contextlib import asynccontextmanager
 
@@ -59,6 +60,15 @@ app.add_middleware(
     allow_methods=["*"],  # Allow all HTTP methods (GET, POST, etc.)
     allow_headers=["*"],  # Allow all headers
 )
+
+#Add FastApi-Guard middleware for whitelisting only US IPs
+if settings.is_publicly_deployed:
+    config = SecurityConfig(
+    geo_ip_handler=GeoIPHandler,
+    ipinfo_token=settings.IPINFO_TOKEN,
+    whitelist_countries=["US"]
+    )
+    app.add_middleware(SecurityMiddleware,config=config)
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG, format="%(levelname)s - %(message)s")

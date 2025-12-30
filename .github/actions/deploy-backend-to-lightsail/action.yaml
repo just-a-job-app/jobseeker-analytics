@@ -32,6 +32,9 @@ inputs:
   google-api-key:
     description: Google API Key
     required: true
+  ipinfo-token:
+    description: IPInfo token
+    required: true
   origin:
     description: Origin
     required: true
@@ -50,6 +53,7 @@ runs:
       echo "::add-mask::${{ inputs.google-client-id }}"
       echo "::add-mask::${{ inputs.google-client-secret }}"
       echo "::add-mask::${{ inputs.google-client-redirect-uris }}"
+      echo "::add-mask::${{ inputs.ipinfo-token }}"
       echo "::add-mask::${{ inputs.redirect-uri }}"
       echo "::add-mask::${{ inputs.ls-database-name }}"
       echo "::add-mask::${{ inputs.origin }}"
@@ -178,6 +182,7 @@ runs:
       GOOGLE_CLIENT_ID: ${{ inputs.google-client-id }}
       GOOGLE_CLIENT_SECRET: ${{ inputs.google-client-secret }}
       GOOGLE_CLIENT_REDIRECT_URI: ${{ inputs.google-client-redirect-uri }}
+      IPINFO_TOKEN: ${{ inputs.ipinfo-token }}
       APP_URL: ${{ inputs.app-url }}
       API_URL: ${{ inputs.api-url }}
       ORIGIN: ${{ inputs.origin }}
@@ -189,6 +194,7 @@ runs:
       echo "::add-mask::${GOOGLE_CLIENT_ID}"
       echo "::add-mask::${GOOGLE_CLIENT_SECRET}"
       echo "::add-mask::${GOOGLE_CLIENT_REDIRECT_URI}"
+      echo "::add-mask::${IPINFO_TOKEN}"
       echo "::add-mask::${DATABASE_URL}"
       echo "::add-mask::${REDIRECT_URI}"
       echo "::add-mask::${APP_URL}"
@@ -212,6 +218,7 @@ runs:
               \"GOOGLE_CLIENT_ID\": \"${GOOGLE_CLIENT_ID}\",
               \"GOOGLE_CLIENT_SECRET\": \"${GOOGLE_CLIENT_SECRET}\",
               \"GOOGLE_CLIENT_REDIRECT_URI\": \"${ESCAPED_GOOGLE_CLIENT_REDIRECT_URI}\",
+              \"IPINFO_TOKEN\": \"${IPINFO_TOKEN}\",
               \"COOKIE_SECRET\": \"${COOKIE_SECRET}\",
               \"APP_URL\": \"${APP_URL}\",
               \"API_URL\": \"${API_URL}\",
