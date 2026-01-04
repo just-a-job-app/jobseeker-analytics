@@ -8,6 +8,7 @@ import uuid
 
 from db.user_emails import UserEmails
 from session.session_layer import validate_session
+from utils.admin_utils import get_context_user_id
 import database
 from slowapi import Limiter
 from slowapi.util import get_remote_address
@@ -154,7 +155,7 @@ async def get_job_application(
     request: Request,
     application_id: str,
     db_session: database.DBSession,
-    user_id: str = Depends(validate_session)
+    user_id: str = Depends(get_context_user_id)
 ):
     """
     Get a specific job application by ID.
@@ -194,7 +195,7 @@ async def get_job_application(
 async def get_job_applications(
     request: Request,
     db_session: database.DBSession,
-    user_id: str = Depends(validate_session),
+    user_id: str = Depends(get_context_user_id),
     status: Optional[str] = None,
     company: Optional[str] = None
 ):

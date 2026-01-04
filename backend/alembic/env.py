@@ -11,6 +11,7 @@ import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 from sqlmodel import SQLModel
+from db import users, user_emails, companies, processing_tasks # noqa: F401
 
 # This is the Alembic Config object
 config = context.config

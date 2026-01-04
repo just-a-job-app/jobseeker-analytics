@@ -13,6 +13,7 @@ from utils.llm_utils import process_email
 from utils.task_utils import exceeds_rate_limit
 from utils.config_utils import get_settings
 from session.session_layer import validate_session
+from utils.admin_utils import get_context_user_id
 import database
 from google.oauth2.credentials import Credentials
 import json
@@ -41,7 +42,7 @@ router = APIRouter()
 async def processing(
     request: Request,
     db_session: database.DBSession,
-    user_id: str = Depends(validate_session),
+    user_id: str = Depends(get_context_user_id),
 ):
     logging.info("user_id:%s processing", user_id)
     if not user_id:
@@ -86,7 +87,7 @@ async def processing(
 
 @router.get("/get-emails", response_model=List[UserEmails])
 @limiter.limit("5/minute")
-def query_emails(request: Request, db_session: database.DBSession, user_id: str = Depends(validate_session)) -> None:
+def query_emails(request: Request, db_session: database.DBSession, user_id: str = Depends(get_context_user_id)) -> None:
     try:
         logger.info(f"query_emails for user_id: {user_id}")
         # Query emails sorted by date (newest first)
@@ -143,11 +144,12 @@ async def delete_email(request: Request, db_session: database.DBSession, email_i
         logger.info(f"Email with id {email_id} deleted successfully for user_id {user_id}")
         return {"message": "Item deleted successfully"}
 
+    except HTTPException as e:
+        # Propagate explicit HTTP errors (e.g., 404) without converting to 500
+        raise e
     except Exception as e:
         logger.error(f"Error deleting email with id {email_id} for user_id {user_id}: {e}")
-        raise HTTPException(
-            status_code=500, detail=f"Failed to delete email: {str(e)}"
-        )
+        raise HTTPException(status_code=500, detail=f"Failed to delete email: {str(e)}")
         
 
 @router.post("/fetch-emails")

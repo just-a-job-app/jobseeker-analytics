@@ -11,6 +11,9 @@ import { checkAuth } from "@/utils/auth";
 export default function Dashboard() {
 	const router = useRouter();
 	const [data, setData] = useState<Application[]>([]);
+	const [role, setRole] = useState<string>("jobseeker");
+	const [clients, setClients] = useState<{ user_id: string; user_email: string }[]>([]);
+	const [viewAs, setViewAs] = useState<string>("");
 	const [loading, setLoading] = useState(true);
 	const [downloading, setDownloading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
@@ -64,7 +67,8 @@ export default function Dashboard() {
 			}
 
 			// Fetch applications (if user is logged in)
-			const response = await fetch(`${apiUrl}/get-emails?page=${currentPage}`, {
+			const viewParam = viewAs ? `&view_as=${encodeURIComponent(viewAs)}` : "";
+			const response = await fetch(`${apiUrl}/get-emails?page=${currentPage}${viewParam}`, {
 				method: "GET",
 				credentials: "include" // Include cookies for session management
 			});
@@ -90,7 +94,35 @@ export default function Dashboard() {
 
 	useEffect(() => {
 		fetchData();
-	}, [apiUrl, router, currentPage]);
+	}, [apiUrl, router, currentPage, viewAs]);
+
+	// Fetch role and clients if coach
+	useEffect(() => {
+		const init = async () => {
+			try {
+				const meResp = await fetch(`${apiUrl}/me`, { method: "GET", credentials: "include" });
+				if (meResp.ok) {
+					const meData = await meResp.json();
+					if (meData.role) {
+						setRole(meData.role);
+						if (meData.role === "coach") {
+							const clientsResp = await fetch(`${apiUrl}/coach/clients`, {
+								method: "GET",
+								credentials: "include"
+							});
+							if (clientsResp.ok) {
+								const list = await clientsResp.json();
+								setClients(list);
+							}
+						}
+					}
+				}
+			} catch {
+				/* ignore */
+			}
+		};
+		init();
+	}, [apiUrl]);
 
 	// Filter data based on search term, status, company, and hide options
 	const filteredData = useMemo(() => {
@@ -232,29 +264,52 @@ export default function Dashboard() {
 	};
 
 	return (
-		<JobApplicationsDashboard
-			companyFilter={companyFilter}
-			currentPage={currentPage}
-			data={filteredData}
-			downloading={downloading}
-			hideApplicationConfirmations={hideApplicationConfirmations}
-			hideRejections={hideRejections}
-			loading={loading}
-			normalizedJobTitleFilter={normalizedJobTitleFilter}
-			searchTerm={searchTerm}
-			statusFilter={statusFilter}
-			totalPages={totalPages}
-			onCompanyFilterChange={setCompanyFilter}
-			onDownloadCsv={downloadCsv}
-			onHideApplicationConfirmationsChange={setHideApplicationConfirmations}
-			onHideRejectionsChange={setHideRejections}
-			onNextPage={nextPage}
-			onNormalizedJobTitleFilterChange={setNormalizedJobTitleFilter}
-			onPrevPage={prevPage}
-			onRefreshData={fetchData}
-			onRemoveItem={handleRemoveItem}
-			onSearchChange={setSearchTerm}
-			onStatusFilterChange={setStatusFilter}
-		/>
+		<>
+			{role === "coach" && clients.length > 0 && (
+				<div className="mb-4 p-4 rounded bg-gray-100 dark:bg-gray-800">
+					<label className="mr-2 font-medium">View as:</label>
+					<select
+						className="px-2 py-1 rounded bg-white dark:bg-black border border-gray-300 dark:border-gray-600"
+						value={viewAs}
+						onChange={(e) => {
+							setViewAs(e.target.value);
+							setCurrentPage(1);
+						}}
+					>
+						<option value="">Me (Coach)</option>
+						{clients.map((c) => (
+							<option key={c.user_id} value={c.user_id}>
+								{c.user_email}
+							</option>
+						))}
+					</select>
+				</div>
+			)}
+			<JobApplicationsDashboard
+				companyFilter={companyFilter}
+				currentPage={currentPage}
+				data={filteredData}
+				downloading={downloading}
+				hideApplicationConfirmations={hideApplicationConfirmations}
+				hideRejections={hideRejections}
+				loading={loading}
+				normalizedJobTitleFilter={normalizedJobTitleFilter}
+				readOnly={!!viewAs}
+				searchTerm={searchTerm}
+				statusFilter={statusFilter}
+				totalPages={totalPages}
+				onCompanyFilterChange={setCompanyFilter}
+				onDownloadCsv={downloadCsv}
+				onHideApplicationConfirmationsChange={setHideApplicationConfirmations}
+				onHideRejectionsChange={setHideRejections}
+				onNextPage={nextPage}
+				onNormalizedJobTitleFilterChange={setNormalizedJobTitleFilter}
+				onPrevPage={prevPage}
+				onRefreshData={fetchData}
+				onRemoveItem={handleRemoveItem}
+				onSearchChange={setSearchTerm}
+				onStatusFilterChange={setStatusFilter}
+			/>
+		</>
 	);
 }
